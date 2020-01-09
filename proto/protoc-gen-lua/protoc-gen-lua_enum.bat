@@ -1,0 +1,1 @@
+@python c:\protobuf\protoc-gen-lua\protoc-gen-lua_enum.py

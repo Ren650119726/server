@@ -1,0 +1,55 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+
+import "protobuf/data.proto";
+
+enum MSG {
+	UNKNOW = 0;
+	CS_SYNC_SERVER_TIME = 10001; // 请求同步服务器时间
+	SC_SYNC_SERVER_TIME = 10002; 
+	CLIENT_KEEPALIVE    = 10003; // 客户端发送心跳
+	SC_KICK_OUT_HALL    = 10004; // 服务器踢下线
+	
+	CS_LOGIN_HALL_REQ 	= 10010; // 客户端请求登陆
+	SC_LOGIN_HALL_RES 	= 10011; 
+	CS_BIND_PHONE       = 10016; // 玩家绑定手机号
+	SC_BIND_PHONE       = 10017;
+	
+}
+
+// 请求同步服务器时间 10002
+message SYNC_SERVER_TIME {
+	uint64 ServerTimeStamp = 1; //  服务器当前时间戳(毫秒)
+}
+
+// 服务器踢下线 10011
+message KICK_OUT_HALL {
+	uint32 Ret 				   	   = 1; 	// 1、服务器维护 2、顶号
+}
+// 客户端请求登陆 10010 
+message LOGIN_HALL_REQ {
+	uint32 LoginType = 1; // 登陆类型 1 游客(设备唯一码) 2 手机号
+	uint32 OSType    = 2; // 登陆类型 1 windows 2 ios 3 android
+	string Unique    = 3; // 登陆码 设备唯一码
+	string Sign      = 4; // 签名
+}
+
+// 客户端请求登陆 10011 
+message LOGIN_HALL_RES {
+	uint32 Ret 				   	   = 1; 	// 0、登陆成功 1、服务器维护 2、签名验证错误
+	AccountStorageData Account 	   = 2; 	// 玩家基础信息
+	AccountGameData    AccountData = 3; 	// 玩家游戏信息
+}
+
+// 客户端请求登陆 10016 
+message BIND_PHONE_REQ {
+	string Phone = 1;
+}
+
+// 客户端请求登陆 10017 
+message BIND_PHONE_RESP {
+	uint32 Ret = 1; 	// 0、成功 1、已经绑定过，不能重复绑定 2、手机号格式不对
+	
+}
+

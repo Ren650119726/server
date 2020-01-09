@@ -1,0 +1,320 @@
+{
+	"Apply_Agent_Error_0": {
+		"Value_CN": "提交申请成功，请等待上级代理审核或联系官方客服",
+		"Value_EN": "",
+		"Value_Test": "0:成功",
+		"备注": "0:成功"
+	},
+	"Apply_Agent_Error_1": {
+		"Value_CN": "提交申请失败;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1: 账号不存在",
+		"备注": "1: 账号不存在"
+	},
+	"Apply_Agent_Error_2": {
+		"Value_CN": "申请已提交，请等待上级代理审核或联系官方客服;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2: 已经申请过了",
+		"备注": "2: 已经申请过了"
+	},
+	"Bind_Invite_Code_Error_0": {
+		"Value_CN": "绑定成功",
+		"Value_EN": "",
+		"Value_Test": "0 成功， ",
+		"备注": "0 成功， "
+	},
+	"Bind_Invite_Code_Error_1": {
+		"Value_CN": "绑定失败;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1 绑定失败, 账号不存在",
+		"备注": "1 绑定失败, 账号不存在"
+	},
+	"Bind_Invite_Code_Error_2": {
+		"Value_CN": "绑定失败;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2 绑定失败, 不能绑定自己",
+		"备注": "2 绑定失败, 不能绑定自己"
+	},
+	"Bind_Invite_Code_Error_3": {
+		"Value_CN": "绑定失败;Code_3",
+		"Value_EN": "",
+		"Value_Test": "3 绑定失败, 找不到被绑定者",
+		"备注": "3 绑定失败, 找不到被绑定者"
+	},
+	"Bind_Invite_Code_Error_4": {
+		"Value_CN": "绑定失败;Code_4",
+		"Value_EN": "",
+		"Value_Test": "4 绑定失败, 操盘手不能绑定",
+		"备注": "4 绑定失败, 操盘手不能绑定"
+	},
+	"Bind_Invite_Code_Error_5": {
+		"Value_CN": "绑定失败;Code_5",
+		"Value_EN": "",
+		"Value_Test": "5 绑定失败, 总渠道只能绑定操盘手",
+		"备注": "5 绑定失败, 总渠道只能绑定操盘手"
+	},
+	"Bind_Invite_Code_Error_6": {
+		"Value_CN": "绑定失败;Code_6",
+		"Value_EN": "",
+		"Value_Test": "6 绑定失败, 上级身份比自己低或相同",
+		"备注": "6 绑定失败, 上级身份比自己低或相同"
+	},
+	"Bind_Invite_Code_Error_7": {
+		"Value_CN": "绑定失败;Code_7",
+		"Value_EN": "",
+		"Value_Test": "7 绑定失败, 环形绑定",
+		"备注": "7 绑定失败, 环形绑定"
+	},
+	"Bind_Invite_Code_Error_8": {
+		"Value_CN": "绑定失败;Code_8",
+		"Value_EN": "",
+		"Value_Test": "8 绑定失败, 重复绑定",
+		"备注": "8 绑定失败, 重复绑定"
+	},
+	"Coffer_Error_0": {
+		"Value_CN": "操作成功",
+		"Value_EN": "",
+		"Value_Test": "0: 成功",
+		"备注": "0: 成功"
+	},
+	"Coffer_Error_1": {
+		"Value_CN": "账号不存在;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1: 账号不存在",
+		"备注": "1: 账号不存在"
+	},
+	"Coffer_Error_2": {
+		"Value_CN": "操作失败;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2: 在房间里游戏, 不能操作",
+		"备注": "2: 在房间里游戏, 不能操作"
+	},
+	"Coffer_Error_3": {
+		"Value_CN": "低于存保险箱的下限;Code_3",
+		"Value_EN": "",
+		"Value_Test": "3: 低于存保险箱的下限",
+		"备注": "3: 低于存保险箱的下限"
+	},
+	"Coffer_Error_4": {
+		"Value_CN": "保险箱里的钱不足;Code_4",
+		"Value_EN": "",
+		"Value_Test": "4: 保险箱里的钱不足",
+		"备注": "4: 保险箱里的钱不足"
+	},
+	"Coffer_Error_5": {
+		"Value_CN": "操作类型错误;Code_5",
+		"Value_EN": "",
+		"Value_Test": "5: 代币类型错误",
+		"备注": "5: 代币类型错误"
+	},
+	"Create_Room_Error_1": {
+		"Value_CN": "创建失败;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1: 账号不存在",
+		"备注": "1: 账号不存在"
+	},
+	"Create_Room_Error_2": {
+		"Value_CN": "您的账号已在房间中;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2: 已在房间中",
+		"备注": "2: 已在房间中"
+	},
+	"Create_Room_Error_24": {
+		"Value_CN": "您的房卡不足，请充值;Code_24",
+		"Value_EN": "",
+		"Value_Test": "24: 所需房卡不足",
+		"备注": "24: 所需房卡不足"
+	},
+	"Create_Room_Error_25": {
+		"Value_CN": "您的元宝不足，请充值;Code_25",
+		"Value_EN": "",
+		"Value_Test": "25: 所需代币不足",
+		"备注": "25: 所需代币不足"
+	},
+	"Create_Room_Error_29": {
+		"Value_CN": "创建数已达最大值;Code_29",
+		"Value_EN": "",
+		"Value_Test": "29: 同类型房间只能创建2个",
+		"备注": "29: 同类型房间只能创建2个"
+	},
+	"Create_Room_Error_30": {
+		"Value_CN": "暂未开放",
+		"Value_EN": "",
+		"Value_Test": "30:游戏即将开启",
+		"备注": "30:游戏即将开启"
+	},
+	"Create_Room_Error_4": {
+		"Value_CN": "游戏维护中;Code_4",
+		"Value_EN": "",
+		"Value_Test": "4: 服务器维护",
+		"备注": "4: 服务器维护"
+	},
+	"Delete_Email_Error_0": {
+		"Value_CN": "删除成功",
+		"Value_EN": "",
+		"Value_Test": "0：删除成功",
+		"备注": "0：删除成功"
+	},
+	"Delete_Email_Error_1": {
+		"Value_CN": "删除失败;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1：账号无效",
+		"备注": "1：账号无效"
+	},
+	"Delete_Email_Error_2": {
+		"Value_CN": "邮件无效;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2：邮件无效",
+		"备注": "2：邮件无效"
+	},
+	"Delete_Email_Error_3": {
+		"Value_CN": "该邮件不能删除;Code_3",
+		"Value_EN": "",
+		"Value_Test": "3：不能删除的邮件类型",
+		"备注": "3：不能删除的邮件类型"
+	},
+	"Get_Email_Reward_Error_0": {
+		"Value_CN": "领取成功",
+		"Value_EN": "",
+		"Value_Test": "0：领取成功",
+		"备注": "0：领取成功"
+	},
+	"Get_Email_Reward_Error_1": {
+		"Value_CN": "领取失败;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1：账号无效",
+		"备注": "1：账号无效"
+	},
+	"Get_Email_Reward_Error_2": {
+		"Value_CN": "邮件无效;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2：邮件无效",
+		"备注": "2：邮件无效"
+	},
+	"Get_Email_Reward_Error_3": {
+		"Value_CN": "已经领取;Code_3",
+		"Value_EN": "",
+		"Value_Test": "3：邮件已经领过了",
+		"备注": "3：邮件已经领过了"
+	},
+	"Login_Error_1": {
+		"Value_CN": "在线人数达到上限;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1: 在线人数达到上限",
+		"备注": "1: 在线人数达到上限"
+	},
+	"Login_Error_2": {
+		"Value_CN": "账号被冻结;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2: 账号被冻结",
+		"备注": "2: 账号被冻结"
+	},
+	"Login_Error_3": {
+		"Value_CN": "账号异常;Code_3",
+		"Value_EN": "",
+		"Value_Test": "3: 账号异常",
+		"备注": "3: 账号异常"
+	},
+	"Login_Error_4": {
+		"Value_CN": "名字生成异常;Code_4",
+		"Value_EN": "",
+		"Value_Test": "4: 名字生成异常",
+		"备注": "4: 名字生成异常"
+	},
+	"Login_Error_5": {
+		"Value_CN": "游戏即将进入维护;Code_5",
+		"Value_EN": "",
+		"Value_Test": "5: 游戏即将进入维护",
+		"备注": "5: 游戏即将进入维护"
+	},
+	"Login_Error_6": {
+		"Value_CN": "账号不存在;Code_6",
+		"Value_EN": "",
+		"Value_Test": "6: 账号不存在",
+		"备注": "6: 账号不存在"
+	},
+	"Modify_Name_Error_0": {
+		"Value_CN": "修改成功",
+		"Value_EN": "",
+		"Value_Test": "0:修改成功",
+		"备注": "0:修改成功"
+	},
+	"Modify_Name_Error_1": {
+		"Value_CN": "修改失败;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1:账号无效",
+		"备注": "1:账号无效"
+	},
+	"Modify_Name_Error_2": {
+		"Value_CN": "次数已达上限;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2: 改名次数异常",
+		"备注": "2: 改名次数异常"
+	},
+	"Modify_Name_Error_3": {
+		"Value_CN": "金币不足;Code_3",
+		"Value_EN": "",
+		"Value_Test": "3: 所需金币不足",
+		"备注": "3: 所需金币不足"
+	},
+	"Modify_Name_Error_4": {
+		"Value_CN": "新昵称不合法;Code_4",
+		"Value_EN": "",
+		"Value_Test": "4: 名字包含屏蔽字",
+		"备注": "4: 名字包含屏蔽字"
+	},
+	"Modify_Name_Error_5": {
+		"Value_CN": "新昵称已存在;Code_5",
+		"Value_EN": "",
+		"Value_Test": "5: 名字重复",
+		"备注": "5: 名字重复"
+	},
+	"Modify_Name_Error_6": {
+		"Value_CN": "新昵称不合法;Code_6",
+		"Value_EN": "",
+		"Value_Test": "6: 名字长度不合法",
+		"备注": "6: 名字长度不合法"
+	},
+	"Modify_Sign_Error_0": {
+		"Value_CN": "修改成功",
+		"Value_EN": "",
+		"Value_Test": "0: 成功",
+		"备注": "0: 成功"
+	},
+	"Modify_Sign_Error_1": {
+		"Value_CN": "修改错误;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1: 账号不存在",
+		"备注": "1: 账号不存在"
+	},
+	"Modify_Sign_Error_2": {
+		"Value_CN": "签名过长;Code_2",
+		"Value_EN": "",
+		"Value_Test": "2: 签名内容太长",
+		"备注": "2: 签名内容太长"
+	},
+	"Modify_Sign_Error_3": {
+		"Value_CN": "签名不合法;Code_3",
+		"Value_EN": "",
+		"Value_Test": "3: 签名内容有不合法内容",
+		"备注": "3: 签名内容有不合法内容"
+	},
+	"Modify_Sign_Error_4": {
+		"Value_CN": "目前无法修改签名;Code_4",
+		"Value_EN": "",
+		"Value_Test": "4:无修改签名权限",
+		"备注": "4:无修改签名权限"
+	},
+	"Query_Record_Error_0": {
+		"Value_CN": "成功",
+		"Value_EN": "",
+		"Value_Test": "0: 成功",
+		"备注": "0: 成功"
+	},
+	"Query_Record_Error_1": {
+		"Value_CN": "账号不存在;Code_1",
+		"Value_EN": "",
+		"Value_Test": "1: 账号不存在",
+		"备注": "1: 账号不存在"
+	}
+}

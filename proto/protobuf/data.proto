@@ -1,0 +1,43 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+
+// 玩家基础信息
+message AccountStorageData {
+  uint32 AccountId  =  1; // 账号ID
+  string UnDevice 	=  2; // 设备ID
+  string Phone    	=  3; // 电话
+  string WeiXin   	=  4; // 微信
+  string Name     	=  5; // 昵称
+  string HeadURL    =  6; // 头像
+  uint64 Money    	=  7; // 金币
+  uint64 SafeMoney	=  8; // 保险箱金币
+  string ActiveTime =  9; // 激活时间
+  string ActiveIP   =  10; // 激活IP
+  uint64 FrozenTime =  11;// 冻结时间
+  int32  Salesman   =  12;// 代理身份 0非代理 1级代理 2级代理
+  string SalesTime  =  13;// 成为代理的时间
+  uint32 Special    =  14;// 特殊账号
+  uint32 OSType     =  15;// 系统类型 1Windows, 2安卓, 3苹果
+  int64  LoginTime  =  16;// 登录时间
+  int64  LogoutTime =  17;// 登出时间
+  uint32 Robot      =  18;// 是否是机器人
+}
+
+// 玩家游戏信息
+message AccountGameData {
+	uint32 RoomID = 2; // 玩家所在房间ID
+}
+
+message Email {
+	uint32 EmailID 	 = 1; // ID
+	uint32 EmailType = 2; // 邮件类型
+	string Content   = 3; // 邮件内容
+	uint64 Money     = 4; // 附带金币
+	int64 SendTime   = 5; // 发送时间
+	uint32 IsRead    = 6; // 0 未读，1 已读取
+}
+
+message EmailList{
+
+}

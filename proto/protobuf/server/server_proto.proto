@@ -1,0 +1,57 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg/inner";
+
+import "protobuf/data.proto";
+
+enum SERVERMSG {
+	UNKNOW = 0;
+	HD_HELLO_DB     	 = 100; // 大厅向db建立链接
+	SS_TEST_NETWORK      = 101; // 網絡測試
+	HD_ALL_DATA          = 105; // 开服获取所有数据
+	DH_ALL_ACCOUNT_RESP  = 106; // db返回所有 账号 给大厅
+	DH_ALL_EMAIL_RESP    = 107; // db返回所有 邮件 给大厅
+	DH_ALL_WATER_LINE    = 108; // db返回所有水位线
+	DH_FINISH_DATA       = 120; // db通知大厅,所有数据发送完成
+	
+	HD_SQL_SYNTAX        = 131; // 大厅发送sql语句给db执行
+	HD_SAVE_ACCOUNT 	 = 135; // 大厅回存玩家数据
+	HD_SAVE_EMAIL_PERSON = 136; // 通知DB回存玩家邮件
+	HD_SAVE_WATER_LINE   = 137; // 回存水位线
+	HD_SAVE_ALL          = 150; // 通知DB回存的所有数据发送完成
+	
+}
+
+// 发送到db执行 sql syntax
+message SQL_SYNTAX {
+	 uint32 DataBaseType = 1;  // 0 inst 1 log 
+	 string SQLSyntax = 2; // sql语句
+}
+// 请求账号信息
+message ALL_ACCOUNT_RESP {
+	repeated AccountStorageData AllAccount = 1;
+}
+// db返回所有水位线
+message ALL_WATER_LINE {
+	repeated SAVE_WATER_LINE Line = 1;
+}
+// 请求邮件信息
+message ALL_EMAIL_RESP {
+	repeated SAVE_EMAIL_PERSON AcccountMail = 1;
+}
+
+// 回存玩家
+message SAVE_ACCOUNT {
+	AccountStorageData AccData = 1;
+}
+// 回存邮件
+message SAVE_EMAIL_PERSON {
+	 uint32 AccountId = 1;
+	 repeated Email Emails = 2;
+}
+// 回存水位线
+message SAVE_WATER_LINE {
+	 uint32 ServerID = 1;
+	 uint32  GameType = 2;
+	 string WaterLine = 3;
+}
