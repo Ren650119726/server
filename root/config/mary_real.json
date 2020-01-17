@@ -1,0 +1,1478 @@
+{
+	"101": {
+		"Real1": 11,
+		"Real2": 10,
+		"Real3": 1,
+		"Real4": 11,
+		"Real5": 8,
+		"Site": 1,
+		"Type": 1
+	},
+	"102": {
+		"Real1": 10,
+		"Real2": 1,
+		"Real3": 11,
+		"Real4": 8,
+		"Real5": 6,
+		"Site": 2,
+		"Type": 1
+	},
+	"103": {
+		"Real1": 1,
+		"Real2": 11,
+		"Real3": 8,
+		"Real4": 6,
+		"Real5": 10,
+		"Site": 3,
+		"Type": 1
+	},
+	"104": {
+		"Real1": 11,
+		"Real2": 8,
+		"Real3": 6,
+		"Real4": 10,
+		"Real5": 1,
+		"Site": 4,
+		"Type": 1
+	},
+	"105": {
+		"Real1": 8,
+		"Real2": 6,
+		"Real3": 10,
+		"Real4": 1,
+		"Real5": 7,
+		"Site": 5,
+		"Type": 1
+	},
+	"106": {
+		"Real1": 6,
+		"Real2": 10,
+		"Real3": 11,
+		"Real4": 7,
+		"Real5": 10,
+		"Site": 6,
+		"Type": 1
+	},
+	"107": {
+		"Real1": 10,
+		"Real2": 11,
+		"Real3": 7,
+		"Real4": 10,
+		"Real5": 11,
+		"Site": 7,
+		"Type": 1
+	},
+	"108": {
+		"Real1": 11,
+		"Real2": 7,
+		"Real3": 10,
+		"Real4": 11,
+		"Real5": 8,
+		"Site": 8,
+		"Type": 1
+	},
+	"109": {
+		"Real1": 7,
+		"Real2": 10,
+		"Real3": 11,
+		"Real4": 8,
+		"Real5": 8,
+		"Site": 9,
+		"Type": 1
+	},
+	"110": {
+		"Real1": 10,
+		"Real2": 11,
+		"Real3": 8,
+		"Real4": 8,
+		"Real5": 9,
+		"Site": 10,
+		"Type": 1
+	},
+	"111": {
+		"Real1": 11,
+		"Real2": 8,
+		"Real3": 8,
+		"Real4": 9,
+		"Real5": 10,
+		"Site": 11,
+		"Type": 1
+	},
+	"112": {
+		"Real1": 8,
+		"Real2": 8,
+		"Real3": 9,
+		"Real4": 10,
+		"Real5": 7,
+		"Site": 12,
+		"Type": 1
+	},
+	"113": {
+		"Real1": 8,
+		"Real2": 9,
+		"Real3": 10,
+		"Real4": 7,
+		"Real5": 1,
+		"Site": 13,
+		"Type": 1
+	},
+	"114": {
+		"Real1": 9,
+		"Real2": 10,
+		"Real3": 7,
+		"Real4": 11,
+		"Real5": 10,
+		"Site": 14,
+		"Type": 1
+	},
+	"115": {
+		"Real1": 10,
+		"Real2": 7,
+		"Real3": 11,
+		"Real4": 10,
+		"Real5": 4,
+		"Site": 15,
+		"Type": 1
+	},
+	"116": {
+		"Real1": 7,
+		"Real2": 11,
+		"Real3": 10,
+		"Real4": 4,
+		"Real5": 5,
+		"Site": 16,
+		"Type": 1
+	},
+	"117": {
+		"Real1": 11,
+		"Real2": 10,
+		"Real3": 4,
+		"Real4": 5,
+		"Real5": 2,
+		"Site": 17,
+		"Type": 1
+	},
+	"118": {
+		"Real1": 10,
+		"Real2": 4,
+		"Real3": 5,
+		"Real4": 2,
+		"Real5": 9,
+		"Site": 18,
+		"Type": 1
+	},
+	"119": {
+		"Real1": 4,
+		"Real2": 5,
+		"Real3": 2,
+		"Real4": 9,
+		"Real5": 4,
+		"Site": 19,
+		"Type": 1
+	},
+	"120": {
+		"Real1": 5,
+		"Real2": 2,
+		"Real3": 9,
+		"Real4": 4,
+		"Real5": 10,
+		"Site": 20,
+		"Type": 1
+	},
+	"121": {
+		"Real1": 2,
+		"Real2": 9,
+		"Real3": 4,
+		"Real4": 10,
+		"Real5": 7,
+		"Site": 21,
+		"Type": 1
+	},
+	"122": {
+		"Real1": 9,
+		"Real2": 4,
+		"Real3": 10,
+		"Real4": 7,
+		"Real5": 8,
+		"Site": 22,
+		"Type": 1
+	},
+	"123": {
+		"Real1": 4,
+		"Real2": 10,
+		"Real3": 7,
+		"Real4": 8,
+		"Real5": 3,
+		"Site": 23,
+		"Type": 1
+	},
+	"124": {
+		"Real1": 10,
+		"Real2": 7,
+		"Real3": 8,
+		"Real4": 3,
+		"Real5": 1,
+		"Site": 24,
+		"Type": 1
+	},
+	"125": {
+		"Real1": 7,
+		"Real2": 8,
+		"Real3": 3,
+		"Real4": 5,
+		"Real5": 8,
+		"Site": 25,
+		"Type": 1
+	},
+	"126": {
+		"Real1": 8,
+		"Real2": 3,
+		"Real3": 5,
+		"Real4": 8,
+		"Real5": 6,
+		"Site": 26,
+		"Type": 1
+	},
+	"127": {
+		"Real1": 3,
+		"Real2": 5,
+		"Real3": 8,
+		"Real4": 6,
+		"Real5": 3,
+		"Site": 27,
+		"Type": 1
+	},
+	"128": {
+		"Real1": 5,
+		"Real2": 8,
+		"Real3": 6,
+		"Real4": 3,
+		"Real5": 11,
+		"Site": 28,
+		"Type": 1
+	},
+	"129": {
+		"Real1": 8,
+		"Real2": 6,
+		"Real3": 3,
+		"Real4": 11,
+		"Real5": 8,
+		"Site": 29,
+		"Type": 1
+	},
+	"130": {
+		"Real1": 6,
+		"Real2": 3,
+		"Real3": 11,
+		"Real4": 8,
+		"Real5": 2,
+		"Site": 30,
+		"Type": 1
+	},
+	"131": {
+		"Real1": 3,
+		"Real2": 11,
+		"Real3": 8,
+		"Real4": 2,
+		"Real5": 9,
+		"Site": 31,
+		"Type": 1
+	},
+	"132": {
+		"Real1": 11,
+		"Real2": 8,
+		"Real3": 2,
+		"Real4": 9,
+		"Real5": 11,
+		"Site": 32,
+		"Type": 1
+	},
+	"133": {
+		"Real1": 8,
+		"Real2": 2,
+		"Real3": 9,
+		"Real4": 11,
+		"Real5": 1,
+		"Site": 33,
+		"Type": 1
+	},
+	"134": {
+		"Real1": 2,
+		"Real2": 9,
+		"Real3": 11,
+		"Real4": 1,
+		"Real5": 8,
+		"Site": 34,
+		"Type": 1
+	},
+	"135": {
+		"Real1": 9,
+		"Real2": 11,
+		"Real3": 7,
+		"Real4": 8,
+		"Real5": 10,
+		"Site": 35,
+		"Type": 1
+	},
+	"136": {
+		"Real1": 11,
+		"Real2": 7,
+		"Real3": 8,
+		"Real4": 10,
+		"Real5": 3,
+		"Site": 36,
+		"Type": 1
+	},
+	"137": {
+		"Real1": 7,
+		"Real2": 8,
+		"Real3": 10,
+		"Real4": 3,
+		"Real5": 11,
+		"Site": 37,
+		"Type": 1
+	},
+	"138": {
+		"Real1": 8,
+		"Real2": 10,
+		"Real3": 3,
+		"Real4": 11,
+		"Real5": 8,
+		"Site": 38,
+		"Type": 1
+	},
+	"139": {
+		"Real1": 10,
+		"Real2": 3,
+		"Real3": 11,
+		"Real4": 8,
+		"Real5": 10,
+		"Site": 39,
+		"Type": 1
+	},
+	"140": {
+		"Real1": 3,
+		"Real2": 11,
+		"Real3": 8,
+		"Real4": 10,
+		"Real5": 2,
+		"Site": 40,
+		"Type": 1
+	},
+	"141": {
+		"Real1": 11,
+		"Real2": 8,
+		"Real3": 10,
+		"Real4": 2,
+		"Real5": 10,
+		"Site": 41,
+		"Type": 1
+	},
+	"142": {
+		"Real1": 8,
+		"Real2": 10,
+		"Real3": 11,
+		"Real4": 10,
+		"Real5": 6,
+		"Site": 42,
+		"Type": 1
+	},
+	"143": {
+		"Real1": 10,
+		"Real2": 11,
+		"Real3": 10,
+		"Real4": 6,
+		"Real5": 4,
+		"Site": 43,
+		"Type": 1
+	},
+	"144": {
+		"Real1": 11,
+		"Real2": 10,
+		"Real3": 6,
+		"Real4": 4,
+		"Real5": 10,
+		"Site": 44,
+		"Type": 1
+	},
+	"145": {
+		"Real1": 10,
+		"Real2": 6,
+		"Real3": 4,
+		"Real4": 10,
+		"Real5": 1,
+		"Site": 45,
+		"Type": 1
+	},
+	"146": {
+		"Real1": 6,
+		"Real2": 4,
+		"Real3": 10,
+		"Real4": 1,
+		"Real5": 11,
+		"Site": 46,
+		"Type": 1
+	},
+	"147": {
+		"Real1": 4,
+		"Real2": 10,
+		"Real3": 1,
+		"Real4": 11,
+		"Real5": 9,
+		"Site": 47,
+		"Type": 1
+	},
+	"148": {
+		"Real1": 10,
+		"Real2": 5,
+		"Real3": 11,
+		"Real4": 9,
+		"Real5": 10,
+		"Site": 48,
+		"Type": 1
+	},
+	"149": {
+		"Real1": 5,
+		"Real2": 11,
+		"Real3": 9,
+		"Real4": 10,
+		"Real5": 1,
+		"Site": 49,
+		"Type": 1
+	},
+	"150": {
+		"Real1": 11,
+		"Real2": 9,
+		"Real3": 10,
+		"Real4": 1,
+		"Real5": 9,
+		"Site": 50,
+		"Type": 1
+	},
+	"151": {
+		"Real1": 9,
+		"Real2": 10,
+		"Real3": 1,
+		"Real4": 9,
+		"Real5": 10,
+		"Site": 51,
+		"Type": 1
+	},
+	"152": {
+		"Real1": 10,
+		"Real2": 6,
+		"Real3": 9,
+		"Real4": 10,
+		"Real5": 3,
+		"Site": 52,
+		"Type": 1
+	},
+	"153": {
+		"Real1": 6,
+		"Real2": 9,
+		"Real3": 10,
+		"Real4": 3,
+		"Real5": 9,
+		"Site": 53,
+		"Type": 1
+	},
+	"154": {
+		"Real1": 9,
+		"Real2": 10,
+		"Real3": 3,
+		"Real4": 9,
+		"Real5": 1,
+		"Site": 54,
+		"Type": 1
+	},
+	"155": {
+		"Real1": 10,
+		"Real2": 3,
+		"Real3": 9,
+		"Real4": 1,
+		"Real5": 6,
+		"Site": 55,
+		"Type": 1
+	},
+	"156": {
+		"Real1": 3,
+		"Real2": 9,
+		"Real3": 7,
+		"Real4": 6,
+		"Real5": 7,
+		"Site": 56,
+		"Type": 1
+	},
+	"157": {
+		"Real1": 9,
+		"Real2": 7,
+		"Real3": 6,
+		"Real4": 7,
+		"Real5": 10,
+		"Site": 57,
+		"Type": 1
+	},
+	"158": {
+		"Real1": 7,
+		"Real2": 6,
+		"Real3": 7,
+		"Real4": 10,
+		"Real5": 2,
+		"Site": 58,
+		"Type": 1
+	},
+	"159": {
+		"Real1": 6,
+		"Real2": 7,
+		"Real3": 10,
+		"Real4": 2,
+		"Real5": 11,
+		"Site": 59,
+		"Type": 1
+	},
+	"160": {
+		"Real1": 7,
+		"Real2": 10,
+		"Real3": 2,
+		"Real4": 11,
+		"Real5": 9,
+		"Site": 60,
+		"Type": 1
+	},
+	"161": {
+		"Real1": 10,
+		"Real2": 2,
+		"Real3": 11,
+		"Real4": 9,
+		"Real5": 1,
+		"Site": 61,
+		"Type": 1
+	},
+	"162": {
+		"Real1": 2,
+		"Real2": 11,
+		"Real3": 9,
+		"Real4": 7,
+		"Real5": 11,
+		"Site": 62,
+		"Type": 1
+	},
+	"163": {
+		"Real1": 11,
+		"Real2": 9,
+		"Real3": 7,
+		"Real4": 11,
+		"Real5": 6,
+		"Site": 63,
+		"Type": 1
+	},
+	"164": {
+		"Real1": 9,
+		"Real2": 7,
+		"Real3": 11,
+		"Real4": 6,
+		"Real5": 1,
+		"Site": 64,
+		"Type": 1
+	},
+	"165": {
+		"Real1": 7,
+		"Real2": 11,
+		"Real3": 6,
+		"Real4": 1,
+		"Real5": 11,
+		"Site": 65,
+		"Type": 1
+	},
+	"166": {
+		"Real1": 11,
+		"Real2": 6,
+		"Real3": 5,
+		"Real4": 11,
+		"Real5": 6,
+		"Site": 66,
+		"Type": 1
+	},
+	"167": {
+		"Real1": 6,
+		"Real2": 5,
+		"Real3": 11,
+		"Real4": 6,
+		"Real5": 1,
+		"Site": 67,
+		"Type": 1
+	},
+	"168": {
+		"Real1": 5,
+		"Real2": 11,
+		"Real3": 6,
+		"Real4": 3,
+		"Real5": 9,
+		"Site": 68,
+		"Type": 1
+	},
+	"169": {
+		"Real1": 11,
+		"Real2": 6,
+		"Real3": 3,
+		"Real4": 9,
+		"Real5": 11,
+		"Site": 69,
+		"Type": 1
+	},
+	"170": {
+		"Real1": 6,
+		"Real2": 3,
+		"Real3": 9,
+		"Real4": 11,
+		"Real5": 10,
+		"Site": 70,
+		"Type": 1
+	},
+	"171": {
+		"Real1": 3,
+		"Real2": 9,
+		"Real3": 11,
+		"Real4": 10,
+		"Real5": 1,
+		"Site": 71,
+		"Type": 1
+	},
+	"172": {
+		"Real1": 9,
+		"Real2": 11,
+		"Real3": 10,
+		"Real4": 1,
+		"Real5": 11,
+		"Site": 72,
+		"Type": 1
+	},
+	"201": {
+		"Real1": 11,
+		"Real2": 10,
+		"Real3": 4,
+		"Real4": 11,
+		"Real5": 8,
+		"Site": 1,
+		"Type": 2
+	},
+	"202": {
+		"Real1": 10,
+		"Real2": 1,
+		"Real3": 11,
+		"Real4": 8,
+		"Real5": 6,
+		"Site": 2,
+		"Type": 2
+	},
+	"203": {
+		"Real1": 1,
+		"Real2": 11,
+		"Real3": 8,
+		"Real4": 6,
+		"Real5": 1,
+		"Site": 3,
+		"Type": 2
+	},
+	"204": {
+		"Real1": 11,
+		"Real2": 8,
+		"Real3": 6,
+		"Real4": 1,
+		"Real5": 11,
+		"Site": 4,
+		"Type": 2
+	},
+	"205": {
+		"Real1": 8,
+		"Real2": 6,
+		"Real3": 10,
+		"Real4": 11,
+		"Real5": 7,
+		"Site": 5,
+		"Type": 2
+	},
+	"206": {
+		"Real1": 6,
+		"Real2": 1,
+		"Real3": 11,
+		"Real4": 7,
+		"Real5": 3,
+		"Site": 6,
+		"Type": 2
+	},
+	"207": {
+		"Real1": 1,
+		"Real2": 11,
+		"Real3": 7,
+		"Real4": 3,
+		"Real5": 10,
+		"Site": 7,
+		"Type": 2
+	},
+	"208": {
+		"Real1": 11,
+		"Real2": 7,
+		"Real3": 3,
+		"Real4": 10,
+		"Real5": 1,
+		"Site": 8,
+		"Type": 2
+	},
+	"209": {
+		"Real1": 7,
+		"Real2": 3,
+		"Real3": 10,
+		"Real4": 1,
+		"Real5": 8,
+		"Site": 9,
+		"Type": 2
+	},
+	"210": {
+		"Real1": 3,
+		"Real2": 10,
+		"Real3": 6,
+		"Real4": 8,
+		"Real5": 9,
+		"Site": 10,
+		"Type": 2
+	},
+	"211": {
+		"Real1": 10,
+		"Real2": 1,
+		"Real3": 8,
+		"Real4": 9,
+		"Real5": 10,
+		"Site": 11,
+		"Type": 2
+	},
+	"212": {
+		"Real1": 1,
+		"Real2": 8,
+		"Real3": 9,
+		"Real4": 10,
+		"Real5": 11,
+		"Site": 12,
+		"Type": 2
+	},
+	"213": {
+		"Real1": 8,
+		"Real2": 9,
+		"Real3": 10,
+		"Real4": 11,
+		"Real5": 3,
+		"Site": 13,
+		"Type": 2
+	},
+	"214": {
+		"Real1": 9,
+		"Real2": 1,
+		"Real3": 11,
+		"Real4": 3,
+		"Real5": 10,
+		"Site": 14,
+		"Type": 2
+	},
+	"215": {
+		"Real1": 1,
+		"Real2": 11,
+		"Real3": 3,
+		"Real4": 10,
+		"Real5": 6,
+		"Site": 15,
+		"Type": 2
+	},
+	"216": {
+		"Real1": 11,
+		"Real2": 3,
+		"Real3": 10,
+		"Real4": 6,
+		"Real5": 5,
+		"Site": 16,
+		"Type": 2
+	},
+	"217": {
+		"Real1": 3,
+		"Real2": 10,
+		"Real3": 6,
+		"Real4": 5,
+		"Real5": 1,
+		"Site": 17,
+		"Type": 2
+	},
+	"218": {
+		"Real1": 10,
+		"Real2": 6,
+		"Real3": 5,
+		"Real4": 1,
+		"Real5": 9,
+		"Site": 18,
+		"Type": 2
+	},
+	"219": {
+		"Real1": 6,
+		"Real2": 5,
+		"Real3": 7,
+		"Real4": 9,
+		"Real5": 6,
+		"Site": 19,
+		"Type": 2
+	},
+	"220": {
+		"Real1": 5,
+		"Real2": 1,
+		"Real3": 9,
+		"Real4": 6,
+		"Real5": 10,
+		"Site": 20,
+		"Type": 2
+	},
+	"221": {
+		"Real1": 1,
+		"Real2": 9,
+		"Real3": 6,
+		"Real4": 10,
+		"Real5": 1,
+		"Site": 21,
+		"Type": 2
+	},
+	"222": {
+		"Real1": 9,
+		"Real2": 6,
+		"Real3": 10,
+		"Real4": 1,
+		"Real5": 8,
+		"Site": 22,
+		"Type": 2
+	},
+	"223": {
+		"Real1": 6,
+		"Real2": 10,
+		"Real3": 7,
+		"Real4": 8,
+		"Real5": 9,
+		"Site": 23,
+		"Type": 2
+	},
+	"224": {
+		"Real1": 10,
+		"Real2": 1,
+		"Real3": 8,
+		"Real4": 9,
+		"Real5": 5,
+		"Site": 24,
+		"Type": 2
+	},
+	"225": {
+		"Real1": 1,
+		"Real2": 8,
+		"Real3": 9,
+		"Real4": 5,
+		"Real5": 8,
+		"Site": 25,
+		"Type": 2
+	},
+	"226": {
+		"Real1": 8,
+		"Real2": 9,
+		"Real3": 5,
+		"Real4": 8,
+		"Real5": 1,
+		"Site": 26,
+		"Type": 2
+	},
+	"227": {
+		"Real1": 9,
+		"Real2": 5,
+		"Real3": 8,
+		"Real4": 1,
+		"Real5": 10,
+		"Site": 27,
+		"Type": 2
+	},
+	"228": {
+		"Real1": 5,
+		"Real2": 8,
+		"Real3": 9,
+		"Real4": 10,
+		"Real5": 11,
+		"Site": 28,
+		"Type": 2
+	},
+	"229": {
+		"Real1": 8,
+		"Real2": 1,
+		"Real3": 10,
+		"Real4": 11,
+		"Real5": 3,
+		"Site": 29,
+		"Type": 2
+	},
+	"230": {
+		"Real1": 1,
+		"Real2": 10,
+		"Real3": 11,
+		"Real4": 3,
+		"Real5": 4,
+		"Site": 30,
+		"Type": 2
+	},
+	"231": {
+		"Real1": 10,
+		"Real2": 11,
+		"Real3": 3,
+		"Real4": 4,
+		"Real5": 9,
+		"Site": 31,
+		"Type": 2
+	},
+	"232": {
+		"Real1": 11,
+		"Real2": 3,
+		"Real3": 4,
+		"Real4": 9,
+		"Real5": 11,
+		"Site": 32,
+		"Type": 2
+	},
+	"233": {
+		"Real1": 3,
+		"Real2": 4,
+		"Real3": 9,
+		"Real4": 11,
+		"Real5": 6,
+		"Site": 33,
+		"Type": 2
+	},
+	"234": {
+		"Real1": 4,
+		"Real2": 9,
+		"Real3": 11,
+		"Real4": 6,
+		"Real5": 8,
+		"Site": 34,
+		"Type": 2
+	},
+	"235": {
+		"Real1": 9,
+		"Real2": 11,
+		"Real3": 6,
+		"Real4": 8,
+		"Real5": 10,
+		"Site": 35,
+		"Type": 2
+	},
+	"236": {
+		"Real1": 11,
+		"Real2": 6,
+		"Real3": 8,
+		"Real4": 10,
+		"Real5": 3,
+		"Site": 36,
+		"Type": 2
+	},
+	"237": {
+		"Real1": 6,
+		"Real2": 8,
+		"Real3": 10,
+		"Real4": 3,
+		"Real5": 11,
+		"Site": 37,
+		"Type": 2
+	},
+	"238": {
+		"Real1": 8,
+		"Real2": 10,
+		"Real3": 3,
+		"Real4": 11,
+		"Real5": 8,
+		"Site": 38,
+		"Type": 2
+	},
+	"239": {
+		"Real1": 10,
+		"Real2": 3,
+		"Real3": 11,
+		"Real4": 8,
+		"Real5": 10,
+		"Site": 39,
+		"Type": 2
+	},
+	"240": {
+		"Real1": 3,
+		"Real2": 11,
+		"Real3": 8,
+		"Real4": 10,
+		"Real5": 9,
+		"Site": 40,
+		"Type": 2
+	},
+	"241": {
+		"Real1": 11,
+		"Real2": 8,
+		"Real3": 10,
+		"Real4": 9,
+		"Real5": 1,
+		"Site": 41,
+		"Type": 2
+	},
+	"242": {
+		"Real1": 8,
+		"Real2": 10,
+		"Real3": 9,
+		"Real4": 1,
+		"Real5": 7,
+		"Site": 42,
+		"Type": 2
+	},
+	"243": {
+		"Real1": 10,
+		"Real2": 9,
+		"Real3": 10,
+		"Real4": 7,
+		"Real5": 4,
+		"Site": 43,
+		"Type": 2
+	},
+	"244": {
+		"Real1": 9,
+		"Real2": 1,
+		"Real3": 7,
+		"Real4": 4,
+		"Real5": 10,
+		"Site": 44,
+		"Type": 2
+	},
+	"245": {
+		"Real1": 1,
+		"Real2": 7,
+		"Real3": 4,
+		"Real4": 10,
+		"Real5": 5,
+		"Site": 45,
+		"Type": 2
+	},
+	"246": {
+		"Real1": 7,
+		"Real2": 4,
+		"Real3": 10,
+		"Real4": 5,
+		"Real5": 1,
+		"Site": 46,
+		"Type": 2
+	},
+	"247": {
+		"Real1": 4,
+		"Real2": 10,
+		"Real3": 5,
+		"Real4": 1,
+		"Real5": 9,
+		"Site": 47,
+		"Type": 2
+	},
+	"248": {
+		"Real1": 10,
+		"Real2": 5,
+		"Real3": 11,
+		"Real4": 9,
+		"Real5": 10,
+		"Site": 48,
+		"Type": 2
+	},
+	"249": {
+		"Real1": 5,
+		"Real2": 1,
+		"Real3": 9,
+		"Real4": 10,
+		"Real5": 8,
+		"Site": 49,
+		"Type": 2
+	},
+	"250": {
+		"Real1": 1,
+		"Real2": 9,
+		"Real3": 10,
+		"Real4": 8,
+		"Real5": 3,
+		"Site": 50,
+		"Type": 2
+	},
+	"251": {
+		"Real1": 9,
+		"Real2": 10,
+		"Real3": 8,
+		"Real4": 3,
+		"Real5": 10,
+		"Site": 51,
+		"Type": 2
+	},
+	"252": {
+		"Real1": 10,
+		"Real2": 8,
+		"Real3": 3,
+		"Real4": 10,
+		"Real5": 11,
+		"Site": 52,
+		"Type": 2
+	},
+	"253": {
+		"Real1": 8,
+		"Real2": 3,
+		"Real3": 10,
+		"Real4": 11,
+		"Real5": 9,
+		"Site": 53,
+		"Type": 2
+	},
+	"254": {
+		"Real1": 3,
+		"Real2": 10,
+		"Real3": 11,
+		"Real4": 9,
+		"Real5": 7,
+		"Site": 54,
+		"Type": 2
+	},
+	"255": {
+		"Real1": 10,
+		"Real2": 11,
+		"Real3": 9,
+		"Real4": 7,
+		"Real5": 1,
+		"Site": 55,
+		"Type": 2
+	},
+	"256": {
+		"Real1": 11,
+		"Real2": 9,
+		"Real3": 7,
+		"Real4": 1,
+		"Real5": 7,
+		"Site": 56,
+		"Type": 2
+	},
+	"257": {
+		"Real1": 9,
+		"Real2": 7,
+		"Real3": 6,
+		"Real4": 7,
+		"Real5": 10,
+		"Site": 57,
+		"Type": 2
+	},
+	"258": {
+		"Real1": 7,
+		"Real2": 1,
+		"Real3": 7,
+		"Real4": 10,
+		"Real5": 4,
+		"Site": 58,
+		"Type": 2
+	},
+	"259": {
+		"Real1": 1,
+		"Real2": 7,
+		"Real3": 10,
+		"Real4": 4,
+		"Real5": 11,
+		"Site": 59,
+		"Type": 2
+	},
+	"260": {
+		"Real1": 7,
+		"Real2": 10,
+		"Real3": 4,
+		"Real4": 11,
+		"Real5": 9,
+		"Site": 60,
+		"Type": 2
+	},
+	"261": {
+		"Real1": 10,
+		"Real2": 4,
+		"Real3": 11,
+		"Real4": 9,
+		"Real5": 1,
+		"Site": 61,
+		"Type": 2
+	},
+	"262": {
+		"Real1": 4,
+		"Real2": 11,
+		"Real3": 9,
+		"Real4": 1,
+		"Real5": 11,
+		"Site": 62,
+		"Type": 2
+	},
+	"263": {
+		"Real1": 11,
+		"Real2": 9,
+		"Real3": 5,
+		"Real4": 11,
+		"Real5": 6,
+		"Site": 63,
+		"Type": 2
+	},
+	"264": {
+		"Real1": 9,
+		"Real2": 1,
+		"Real3": 11,
+		"Real4": 6,
+		"Real5": 7,
+		"Site": 64,
+		"Type": 2
+	},
+	"265": {
+		"Real1": 1,
+		"Real2": 11,
+		"Real3": 6,
+		"Real4": 7,
+		"Real5": 11,
+		"Site": 65,
+		"Type": 2
+	},
+	"266": {
+		"Real1": 11,
+		"Real2": 6,
+		"Real3": 7,
+		"Real4": 11,
+		"Real5": 6,
+		"Site": 66,
+		"Type": 2
+	},
+	"267": {
+		"Real1": 6,
+		"Real2": 7,
+		"Real3": 11,
+		"Real4": 6,
+		"Real5": 11,
+		"Site": 67,
+		"Type": 2
+	},
+	"268": {
+		"Real1": 7,
+		"Real2": 11,
+		"Real3": 6,
+		"Real4": 11,
+		"Real5": 9,
+		"Site": 68,
+		"Type": 2
+	},
+	"269": {
+		"Real1": 11,
+		"Real2": 1,
+		"Real3": 11,
+		"Real4": 9,
+		"Real5": 11,
+		"Site": 69,
+		"Type": 2
+	},
+	"270": {
+		"Real1": 1,
+		"Real2": 11,
+		"Real3": 9,
+		"Real4": 11,
+		"Real5": 10,
+		"Site": 70,
+		"Type": 2
+	},
+	"271": {
+		"Real1": 11,
+		"Real2": 9,
+		"Real3": 11,
+		"Real4": 10,
+		"Real5": 1,
+		"Site": 71,
+		"Type": 2
+	},
+	"272": {
+		"Real1": 9,
+		"Real2": 11,
+		"Real3": 10,
+		"Real4": 1,
+		"Real5": 11,
+		"Site": 72,
+		"Type": 2
+	},
+	"301": {
+		"Real1": 6,
+		"Real2": 4,
+		"Real3": 3,
+		"Real4": 6,
+		"Real5": 0,
+		"Site": 1,
+		"Type": 3
+	},
+	"302": {
+		"Real1": 4,
+		"Real2": 3,
+		"Real3": 6,
+		"Real4": 5,
+		"Real5": 0,
+		"Site": 2,
+		"Type": 3
+	},
+	"303": {
+		"Real1": 3,
+		"Real2": 6,
+		"Real3": 5,
+		"Real4": 3,
+		"Real5": 0,
+		"Site": 3,
+		"Type": 3
+	},
+	"304": {
+		"Real1": 6,
+		"Real2": 5,
+		"Real3": 3,
+		"Real4": 7,
+		"Real5": 0,
+		"Site": 4,
+		"Type": 3
+	},
+	"305": {
+		"Real1": 5,
+		"Real2": 3,
+		"Real3": 7,
+		"Real4": 6,
+		"Real5": 0,
+		"Site": 5,
+		"Type": 3
+	},
+	"306": {
+		"Real1": 3,
+		"Real2": 7,
+		"Real3": 6,
+		"Real4": 4,
+		"Real5": 0,
+		"Site": 6,
+		"Type": 3
+	},
+	"307": {
+		"Real1": 7,
+		"Real2": 6,
+		"Real3": 4,
+		"Real4": 7,
+		"Real5": 0,
+		"Site": 7,
+		"Type": 3
+	},
+	"308": {
+		"Real1": 6,
+		"Real2": 4,
+		"Real3": 7,
+		"Real4": 2,
+		"Real5": 0,
+		"Site": 8,
+		"Type": 3
+	},
+	"309": {
+		"Real1": 4,
+		"Real2": 7,
+		"Real3": 2,
+		"Real4": 3,
+		"Real5": 0,
+		"Site": 9,
+		"Type": 3
+	},
+	"310": {
+		"Real1": 7,
+		"Real2": 2,
+		"Real3": 3,
+		"Real4": 6,
+		"Real5": 0,
+		"Site": 10,
+		"Type": 3
+	},
+	"311": {
+		"Real1": 2,
+		"Real2": 3,
+		"Real3": 6,
+		"Real4": 4,
+		"Real5": 0,
+		"Site": 11,
+		"Type": 3
+	},
+	"312": {
+		"Real1": 3,
+		"Real2": 6,
+		"Real3": 4,
+		"Real4": 7,
+		"Real5": 0,
+		"Site": 12,
+		"Type": 3
+	},
+	"313": {
+		"Real1": 6,
+		"Real2": 4,
+		"Real3": 7,
+		"Real4": 5,
+		"Real5": 0,
+		"Site": 13,
+		"Type": 3
+	},
+	"314": {
+		"Real1": 4,
+		"Real2": 7,
+		"Real3": 5,
+		"Real4": 7,
+		"Real5": 0,
+		"Site": 14,
+		"Type": 3
+	},
+	"315": {
+		"Real1": 7,
+		"Real2": 5,
+		"Real3": 7,
+		"Real4": 2,
+		"Real5": 0,
+		"Site": 15,
+		"Type": 3
+	},
+	"316": {
+		"Real1": 5,
+		"Real2": 7,
+		"Real3": 2,
+		"Real4": 5,
+		"Real5": 0,
+		"Site": 16,
+		"Type": 3
+	},
+	"317": {
+		"Real1": 7,
+		"Real2": 2,
+		"Real3": 5,
+		"Real4": 1,
+		"Real5": 0,
+		"Site": 17,
+		"Type": 3
+	},
+	"318": {
+		"Real1": 2,
+		"Real2": 5,
+		"Real3": 1,
+		"Real4": 6,
+		"Real5": 0,
+		"Site": 18,
+		"Type": 3
+	},
+	"319": {
+		"Real1": 5,
+		"Real2": 1,
+		"Real3": 6,
+		"Real4": 4,
+		"Real5": 0,
+		"Site": 19,
+		"Type": 3
+	},
+	"320": {
+		"Real1": 1,
+		"Real2": 6,
+		"Real3": 4,
+		"Real4": 3,
+		"Real5": 0,
+		"Site": 20,
+		"Type": 3
+	}
+}

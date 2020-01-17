@@ -1,0 +1,126 @@
+package logic
+
+import (
+	"fmt"
+	"github.com/astaxie/beego"
+	"root/common"
+	"root/common/tools"
+	"root/core"
+	"root/core/log"
+	"root/core/log/colorized"
+	"root/core/network"
+	"root/core/packet"
+	"root/protomsg"
+	"root/protomsg/inner"
+	"root/server/fruitMary/account"
+	"root/server/fruitMary/room"
+	"root/server/fruitMary/send_tools"
+	"strconv"
+)
+
+type (
+	FruitMary struct {
+		owner     *core.Actor
+		init bool // 是否是第一次启动程序
+	}
+)
+
+func NewFruitMary() *FruitMary {
+	return &FruitMary{}
+}
+
+func (self *FruitMary) Init(actor *core.Actor) bool {
+	// 先处理脚本
+	if core.ScriptDir != "" {
+		core.InitScript(core.ScriptDir)
+	}
+
+	self.owner = actor
+
+	// 连接hall
+	hallIP := core.CoreAppConfString("connectHall")
+	connectHall_actor := network.NewTCPClient(self.owner, func() string {
+		return core.CoreAppConfString("connectHall")
+	}, self.registerHall)
+	child := core.NewActor(common.EActorType_CONNECT_HALL.Int32(), connectHall_actor, make(chan core.IMessage, 1000))
+	core.CoreRegisteActor(child)
+	log.Infof(colorized.Yellow("连接hall:[%v]"), hallIP)
+	return true
+}
+
+// 向hall注册
+func (self *FruitMary) registerHall() {
+	// 发送注册消息登记自身信息
+	sid, _ := strconv.Atoi(core.Appname)
+	count := uint32(room.RoomMgr.RoomCount())
+
+	GAME_TO_HALL_MAP_KEY := "fwef32f3245435"
+	strSign := fmt.Sprintf("%v%v%v", sid, count, GAME_TO_HALL_MAP_KEY)
+	strSign = tools.MD5(strSign)
+
+	// 组装消息
+	send_tools.Send2Hall(inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(),&inner.GAME_CONNECT_HALL{
+		ServerID: uint32(sid),
+		GameType: uint32(beego.AppConfig.DefaultInt(fmt.Sprintf("%v::gametype",sid),0)),
+	})
+	log.Infof("连接大厅成功  sid:%v", sid)
+	if !self.init{
+		room.RoomMgr.InitRoomMgr()
+		self.StartService()
+	}
+	room.RoomMgr.SendRoomInfo2Hall()
+
+	self.init = true
+}
+
+func (self *FruitMary) StartService() {
+	// 监听端口，客户端连接用
+	var customer []*core.Actor
+	customer = append(customer, self.owner)
+	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""),
+		beego.AppConfig.DefaultString(core.Appname+"::listenHttp", ""))
+	child := core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 10000))
+	core.CoreRegisteActor(child)
+}
+
+func (self *FruitMary) Stop() {
+
+}
+
+func (self *FruitMary) HandleMessage(actor int32, msg []byte, session int64) bool {
+	pack := packet.NewPacket(msg)
+	switch pack.GetMsgID() {
+	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
+		self.SERVERMSG_HG_PLAYER_DATA_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ.UInt16(): // 请求进入小玛利房间
+		actor := self.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ(actor, pack.ReadBytes(), session)
+		core.CoreSend(self.owner.Id, actor, msg, session)
+	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():
+		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(),nil, session)
+
+	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
+		log.Infof("收到来自大厅的测试网络消息 SessionID:%v", session)
+		req := packet.NewPacket(nil)
+		req.SetMsgID(inner.SERVERMSG_SS_TEST_NETWORK.UInt16())
+		send_tools.Send2Hall(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(),nil)
+	default: // 客户端游戏消息，统一发送给房间处理
+		acc := account.AccountMgr.GetAccountBySessionID(session)
+		if acc == nil {
+			log.Warnf("找不到session 关联的玩家 session:%v msgId：%v", session, pack.GetMsgID())
+			return false
+		}
+		core.CoreSend(self.owner.Id, int32(acc.RoomID), msg, session)
+		break
+	}
+	return true
+}
+
+
+func (self *FruitMary) Old_MSGID_MAINTENANCE_NOTICE(actor int32, msg []byte, session int64) {
+	pack := packet.NewPacket(msg)
+	if session != 0 {
+		log.Warnf("Error, 异常session:%v 处理消息编号:%v", session, pack.GetMsgID())
+		return
+	}
+	room.Close(nil)
+}

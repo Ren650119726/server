@@ -1,0 +1,58 @@
+{
+	"1": {
+		"Odds1": 200,
+		"Odds2": 1,
+		"Odds3": 20,
+		"Odds4": 500,
+		"Weight": 100
+	},
+	"2": {
+		"Odds1": 100,
+		"Odds2": 1,
+		"Odds3": 20,
+		"Odds4": 500,
+		"Weight": 200
+	},
+	"3": {
+		"Odds1": 70,
+		"Odds2": 1,
+		"Odds3": 20,
+		"Odds4": 500,
+		"Weight": 300
+	},
+	"4": {
+		"Odds1": 50,
+		"Odds2": 1,
+		"Odds3": 20,
+		"Odds4": 500,
+		"Weight": 500
+	},
+	"5": {
+		"Odds1": 20,
+		"Odds2": 1,
+		"Odds3": 20,
+		"Odds4": 500,
+		"Weight": 800
+	},
+	"6": {
+		"Odds1": 10,
+		"Odds2": 1,
+		"Odds3": 20,
+		"Odds4": 500,
+		"Weight": 1200
+	},
+	"7": {
+		"Odds1": 5,
+		"Odds2": 1,
+		"Odds3": 20,
+		"Odds4": 500,
+		"Weight": 2000
+	},
+	"8": {
+		"Odds1": 0,
+		"Odds2": 0,
+		"Odds3": 0,
+		"Odds4": 0,
+		"Weight": 4900
+	}
+}

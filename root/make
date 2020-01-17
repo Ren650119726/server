@@ -1,0 +1,2 @@
+go install -mod=vendor -v root/server/db
+go install -mod=vendor -v root/server/hall
