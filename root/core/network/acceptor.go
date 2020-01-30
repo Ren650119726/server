@@ -108,7 +108,7 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 		self.sessions.Unlock()
 		select{
 		case <-session.httpchan:
-			log.Infof("断开连接：%v",ws.RemoteAddr())
+			//log.Infof("断开连接：%v",ws.RemoteAddr())
 			return
 		}
 	}))

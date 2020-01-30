@@ -20,7 +20,8 @@ import (
 
 // 客户端同步服务器时间
 func (self *Hall) MSG_CS_SYNC_SERVER_TIME(actor int32, msg []byte, session int64) {
-	log.Infof("同步时间:%v",session)
+	timeMSG := packet.PBUnmarshal(msg,&protomsg.SYNC_SERVER_TIME{}).(*protomsg.SYNC_SERVER_TIME)
+	log.Infof("同步时间:%v 数据:%v",session,timeMSG.GetServerTimeStamp())
 	nServerTime := utils.MilliSecondTimeSince1970()
 	send_tools.Send2Account(protomsg.MSG_SC_SYNC_SERVER_TIME.UInt16(),&protomsg.SYNC_SERVER_TIME{ServerTimeStamp:uint64(nServerTime)}, session)
 }
