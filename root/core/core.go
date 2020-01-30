@@ -51,7 +51,11 @@ func init() {
 // 初始化主配置
 func initConfig(section, path string) {
 	// 基础配置(服务器网络相关)
-	beego.LoadAppConfig("ini", path)
+	err := beego.LoadAppConfig("ini", path)
+	if err != nil {
+		panic(err)
+		return
+	}
 	Appname = section
 }
 
@@ -106,13 +110,14 @@ func coreInit(section, path string) {
 	// 初始化时区
 	utils.InitLocalTime("Asia/Shanghai")
 	utils.ResetTime(0)
-	SID = beego.AppConfig.DefaultInt(Appname+"::sid", 0)
-
+	SID = beego.AppConfig.DefaultInt(Appname+"::sid", -1)
 	// 日志初始化
 	initLogger()
 
 	// 设置运行的cpunum
-	runtime.GOMAXPROCS(runtime.NumCPU())
+	cpu := runtime.NumCPU()
+	runtime.GOMAXPROCS(cpu)
+	log.Infof("当前服务器CPU 数量%v",cpu)
 
 	// actor相关初始化
 	newchan = make(chan *Actor, utils.MAX_ACTOR_NUMBER)
