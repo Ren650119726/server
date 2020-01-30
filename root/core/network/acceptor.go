@@ -99,7 +99,7 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 		self.sessions.Lock()
 		self.curr_sessionid++
 		session := NewSession(self.curr_sessionid, ws, self.offchan, self.callback, 30, 30)
-		log.Infof("new websocket connect:%v", ws.RemoteAddr())
+		log.Infof("new websocket connect:%v", ws.LocalAddr())
 		if session != nil {
 			self.sessions.m[self.curr_sessionid] = session
 			session.DoWork()
