@@ -67,9 +67,9 @@ func (self *Room) LoadConfig()  {
 	}
 
 	self.lineConf = make([][5]int,10,10)
-	for id,_ := range config.Global_mary_line_config{
+	for id,_ := range config.Global_mary_lines_config{
 		for i:=1;i <=5;i++{
-			val := config.Get_mary_line_configInt(id,fmt.Sprintf("site%v",i))
+			val := config.Get_mary_lines_configInt(id,fmt.Sprintf("site%v",i))
 			self.lineConf[id][i-1] = val-1
 		}
 	}
@@ -80,7 +80,7 @@ func initWheel() (main,free,mary []*wheelNode ) {
 	main = make([]*wheelNode, 0)
 	free = make([]*wheelNode, 0)
 	mary =  make([]*wheelNode, 0)
-	for id,_ := range config.Global_mary_line_config {
+	for id,_ := range config.Global_mary_lines_config {
 		node := new(wheelNode)
 		node.cfPosition = config.Get_mary_real_ConfigInt(id,"Site")
 		if node.cfPosition > 0 {

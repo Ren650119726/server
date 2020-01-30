@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"root/protomsg"
-	"root/server/dehgame/send_tools"
+	"root/server/mahjong-panda/send_tools"
 	"root/server/mahjong-panda/account"
 	"root/server/mahjong-panda/room"
 )
