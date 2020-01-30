@@ -65,7 +65,6 @@ func (self *LogCacheLog) SendServiceFeeLog(portion int) {
 	}
 	strSQL = strings.TrimRight(strSQL, ",")
 	send_tools.SQLLog(strSQL)
-	log.Info(strSQL)
 	self.saveServiceFeeLog[portion] = make([]string, 0, 100)
 }
 
@@ -94,6 +93,5 @@ func (self *LogCacheLog) SendMoneyChangeLog(portion int) {
 	}
 	strSQL = strings.TrimRight(strSQL, ",")
 	send_tools.SQLLog(strSQL)
-	log.Info(strSQL)
 	self.saveMoneyChangeLog[portion] = make([]string, 0, 100)
 }

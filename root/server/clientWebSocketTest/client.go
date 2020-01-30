@@ -25,7 +25,7 @@ var Clinet_Global *Client
 func (self *Logic) Init(actor *core.Actor) bool {
 	self.owner = actor
 
-	Clinet_Global = NewWebsocketClient("192.168.117.1:41000","/connect")
+	Clinet_Global = NewWebsocketClient("47.108.87.29:41000","/connect")
 	Clinet_Global.connect()
 	fmt.Println("connected success :",Clinet_Global.ws.RemoteAddr())
 	go func() {
