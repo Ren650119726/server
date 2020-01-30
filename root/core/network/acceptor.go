@@ -98,8 +98,7 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 	http.Handle("/connect", websocket.Handler(func(ws *websocket.Conn) {
 		self.sessions.Lock()
 		self.curr_sessionid++
-		ws.PayloadType = websocket.BinaryFrame
-		log.Infof("新连接:%v ",ws.PayloadType)
+		ws.PayloadType = websocket.BinaryFrame // 此行解决前端收到报错:Could not decode a text frame as UTF-8
 		session := NewSession(self.curr_sessionid, ws, self.offchan, self.callback, 30, 30)
 		log.Infof("new websocket connect:%v", ws.LocalAddr())
 		if session != nil {
@@ -109,7 +108,7 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 		self.sessions.Unlock()
 		select{
 		case <-session.httpchan:
-			log.Infof("断开连接")
+			log.Infof("断开连接：%v",session.RemoteIP())
 			return
 		}
 	}))
