@@ -47,6 +47,12 @@ func Get_mary_lines_config(ID int, key string) string {
 		log.Panicf("配置mary_lines.json ID:%v 找不到字段：%v ",ID,key)
 		return ""
 	}else {
+		switch val.(type) {
+		case string:
+			return val.(string)
+		default:
+			return strconv.Itoa(val.(int))
+		}
 		return val.(string)
 	}
 }

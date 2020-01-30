@@ -47,6 +47,12 @@ func Get_mary_room_Config(roomID int, key string) string {
 		log.Panicf("配置mary_room.json roomID:%v 找不到字段：%v ",roomID,key)
 		return ""
 	}else {
+		switch val.(type) {
+		case string:
+			return val.(string)
+		default:
+			return strconv.Itoa(val.(int))
+		}
 		return val.(string)
 	}
 }
