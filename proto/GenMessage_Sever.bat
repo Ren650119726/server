@@ -1,3 +1,3 @@
-protoc .\protobuf\*.proto --go_out=D:\project\repository\
-protoc .\protobuf\server\*.proto --go_out=D:\project\repository\
+protoc .\protobuf\*.proto --go_out=C:\Users\wwj\Desktop\server
+protoc .\protobuf\server\*.proto --go_out=C:\Users\wwj\Desktop\server
 pause

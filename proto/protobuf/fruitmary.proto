@@ -18,7 +18,7 @@ enum FRUITMARYMSG {
 	CS_START_MARY2_REQ           = 20011;// 请求开始游戏2
 	SC_START_MARY2_RES           = 20012;
 	
-	CS_NEXT_MARY_RESULT          = 20013； // 客户通知服务器播放下一个结果
+	CS_NEXT_MARY_RESULT          = 20013; // 客户通知服务器播放下一个结果
 }
 
 // 游戏1 图案枚举
