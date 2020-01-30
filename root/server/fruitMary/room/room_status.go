@@ -8,7 +8,7 @@ const (
 )
 
 var typeStringify = [...]string{
-	ERoomStatus_GAME:             "stop",
+	ERoomStatus_GAME:             "game",
 }
 
 func (e ERoomStatus) String() string {

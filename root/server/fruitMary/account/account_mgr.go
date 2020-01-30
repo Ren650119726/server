@@ -51,6 +51,16 @@ func (self *accountMgr) GetAccountBySessionID(session int64) *Account {
 	return self.accountbySessionID[session]
 }
 
+func (self *accountMgr) GetAccountBySessionIDAssert(session int64) *Account {
+	self.Lock.Lock()
+	defer self.Lock.Unlock()
+	acc :=  self.accountbySessionID[session]
+	if acc == nil {
+		log.Panicf("找不到玩家:%v ",session)
+	}
+	return acc
+}
+
 
 // 创建账号
 func (self *accountMgr) RecvAccount(storage *protomsg.AccountStorageData, game *protomsg.AccountGameData) {
