@@ -38,11 +38,8 @@ func (self *Hall) CMD_LoadConfig(sParam []string) {
 	}
 	if strCMD == "" || strCMD == "all" {
 		config.LoadPublic_Conf()
-		config.LoadStore_Conf()
 	} else if strCMD == "public" {
 		config.LoadPublic_Conf()
-	} else if strCMD == "store" {
-		config.LoadStore_Conf()
 	}
 
 	strServerIP := utils.GetLocalIP()
