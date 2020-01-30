@@ -42,6 +42,7 @@ func Send2Account(msgId uint16, pb proto.Message, session int64) {
 	req := packet.NewPacket(nil)
 	req.SetMsgID(msgId)
 	req.WriteBytes(bytes)
+	log.Infof("发送数据:%v %v ", req.GetData(),len(req.GetData()))
 	core.CoreSend(0, common.EActorType_SERVER.Int32(), req.GetData(), session)
 }
 
