@@ -1,0 +1,146 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+
+// 网络消息
+enum FRUITMARYMSG {
+	UNKNOW_FRUITMARY = 0;
+	CS_ENTER_GAME_FRUITMARY_REQ = 20001; // 玩家请求进入房间
+	SC_ENTER_GAME_FRUITMARY_RES = 20002; 
+	CS_LEAVE_GAME_FRUITMARY_REQ = 20003; // 玩家请求退出房间
+	SC_LEAVE_GAME_FRUITMARY_RES = 20004; 
+	
+	CS_START_MARY_REQ           = 20008;// 请求开始游戏1
+	SC_START_MARY_RES           = 20009;
+	
+	SC_UPDATE_MARY_BONUS        = 20010;// 通知更新奖金池
+	
+	CS_START_MARY2_REQ           = 20011;// 请求开始游戏2
+	SC_START_MARY2_RES           = 20012;
+	
+	CS_NEXT_MARY_RESULT          = 20013； // 客户通知服务器播放下一个结果
+}
+
+// 游戏1 图案枚举
+enum Fruit1ID {
+	Fruit1Unknow    = 0;
+	Fruit1Wild      = 1; // Wild图案
+	Fruit1Bonus     = 2; // Bonus图案
+	Fruit1Scatter   = 3; // Scatter图案
+	Fruit1Bar       = 4; // Bar
+	Fruit1Cherry    = 5; // 樱桃
+	Fruit1Bell      = 6; // 铃铛
+	Fruit1Pineapple = 7; // 菠萝
+	Fruit1Grap      = 8; // 葡萄
+	Fruit1Mango     = 9; // 芒果
+	Fruit1Watermelon= 10; // 西瓜
+	Fruit1Banana	= 11; // 香蕉
+	
+}
+
+// 游戏2 图案枚举
+enum Fruit2ID {
+	Fruit2Unknow     = 0;
+	Fruit2Watermelon = 1; // 西瓜
+	Fruit2Grap       = 2; // 葡萄
+	Fruit2Mango      = 3; // 芒果
+	Fruit2Cherry     = 4; // 樱桃
+	Fruit2Banana     = 5; // 香蕉
+	Fruit2Orange     = 6; // 橘子
+	Fruit2Pineapple  = 7; // 菠萝
+	Fruit2Bomb       = 8; // 炸弹
+}
+
+// 请求进入房间
+message ENTER_GAME_FRUITMARY_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message ENTER_GAME_FRUITMARY_RES {
+	message FruitRatio {
+		Fruit2ID ID   = 1;
+		int32 Single = 2; // 跑灯图案赔率
+		int32 Same_2 = 3; // 三连一下的赔率
+		int32 Same_3 = 4; // 三连赔率
+		int32 Same_4 = 5; // 四连赔率
+	}
+	uint32 RoomID 	    		 	= 1; // 房间ID
+	int64 Basics        		 	= 2; // 基础金额
+	int64 Bonus         		 	= 3; // 奖金池
+	int64 LastBet                   = 4; // 最后一次压住
+	repeated uint64 Bets 		 	= 5; // 可以选择的押注金额
+	map<int32, FruitRatio> Ratio    = 6; // 水果赔率
+	START_MARY2_RES Mary2_Result    = 7; // 小玛利结果
+}
+
+
+// 请求退出房间
+message LEAVE_GAME_FRUITMARY_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message LEAVE_GAME_FRUITMARY_RES {
+	uint32 RoomID = 1; // 房间ID
+}
+
+////////////////////////////////////////////// 游戏1 /////////////////////////////////////////////
+// 请求开始游戏1
+message START_MARY_REQ {
+	uint64 Bet = 1; 
+}
+
+message START_MARY_RES {
+	uint64 Ret 						  = 1; // 0成功 
+	int64  SumOdds 					  = 2; // 9条线总赔率
+	repeated FRUITMARY_Result Results = 3; // 中奖线列表
+	repeated int32 PictureList        = 4; // 图形列表( [0-14] 即15个图形)
+	int64 Bonus                       = 5; // 水池里的金币
+	int64 Money                       = 6; // 身上的钱
+	int64 FreeCount                   = 7; // 获得免费次数
+	int64 MaryCount                   = 8; // 触发小玛丽次数
+}
+
+message FRUITMARY_position{
+	int32 px = 1;
+	int32 py = 2;
+}
+
+message FRUITMARY_Result{
+	int32 LineId = 1; // 表示第几条线
+	int32 Count  = 2; // 图形项连的个数
+	int32 Odds   = 3; // 该条线的赔率
+	repeated FRUITMARY_position Positions = 4;
+}
+
+// 通知更新奖金池
+message UPDATE_MARY_BONUS{
+	int64 Bonus = 1;
+}
+
+////////////////////////////////////////////// 游戏2 /////////////////////////////////////////////
+// 请求开始游戏2
+message START_MARY2_REQ {
+}
+
+message START_MARY2_RES {
+	repeated Mary2_Result Result = 1; // 游戏2结果
+	int32 MarySpareCount = 2;// 剩余游戏2次数
+}
+
+message Mary2_Result {
+	int32 IndexId          = 1; // 命中的水果图案(1-8)
+	repeated int32 MaryId  = 2; // 1-4个图案ID
+	int32 Profit1  		   = 3; // 外面24个中奖金额
+	int32 Profit2  		   = 4; // 里面4个中将金额
+}
+
+message NEXT_MARY_RESULT  {
+}
+
+
+
+
+
+

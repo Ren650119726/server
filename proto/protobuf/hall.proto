@@ -11,11 +11,33 @@ enum MSG {
 	CLIENT_KEEPALIVE    = 10003; // 客户端发送心跳
 	SC_KICK_OUT_HALL    = 10004; // 服务器踢下线
 	
-	CS_LOGIN_HALL_REQ 	= 10010; // 客户端请求登陆
-	SC_LOGIN_HALL_RES 	= 10011; 
-	CS_BIND_PHONE       = 10016; // 玩家绑定手机号
-	SC_BIND_PHONE       = 10017;
+	/////////////////////// 客户端请求的消息 /////////////////////////////////////////////
+	CS_LOGIN_HALL_REQ 		= 10010; // 客户端请求登陆
+	SC_LOGIN_HALL_RES 		= 10011; 
 	
+	CS_SAFEMONEY_OPERATE_REQ = 10014; // 保险箱操作
+	SC_SAFEMONEY_OPERATE_RES = 10015; // 
+	
+	CS_BIND_PHONE_REQ   	= 10016; // 玩家绑定手机号
+	SC_BIND_PHONE_RES   	= 10017; 
+	
+	CS_ENTER_ROOM_REQ   	= 10018; // 玩家请求进入房间
+	SC_ENTER_ROOM_RES   	= 10019; 
+	
+	CS_EMAILS_REQ       	= 10020; // 客户端请求邮件列表
+	SC_EMAILS_RES       	= 10021; 
+	CS_EMAIL_READ_REQ   	= 10022; // 客户端请求阅读未读过的邮件
+	SC_EMAIL_READ_RES   	= 10023; 
+	CS_EMAIL_REWARD_REQ   	= 10024; // 客户端请求领取邮件奖励
+	SC_EMAIL_REWARD_RES   	= 10025;
+	CS_EMAIL_DEL_REQ   		= 10026; // 客户端请求删除一封邮件
+	SC_EMAIL_DEL_RES   		= 10027;
+	
+	
+	//////////////////////// 服务器主动推送的消息 ///////////////////////////////////////
+	SC_UPDATE_MONEY     = 10055;  // 通知更新金币
+	SC_EMAIL_NEW        = 10056;  // 通知获得新邮件
+	SC_BROADCAST_MSG    = 10057;  // 广播跑马灯
 }
 
 // 请求同步服务器时间 10002
@@ -42,14 +64,85 @@ message LOGIN_HALL_RES {
 	AccountGameData    AccountData = 3; 	// 玩家游戏信息
 }
 
+// 客户端请求操作保险箱 10014
+message SAFEMONEY_OPERATE_REQ {
+	uint32 Operate 		= 1; // 1 取钱，2 存钱
+	uint64 OperateMoney = 2; // 操作保险箱金额(存、取都发正数)
+}
+// 客户端请求操作保险箱 10015 
+message SAFEMONEY_OPERATE_RES {
+	uint32 ret = 1; // 0、操作成功 1、保险箱钱不够取 2、身上钱不够存
+}
+
 // 客户端请求登陆 10016 
 message BIND_PHONE_REQ {
 	string Phone = 1;
 }
 
 // 客户端请求登陆 10017 
-message BIND_PHONE_RESP {
+message BIND_PHONE_RES {
 	uint32 Ret = 1; 	// 0、成功 1、已经绑定过，不能重复绑定 2、手机号格式不对
 	
+}
+
+// 玩家请求进入房间 10018 
+message ENTER_ROOM_REQ {
+	uint32 RoomID = 1; 	// 房间ID
+	
+}
+// 玩家请求进入房间 10019 
+message ENTER_ROOM_RES {
+	uint32 ret = 1; //0、进入成功 1、房间维护 2、不存在的房间
+	uint32 RoomID   = 2; 
+	uint32 GameType = 3;
+}
+
+				///////////////////////// 邮件相关 ///////////////////////////////////////
+// 客户端请求邮件列表 10020
+message EMAILS_REQ  {
+}
+// 客户端请求邮件列表 10021
+message EMAILS_RES  {
+	repeated Email Emails = 1; // 所有邮件
+}
+// 客户端请求阅读未读过的邮件 10022
+message EMAIL_READ_REQ  {
+	uint32 EmailID  = 1;
+}
+// 客户端请求阅读未读过的邮件 10023
+message EMAIL_READ_RES  {
+	uint32 EmailID  = 1;
+}
+// 客户端请求领取邮件奖励 10024
+message EMAIL_REWARD_REQ  {
+	uint32 EmailID  = 1;
+}
+// 客户端请求阅读未读过的邮件 10025
+message EMAIL_REWARD_RES  {
+	int32  ret      = 1; // 0、领取成功  1、邮件没有奖励金 
+	uint32 EmailID  = 2;
+}
+// 客户端请求删除一封邮件 10026
+message EMAIL_DEL_REQ  {
+	uint32 EmailID  = 1;
+}
+// 客户端请求阅读未读过的邮件 10027
+message EMAIL_DEL_RES   {
+	uint32 EmailID  = 1;
+}
+
+			//////////////////////// 服务器主动推送的消息 ///////////////////////////////////////
+// 通知客户端更新金币 10055 
+message UPDATE_MONEY {
+	int32 Operate  = 1; 	 // 操作类型
+	uint64 Money    = 2;     // 当前金币
+}
+// 通知客户端获得新邮件 10056 
+message EMAIL_NEW {
+	Email New  = 1;// 获得新邮件
+}
+// 通知客户端跑马灯 10057 
+message BROADCAST_MSG {
+	string content = 1;
 }
 

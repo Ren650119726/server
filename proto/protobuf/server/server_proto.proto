@@ -20,6 +20,17 @@ enum SERVERMSG {
 	HD_SAVE_WATER_LINE   = 137; // 回存水位线
 	HD_SAVE_ALL          = 150; // 通知DB回存的所有数据发送完成
 	
+	GH_GAME_CONNECT_HALL = 170; // 游戏连接大厅
+	GH_ROOM_INFO         = 171; // 游戏上报房间信息给大厅
+	
+	GH_SERVERFEE_LOG     = 175;// 回存服务费
+	GH_MONEYCHANGE       = 176;// 游戏改变金币，通知大厅
+	
+	HG_PLAYER_DATA_REQ   = 180; // 大厅给游戏发送玩家数据
+	GH_PLAYER_DATA_RES   = 181; // 游戏回复大厅，收到玩家数据，大厅通知玩家进入
+	GH_PLAYER_ENTER_ROOM = 182; // 游戏通知大厅，玩家进入房间
+	GH_PLAYER_LEAVE_ROOM = 183; // 游戏通知大厅，玩家退出房间
+	
 }
 
 // 发送到db执行 sql syntax
@@ -55,3 +66,62 @@ message SAVE_WATER_LINE {
 	 uint32  GameType = 2;
 	 string WaterLine = 3;
 }
+
+// 游戏连接大厅
+message GAME_CONNECT_HALL {
+	 uint32 ServerID = 1;
+	 uint32 GameType = 2;
+}
+
+// 游戏上报房间信息给大厅
+message ROOM_INFO {
+	uint32 ServerID = 1; // 服务器id
+	repeated uint32 RoomsID = 2; // 房间ID
+}
+
+// 向大厅发送服务费
+message SERVERFEE_LOG {
+	 uint32 AccountID = 1;
+	 uint32 ServerFee = 2;
+	 uint32 GameType  = 3;
+	 string Time      = 4;
+	 uint32 RoomID    = 5;
+}
+
+// 向大厅发送金币改变日志
+message MONEYCHANGE {
+	 uint32 AccountID   = 1;
+	 int64  ChangeValue = 2;
+	 int64  Value 		= 3;
+	 uint32 Operate     = 4;
+	 string Time        = 6;
+	 uint32 RoomID      = 7;
+}
+
+// 大厅给游戏发送玩家数据
+message PLAYER_DATA_REQ {
+	AccountStorageData Account 	   = 1; 	// 玩家基础信息
+	AccountGameData    AccountData = 2; 	// 玩家游戏信息
+	uint32 RoomID                  = 3;
+}
+
+// 游戏回复大厅，收到玩家数据，大厅通知玩家进入
+message PLAYER_DATA_RES {
+	uint32 Ret       = 1; // 
+	uint32 AccountID = 2;
+	uint32 RoomID    = 3;
+	
+}
+
+// 游戏通知大厅，玩家进入房间
+message PLAYER_ENTER_ROOM {
+	uint32 AccountID = 2;
+	uint32 RoomID    = 3;
+}
+
+// 游戏通知大厅，玩家退出房间
+message PLAYER_LEAVE_ROOM {
+	uint32 AccountID = 2;
+	uint32 RoomID    = 3;
+}
+
