@@ -96,6 +96,12 @@ func (self *Logic) HandleMessage(actor int32, msg []byte, session int64) bool {
 	case protomsg.MSG_SC_LOGIN_HALL_RES.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.LOGIN_HALL_RES{}).(*protomsg.LOGIN_HALL_RES)
 		log.Infof(colorized.Blue("登陆成功：%+v"),pb)
+
+	case protomsg.MSG_SC_SYNC_SERVER_TIME.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.SYNC_SERVER_TIME{}).(*protomsg.SYNC_SERVER_TIME)
+		log.Infof(colorized.Blue("同步服务器时间：%+v"),pb)
+
 	}
+
 	return false
 }

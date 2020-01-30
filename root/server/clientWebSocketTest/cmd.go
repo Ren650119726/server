@@ -11,6 +11,8 @@ import (
 
 func init() {
 	core.Cmd.Regist("login", login, true)
+	core.Cmd.Regist("time", time, true)
+
 }
 
 func Send2Hall(msgId uint16, pb proto.Message) {
@@ -44,4 +46,8 @@ func login(s []string) {
 		Unique:    acc,
 		Sign:      "",
 	})
+}
+
+func time(s []string) {
+	Send2Hall(protomsg.MSG_CS_SYNC_SERVER_TIME.UInt16(),nil)
 }

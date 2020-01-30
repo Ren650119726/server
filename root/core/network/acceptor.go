@@ -98,6 +98,7 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 	http.Handle("/connect", websocket.Handler(func(ws *websocket.Conn) {
 		self.sessions.Lock()
 		self.curr_sessionid++
+		ws.PayloadType = websocket.BinaryFrame
 		session := NewSession(self.curr_sessionid, ws, self.offchan, self.callback, 30, 30)
 		log.Infof("new websocket connect:%v", ws.LocalAddr())
 		if session != nil {
