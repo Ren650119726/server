@@ -168,6 +168,12 @@ func (self *packet) GetMsgID() (ret uint16) {
 	return ret
 }
 
+func (self *packet) GetMsgSize() (ret uint16) {
+	ret = uint16(self.data[4])
+	ret |= uint16(self.data[5]) << 8
+	return ret
+}
+
 func (self *packet) GetData() []byte {
 	self.data[4] = uint8(self.wpos)
 	self.data[5] = uint8(self.wpos >> 8)
@@ -356,8 +362,7 @@ func (self *packet) ReadString() (ret string) {
 }
 
 func (self *packet) ReadBytes() (ret []byte) {
-
-	size := self.ReadUInt16()
+	size := self.GetMsgSize() - 6
 	if size <= 0 {
 		return nil
 	}
@@ -548,10 +553,10 @@ func (self *packet) WriteString(s string) bool {
 
 func (self *packet) WriteBytes(buff []byte) bool {
 	buff_len := uint16(len(buff))
-	ret := self.WriteUInt16(buff_len)
-	if ret == false {
-		return false
-	}
+	//ret := self.WriteUInt16(buff_len)
+	//if ret == false {
+	//	return false
+	//}
 
 	size := self.wpos + buff_len
 	if size >= PACKET_BUFFER_LEN {
