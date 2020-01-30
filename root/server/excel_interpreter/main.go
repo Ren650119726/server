@@ -19,6 +19,7 @@ func main() {
 	beego.LoadAppConfig("ini", "./app.conf")
 	inputstr := beego.AppConfig.DefaultString("CONF::Input_path", "./")
 	output := beego.AppConfig.DefaultString("CONF::Output_path", "nill/")
+	fmt.Println("输出目录:", output)
 	inputs := strings.Split(inputstr, " ")
 	for _,input := range inputs{
 		dir_list, e := ioutil.ReadDir(input)
@@ -26,20 +27,21 @@ func main() {
 			fmt.Println("read dir error")
 			return
 		}
-		fmt.Println("输出目录:", output)
+
 		for _, filename := range dir_list {
 			ret := regexp.MustCompile(`xlsx`).FindStringIndex(filename.Name())
 			if ret != nil {
 				name := input + "\\" + filename.Name()
-				outjson := output + "\\" + filename.Name()[:ret[0]] + "json"
-				fmt.Println("解析文件: ", name)
+				jsonname := filename.Name()[:ret[0]] + "json"
+				outjson := output + "\\" + jsonname
 				transform2json(name, outjson)
+				fmt.Printf("解析文件:%-70v %-30v\n",name,jsonname)
 			}
 		}
 	}
 }
 
-func transform2json(dirFile string, out string) {
+func transform2json(dirFile string, out string){
 	xls, err := excelize.OpenFile(dirFile)
 	if err != nil {
 		fmt.Println(err)

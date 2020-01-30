@@ -53,6 +53,13 @@ func (self *packet) SetMsgID(msgid uint16) {
 	self.data[2] = uint8(msgid)
 	self.data[3] = uint8(msgid >> 8)
 }
+func (self *packet) HeadByte() []byte {
+	return self.data[:PACKET_HEAD_LEN]
+}
+
+func (self *packet) SetHeadByte(h []byte){
+	 self.data = h
+}
 
 func (self *packet) Rrevise(wpos uint16, data interface{}) bool {
 

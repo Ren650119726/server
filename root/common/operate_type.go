@@ -10,6 +10,8 @@ const (
 	EOperateType_OFFLINE_CHARGE               = 3 // 人工充值
 	EOperateType_SAFE_MONEY_SAVE              = 4 // 存钱到保险箱
 	EOperateType_SAFE_MONEY_GET               = 5 // 从保险箱取钱
+	EOperateType_FRUIT_MARY_WIN               = 6 // 水果小玛利 游戏1 获得钱
+	EOperateType_FRUIT_MARY2_WIN               = 7 // 水果小玛利 游戏2 获得钱
 
 )
 
@@ -20,6 +22,7 @@ var typeStringify_operate = map[EOperateType]string{
 	EOperateType_OFFLINE_CHARGE:  "CHARGE",          // VIP充值
 	EOperateType_SAFE_MONEY_SAVE: "SAFE_MONEY_SAVE", // 存钱到保险箱
 	EOperateType_SAFE_MONEY_GET:  "SAFE_MONEY_GET",  // 从保险箱取钱
+	EOperateType_FRUIT_MARY_WIN:  "FRUIT_MARY_WIN",  // 水果小玛利 游戏1 获得钱
 }
 
 func (e EOperateType) String() string {

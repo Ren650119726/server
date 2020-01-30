@@ -74,6 +74,21 @@ func SplitConf2ArrInt64(value string) []int64 {
 	}
 	return arrInt64
 }
+// 解析"1,2,3,4,5"为[1,2,3,4,5]
+func SplitConf2ArrUInt64(value string) []uint64 {
+	strs := strings.Split(value, ",")
+	arrInt64 := make([]uint64, 0, 2)
+
+	for _, v := range strs {
+		iv, err := strconv.Atoi(v)
+		if err != nil {
+			log.Errorf("解析错误 :%v", value)
+			return nil
+		}
+		arrInt64 = append(arrInt64, uint64(iv))
+	}
+	return arrInt64
+}
 
 // 解析"1#100,2#200,3#300"为[[1,100],[2,200],[3,300]]
 func SplitConf2Arr_ArrInt64(value string) [][]int64 {

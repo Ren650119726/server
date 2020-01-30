@@ -12,6 +12,7 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// 网络消息
 type FRUITMARYMSG int32
 
 const (
@@ -20,6 +21,11 @@ const (
 	FRUITMARYMSG_SC_ENTER_GAME_FRUITMARY_RES FRUITMARYMSG = 20002
 	FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ FRUITMARYMSG = 20003
 	FRUITMARYMSG_SC_LEAVE_GAME_FRUITMARY_RES FRUITMARYMSG = 20004
+	FRUITMARYMSG_CS_START_MARY_REQ           FRUITMARYMSG = 20008
+	FRUITMARYMSG_SC_START_MARY_RES           FRUITMARYMSG = 20009
+	FRUITMARYMSG_SC_UPDATE_MARY_BONUS        FRUITMARYMSG = 20010
+	FRUITMARYMSG_CS_START_MARY2_REQ          FRUITMARYMSG = 20011
+	FRUITMARYMSG_SC_START_MARY2_RES          FRUITMARYMSG = 20012
 )
 
 var FRUITMARYMSG_name = map[int32]string{
@@ -28,6 +34,11 @@ var FRUITMARYMSG_name = map[int32]string{
 	20002: "SC_ENTER_GAME_FRUITMARY_RES",
 	20003: "CS_LEAVE_GAME_FRUITMARY_REQ",
 	20004: "SC_LEAVE_GAME_FRUITMARY_RES",
+	20008: "CS_START_MARY_REQ",
+	20009: "SC_START_MARY_RES",
+	20010: "SC_UPDATE_MARY_BONUS",
+	20011: "CS_START_MARY2_REQ",
+	20012: "SC_START_MARY2_RES",
 }
 var FRUITMARYMSG_value = map[string]int32{
 	"UNKNOW_FRUITMARY":            0,
@@ -35,6 +46,11 @@ var FRUITMARYMSG_value = map[string]int32{
 	"SC_ENTER_GAME_FRUITMARY_RES": 20002,
 	"CS_LEAVE_GAME_FRUITMARY_REQ": 20003,
 	"SC_LEAVE_GAME_FRUITMARY_RES": 20004,
+	"CS_START_MARY_REQ":           20008,
+	"SC_START_MARY_RES":           20009,
+	"SC_UPDATE_MARY_BONUS":        20010,
+	"CS_START_MARY2_REQ":          20011,
+	"SC_START_MARY2_RES":          20012,
 }
 
 func (x FRUITMARYMSG) String() string {
@@ -42,7 +58,102 @@ func (x FRUITMARYMSG) String() string {
 }
 func (FRUITMARYMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
 
-// 请求进入水果小玛丽房间
+// 游戏1 图案枚举
+type Fruit1ID int32
+
+const (
+	Fruit1ID_Fruit1Unknow     Fruit1ID = 0
+	Fruit1ID_Fruit1Wild       Fruit1ID = 1
+	Fruit1ID_Fruit1Bonus      Fruit1ID = 2
+	Fruit1ID_Fruit1Scatter    Fruit1ID = 3
+	Fruit1ID_Fruit1Bar        Fruit1ID = 4
+	Fruit1ID_Fruit1Cherry     Fruit1ID = 5
+	Fruit1ID_Fruit1Bell       Fruit1ID = 6
+	Fruit1ID_Fruit1Pineapple  Fruit1ID = 7
+	Fruit1ID_Fruit1Grap       Fruit1ID = 8
+	Fruit1ID_Fruit1Mango      Fruit1ID = 9
+	Fruit1ID_Fruit1Watermelon Fruit1ID = 10
+	Fruit1ID_Fruit1Banana     Fruit1ID = 11
+)
+
+var Fruit1ID_name = map[int32]string{
+	0:  "Fruit1Unknow",
+	1:  "Fruit1Wild",
+	2:  "Fruit1Bonus",
+	3:  "Fruit1Scatter",
+	4:  "Fruit1Bar",
+	5:  "Fruit1Cherry",
+	6:  "Fruit1Bell",
+	7:  "Fruit1Pineapple",
+	8:  "Fruit1Grap",
+	9:  "Fruit1Mango",
+	10: "Fruit1Watermelon",
+	11: "Fruit1Banana",
+}
+var Fruit1ID_value = map[string]int32{
+	"Fruit1Unknow":     0,
+	"Fruit1Wild":       1,
+	"Fruit1Bonus":      2,
+	"Fruit1Scatter":    3,
+	"Fruit1Bar":        4,
+	"Fruit1Cherry":     5,
+	"Fruit1Bell":       6,
+	"Fruit1Pineapple":  7,
+	"Fruit1Grap":       8,
+	"Fruit1Mango":      9,
+	"Fruit1Watermelon": 10,
+	"Fruit1Banana":     11,
+}
+
+func (x Fruit1ID) String() string {
+	return proto.EnumName(Fruit1ID_name, int32(x))
+}
+func (Fruit1ID) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+
+// 游戏2 图案枚举
+type Fruit2ID int32
+
+const (
+	Fruit2ID_Fruit2Unknow     Fruit2ID = 0
+	Fruit2ID_Fruit2Watermelon Fruit2ID = 1
+	Fruit2ID_Fruit2Grap       Fruit2ID = 2
+	Fruit2ID_Fruit2Mango      Fruit2ID = 3
+	Fruit2ID_Fruit2Cherry     Fruit2ID = 4
+	Fruit2ID_Fruit2Banana     Fruit2ID = 5
+	Fruit2ID_Fruit2Orange     Fruit2ID = 6
+	Fruit2ID_Fruit2Pineapple  Fruit2ID = 7
+	Fruit2ID_Fruit2Bomb       Fruit2ID = 8
+)
+
+var Fruit2ID_name = map[int32]string{
+	0: "Fruit2Unknow",
+	1: "Fruit2Watermelon",
+	2: "Fruit2Grap",
+	3: "Fruit2Mango",
+	4: "Fruit2Cherry",
+	5: "Fruit2Banana",
+	6: "Fruit2Orange",
+	7: "Fruit2Pineapple",
+	8: "Fruit2Bomb",
+}
+var Fruit2ID_value = map[string]int32{
+	"Fruit2Unknow":     0,
+	"Fruit2Watermelon": 1,
+	"Fruit2Grap":       2,
+	"Fruit2Mango":      3,
+	"Fruit2Cherry":     4,
+	"Fruit2Banana":     5,
+	"Fruit2Orange":     6,
+	"Fruit2Pineapple":  7,
+	"Fruit2Bomb":       8,
+}
+
+func (x Fruit2ID) String() string {
+	return proto.EnumName(Fruit2ID_name, int32(x))
+}
+func (Fruit2ID) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+
+// 请求进入房间
 type ENTER_GAME_FRUITMARY_REQ struct {
 	AccountID uint32 `protobuf:"varint,1,opt,name=AccountID" json:"AccountID,omitempty"`
 	RoomID    uint32 `protobuf:"varint,2,opt,name=RoomID" json:"RoomID,omitempty"`
@@ -68,7 +179,13 @@ func (m *ENTER_GAME_FRUITMARY_REQ) GetRoomID() uint32 {
 }
 
 type ENTER_GAME_FRUITMARY_RES struct {
-	RoomID uint32 `protobuf:"varint,1,opt,name=RoomID" json:"RoomID,omitempty"`
+	RoomID       uint32                                         `protobuf:"varint,1,opt,name=RoomID" json:"RoomID,omitempty"`
+	Basics       int64                                          `protobuf:"varint,2,opt,name=Basics" json:"Basics,omitempty"`
+	Bonus        int64                                          `protobuf:"varint,3,opt,name=Bonus" json:"Bonus,omitempty"`
+	LastBet      int64                                          `protobuf:"varint,4,opt,name=LastBet" json:"LastBet,omitempty"`
+	Bets         []uint64                                       `protobuf:"varint,5,rep,packed,name=Bets" json:"Bets,omitempty"`
+	Ratio        map[int32]*ENTER_GAME_FRUITMARY_RES_FruitRatio `protobuf:"bytes,6,rep,name=Ratio" json:"Ratio,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Mary2_Result *START_MARY2_RES                               `protobuf:"bytes,7,opt,name=Mary2_Result,json=Mary2Result" json:"Mary2_Result,omitempty"`
 }
 
 func (m *ENTER_GAME_FRUITMARY_RES) Reset()                    { *m = ENTER_GAME_FRUITMARY_RES{} }
@@ -83,7 +200,99 @@ func (m *ENTER_GAME_FRUITMARY_RES) GetRoomID() uint32 {
 	return 0
 }
 
-// 请求退出水果小玛丽房间
+func (m *ENTER_GAME_FRUITMARY_RES) GetBasics() int64 {
+	if m != nil {
+		return m.Basics
+	}
+	return 0
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES) GetBonus() int64 {
+	if m != nil {
+		return m.Bonus
+	}
+	return 0
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES) GetLastBet() int64 {
+	if m != nil {
+		return m.LastBet
+	}
+	return 0
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES) GetBets() []uint64 {
+	if m != nil {
+		return m.Bets
+	}
+	return nil
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES) GetRatio() map[int32]*ENTER_GAME_FRUITMARY_RES_FruitRatio {
+	if m != nil {
+		return m.Ratio
+	}
+	return nil
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES) GetMary2_Result() *START_MARY2_RES {
+	if m != nil {
+		return m.Mary2_Result
+	}
+	return nil
+}
+
+type ENTER_GAME_FRUITMARY_RES_FruitRatio struct {
+	ID     Fruit2ID `protobuf:"varint,1,opt,name=ID,enum=protomsg.Fruit2ID" json:"ID,omitempty"`
+	Single int32    `protobuf:"varint,2,opt,name=Single" json:"Single,omitempty"`
+	Same_2 int32    `protobuf:"varint,3,opt,name=Same_2,json=Same2" json:"Same_2,omitempty"`
+	Same_3 int32    `protobuf:"varint,4,opt,name=Same_3,json=Same3" json:"Same_3,omitempty"`
+	Same_4 int32    `protobuf:"varint,5,opt,name=Same_4,json=Same4" json:"Same_4,omitempty"`
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) Reset()         { *m = ENTER_GAME_FRUITMARY_RES_FruitRatio{} }
+func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) String() string { return proto.CompactTextString(m) }
+func (*ENTER_GAME_FRUITMARY_RES_FruitRatio) ProtoMessage()    {}
+func (*ENTER_GAME_FRUITMARY_RES_FruitRatio) Descriptor() ([]byte, []int) {
+	return fileDescriptor1, []int{1, 0}
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) GetID() Fruit2ID {
+	if m != nil {
+		return m.ID
+	}
+	return Fruit2ID_Fruit2Unknow
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) GetSingle() int32 {
+	if m != nil {
+		return m.Single
+	}
+	return 0
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) GetSame_2() int32 {
+	if m != nil {
+		return m.Same_2
+	}
+	return 0
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) GetSame_3() int32 {
+	if m != nil {
+		return m.Same_3
+	}
+	return 0
+}
+
+func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) GetSame_4() int32 {
+	if m != nil {
+		return m.Same_4
+	}
+	return 0
+}
+
+// 请求退出房间
 type LEAVE_GAME_FRUITMARY_REQ struct {
 	AccountID uint32 `protobuf:"varint,1,opt,name=AccountID" json:"AccountID,omitempty"`
 	RoomID    uint32 `protobuf:"varint,2,opt,name=RoomID" json:"RoomID,omitempty"`
@@ -124,31 +333,335 @@ func (m *LEAVE_GAME_FRUITMARY_RES) GetRoomID() uint32 {
 	return 0
 }
 
+// //////////////////////////////////////////// 游戏1 /////////////////////////////////////////////
+// 请求开始游戏1
+type START_MARY_REQ struct {
+	Bet uint64 `protobuf:"varint,1,opt,name=Bet" json:"Bet,omitempty"`
+}
+
+func (m *START_MARY_REQ) Reset()                    { *m = START_MARY_REQ{} }
+func (m *START_MARY_REQ) String() string            { return proto.CompactTextString(m) }
+func (*START_MARY_REQ) ProtoMessage()               {}
+func (*START_MARY_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+
+func (m *START_MARY_REQ) GetBet() uint64 {
+	if m != nil {
+		return m.Bet
+	}
+	return 0
+}
+
+type START_MARY_RES struct {
+	Ret         uint64              `protobuf:"varint,1,opt,name=Ret" json:"Ret,omitempty"`
+	SumOdds     int64               `protobuf:"varint,2,opt,name=SumOdds" json:"SumOdds,omitempty"`
+	Results     []*FRUITMARY_Result `protobuf:"bytes,3,rep,name=Results" json:"Results,omitempty"`
+	PictureList []int32             `protobuf:"varint,4,rep,packed,name=PictureList" json:"PictureList,omitempty"`
+	Bonus       int64               `protobuf:"varint,5,opt,name=Bonus" json:"Bonus,omitempty"`
+	Money       int64               `protobuf:"varint,6,opt,name=Money" json:"Money,omitempty"`
+	FreeCount   int64               `protobuf:"varint,7,opt,name=FreeCount" json:"FreeCount,omitempty"`
+	MaryCount   int64               `protobuf:"varint,8,opt,name=MaryCount" json:"MaryCount,omitempty"`
+}
+
+func (m *START_MARY_RES) Reset()                    { *m = START_MARY_RES{} }
+func (m *START_MARY_RES) String() string            { return proto.CompactTextString(m) }
+func (*START_MARY_RES) ProtoMessage()               {}
+func (*START_MARY_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
+
+func (m *START_MARY_RES) GetRet() uint64 {
+	if m != nil {
+		return m.Ret
+	}
+	return 0
+}
+
+func (m *START_MARY_RES) GetSumOdds() int64 {
+	if m != nil {
+		return m.SumOdds
+	}
+	return 0
+}
+
+func (m *START_MARY_RES) GetResults() []*FRUITMARY_Result {
+	if m != nil {
+		return m.Results
+	}
+	return nil
+}
+
+func (m *START_MARY_RES) GetPictureList() []int32 {
+	if m != nil {
+		return m.PictureList
+	}
+	return nil
+}
+
+func (m *START_MARY_RES) GetBonus() int64 {
+	if m != nil {
+		return m.Bonus
+	}
+	return 0
+}
+
+func (m *START_MARY_RES) GetMoney() int64 {
+	if m != nil {
+		return m.Money
+	}
+	return 0
+}
+
+func (m *START_MARY_RES) GetFreeCount() int64 {
+	if m != nil {
+		return m.FreeCount
+	}
+	return 0
+}
+
+func (m *START_MARY_RES) GetMaryCount() int64 {
+	if m != nil {
+		return m.MaryCount
+	}
+	return 0
+}
+
+type FRUITMARYPosition struct {
+	Px int32 `protobuf:"varint,1,opt,name=px" json:"px,omitempty"`
+	Py int32 `protobuf:"varint,2,opt,name=py" json:"py,omitempty"`
+}
+
+func (m *FRUITMARYPosition) Reset()                    { *m = FRUITMARYPosition{} }
+func (m *FRUITMARYPosition) String() string            { return proto.CompactTextString(m) }
+func (*FRUITMARYPosition) ProtoMessage()               {}
+func (*FRUITMARYPosition) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
+
+func (m *FRUITMARYPosition) GetPx() int32 {
+	if m != nil {
+		return m.Px
+	}
+	return 0
+}
+
+func (m *FRUITMARYPosition) GetPy() int32 {
+	if m != nil {
+		return m.Py
+	}
+	return 0
+}
+
+type FRUITMARY_Result struct {
+	LineId    int32                `protobuf:"varint,1,opt,name=LineId" json:"LineId,omitempty"`
+	Count     int32                `protobuf:"varint,2,opt,name=Count" json:"Count,omitempty"`
+	Odds      int32                `protobuf:"varint,3,opt,name=Odds" json:"Odds,omitempty"`
+	Positions []*FRUITMARYPosition `protobuf:"bytes,4,rep,name=Positions" json:"Positions,omitempty"`
+}
+
+func (m *FRUITMARY_Result) Reset()                    { *m = FRUITMARY_Result{} }
+func (m *FRUITMARY_Result) String() string            { return proto.CompactTextString(m) }
+func (*FRUITMARY_Result) ProtoMessage()               {}
+func (*FRUITMARY_Result) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
+
+func (m *FRUITMARY_Result) GetLineId() int32 {
+	if m != nil {
+		return m.LineId
+	}
+	return 0
+}
+
+func (m *FRUITMARY_Result) GetCount() int32 {
+	if m != nil {
+		return m.Count
+	}
+	return 0
+}
+
+func (m *FRUITMARY_Result) GetOdds() int32 {
+	if m != nil {
+		return m.Odds
+	}
+	return 0
+}
+
+func (m *FRUITMARY_Result) GetPositions() []*FRUITMARYPosition {
+	if m != nil {
+		return m.Positions
+	}
+	return nil
+}
+
+// 通知更新奖金池
+type UPDATE_MARY_BONUS struct {
+	Bonus int64 `protobuf:"varint,1,opt,name=Bonus" json:"Bonus,omitempty"`
+}
+
+func (m *UPDATE_MARY_BONUS) Reset()                    { *m = UPDATE_MARY_BONUS{} }
+func (m *UPDATE_MARY_BONUS) String() string            { return proto.CompactTextString(m) }
+func (*UPDATE_MARY_BONUS) ProtoMessage()               {}
+func (*UPDATE_MARY_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
+
+func (m *UPDATE_MARY_BONUS) GetBonus() int64 {
+	if m != nil {
+		return m.Bonus
+	}
+	return 0
+}
+
+// //////////////////////////////////////////// 游戏2 /////////////////////////////////////////////
+// 请求开始游戏2
+type START_MARY2_REQ struct {
+}
+
+func (m *START_MARY2_REQ) Reset()                    { *m = START_MARY2_REQ{} }
+func (m *START_MARY2_REQ) String() string            { return proto.CompactTextString(m) }
+func (*START_MARY2_REQ) ProtoMessage()               {}
+func (*START_MARY2_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
+
+type START_MARY2_RES struct {
+	Result         []*Mary2_Result `protobuf:"bytes,1,rep,name=Result" json:"Result,omitempty"`
+	MarySpareCount int32           `protobuf:"varint,2,opt,name=MarySpareCount" json:"MarySpareCount,omitempty"`
+}
+
+func (m *START_MARY2_RES) Reset()                    { *m = START_MARY2_RES{} }
+func (m *START_MARY2_RES) String() string            { return proto.CompactTextString(m) }
+func (*START_MARY2_RES) ProtoMessage()               {}
+func (*START_MARY2_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
+
+func (m *START_MARY2_RES) GetResult() []*Mary2_Result {
+	if m != nil {
+		return m.Result
+	}
+	return nil
+}
+
+func (m *START_MARY2_RES) GetMarySpareCount() int32 {
+	if m != nil {
+		return m.MarySpareCount
+	}
+	return 0
+}
+
+type Mary2_Result struct {
+	IndexId int32   `protobuf:"varint,1,opt,name=IndexId" json:"IndexId,omitempty"`
+	MaryId  []int32 `protobuf:"varint,2,rep,packed,name=MaryId" json:"MaryId,omitempty"`
+	Profit1 int32   `protobuf:"varint,3,opt,name=Profit1" json:"Profit1,omitempty"`
+	Profit2 int32   `protobuf:"varint,4,opt,name=Profit2" json:"Profit2,omitempty"`
+}
+
+func (m *Mary2_Result) Reset()                    { *m = Mary2_Result{} }
+func (m *Mary2_Result) String() string            { return proto.CompactTextString(m) }
+func (*Mary2_Result) ProtoMessage()               {}
+func (*Mary2_Result) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
+
+func (m *Mary2_Result) GetIndexId() int32 {
+	if m != nil {
+		return m.IndexId
+	}
+	return 0
+}
+
+func (m *Mary2_Result) GetMaryId() []int32 {
+	if m != nil {
+		return m.MaryId
+	}
+	return nil
+}
+
+func (m *Mary2_Result) GetProfit1() int32 {
+	if m != nil {
+		return m.Profit1
+	}
+	return 0
+}
+
+func (m *Mary2_Result) GetProfit2() int32 {
+	if m != nil {
+		return m.Profit2
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*ENTER_GAME_FRUITMARY_REQ)(nil), "protomsg.ENTER_GAME_FRUITMARY_REQ")
 	proto.RegisterType((*ENTER_GAME_FRUITMARY_RES)(nil), "protomsg.ENTER_GAME_FRUITMARY_RES")
+	proto.RegisterType((*ENTER_GAME_FRUITMARY_RES_FruitRatio)(nil), "protomsg.ENTER_GAME_FRUITMARY_RES.FruitRatio")
 	proto.RegisterType((*LEAVE_GAME_FRUITMARY_REQ)(nil), "protomsg.LEAVE_GAME_FRUITMARY_REQ")
 	proto.RegisterType((*LEAVE_GAME_FRUITMARY_RES)(nil), "protomsg.LEAVE_GAME_FRUITMARY_RES")
+	proto.RegisterType((*START_MARY_REQ)(nil), "protomsg.START_MARY_REQ")
+	proto.RegisterType((*START_MARY_RES)(nil), "protomsg.START_MARY_RES")
+	proto.RegisterType((*FRUITMARYPosition)(nil), "protomsg.FRUITMARY_position")
+	proto.RegisterType((*FRUITMARY_Result)(nil), "protomsg.FRUITMARY_Result")
+	proto.RegisterType((*UPDATE_MARY_BONUS)(nil), "protomsg.UPDATE_MARY_BONUS")
+	proto.RegisterType((*START_MARY2_REQ)(nil), "protomsg.START_MARY2_REQ")
+	proto.RegisterType((*START_MARY2_RES)(nil), "protomsg.START_MARY2_RES")
+	proto.RegisterType((*Mary2_Result)(nil), "protomsg.Mary2_Result")
 	proto.RegisterEnum("protomsg.FRUITMARYMSG", FRUITMARYMSG_name, FRUITMARYMSG_value)
+	proto.RegisterEnum("protomsg.Fruit1ID", Fruit1ID_name, Fruit1ID_value)
+	proto.RegisterEnum("protomsg.Fruit2ID", Fruit2ID_name, Fruit2ID_value)
 }
 
 func init() { proto.RegisterFile("protobuf/fruitmary.proto", fileDescriptor1) }
 
 var fileDescriptor1 = []byte{
-	// 227 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x28, 0x28, 0xca, 0x2f,
-	0xc9, 0x4f, 0x2a, 0x4d, 0xd3, 0x4f, 0x2b, 0x2a, 0xcd, 0x2c, 0xc9, 0x4d, 0x2c, 0xaa, 0xd4, 0x03,
-	0x0b, 0x09, 0x71, 0x80, 0xa9, 0xdc, 0xe2, 0x74, 0xa5, 0x00, 0x2e, 0x09, 0x57, 0xbf, 0x10, 0xd7,
-	0xa0, 0x78, 0x77, 0x47, 0x5f, 0xd7, 0x78, 0xb7, 0xa0, 0x50, 0xcf, 0x10, 0x5f, 0xc7, 0xa0, 0xc8,
-	0xf8, 0x20, 0xd7, 0x40, 0x21, 0x19, 0x2e, 0x4e, 0xc7, 0xe4, 0xe4, 0xfc, 0xd2, 0xbc, 0x12, 0x4f,
-	0x17, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xde, 0x20, 0x84, 0x80, 0x90, 0x18, 0x17, 0x5b, 0x50, 0x7e,
-	0x7e, 0xae, 0xa7, 0x8b, 0x04, 0x13, 0x58, 0x0a, 0xca, 0x53, 0x32, 0xc2, 0x69, 0x62, 0x30, 0x92,
-	0x1e, 0x46, 0x14, 0x3d, 0x01, 0x5c, 0x12, 0x3e, 0xae, 0x8e, 0x61, 0xae, 0x54, 0x75, 0x05, 0x0e,
-	0x13, 0x71, 0xba, 0x42, 0x6b, 0x03, 0x23, 0x17, 0x0f, 0x5c, 0xa5, 0x6f, 0xb0, 0xbb, 0x90, 0x08,
-	0x97, 0x40, 0xa8, 0x9f, 0xb7, 0x9f, 0x7f, 0x38, 0xc2, 0x00, 0x01, 0x06, 0x21, 0x45, 0x2e, 0x69,
-	0xe7, 0xe0, 0x78, 0x5c, 0xa1, 0x26, 0xb0, 0x70, 0x0e, 0x23, 0x48, 0x49, 0xb0, 0x33, 0x2e, 0x25,
-	0xc1, 0x02, 0x8b, 0x20, 0x4a, 0x9c, 0x83, 0xe3, 0x71, 0xf9, 0x5a, 0x60, 0x31, 0xdc, 0x14, 0x5c,
-	0xde, 0x10, 0x58, 0x32, 0x87, 0xd1, 0x89, 0x3f, 0x8a, 0xb7, 0x28, 0x3f, 0xbf, 0x44, 0x1f, 0x16,
-	0x9f, 0x49, 0x6c, 0x60, 0x96, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x01, 0x28, 0x7c, 0xb6, 0xfc,
-	0x01, 0x00, 0x00,
+	// 999 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0x4b, 0x6f, 0xeb, 0x44,
+	0x14, 0xbe, 0xb6, 0xe3, 0xb4, 0x3d, 0xe9, 0x63, 0x3a, 0x94, 0x8b, 0x29, 0x77, 0x51, 0xbc, 0x40,
+	0xa1, 0x12, 0xb9, 0xaa, 0xdb, 0x05, 0xba, 0x62, 0x93, 0x57, 0xab, 0x88, 0xa6, 0xcd, 0x9d, 0x49,
+	0xb8, 0x82, 0x8d, 0xe5, 0x26, 0xd3, 0x60, 0xdd, 0xc4, 0x8e, 0x6c, 0x07, 0x9a, 0xbf, 0x80, 0x84,
+	0xc4, 0x0f, 0xc8, 0x86, 0xc7, 0x82, 0x97, 0x58, 0xf0, 0x87, 0xf8, 0x23, 0x2c, 0xd0, 0x3c, 0x9c,
+	0x71, 0xca, 0x8d, 0xc4, 0x82, 0x55, 0x7c, 0xce, 0x7c, 0x73, 0x1e, 0xdf, 0xf9, 0xce, 0x04, 0x9c,
+	0x59, 0x12, 0x67, 0xf1, 0xdd, 0xfc, 0xfe, 0xf9, 0x7d, 0x32, 0x0f, 0xb3, 0x69, 0x90, 0x2c, 0x6a,
+	0xc2, 0x85, 0xb7, 0xc5, 0xcf, 0x34, 0x1d, 0xbb, 0x3d, 0x70, 0xda, 0x37, 0xfd, 0x36, 0xf1, 0xaf,
+	0xea, 0xdd, 0xb6, 0x7f, 0x49, 0x06, 0x9d, 0x7e, 0xb7, 0x4e, 0x3e, 0xf7, 0x49, 0xfb, 0x25, 0x7e,
+	0x06, 0x3b, 0xf5, 0xe1, 0x30, 0x9e, 0x47, 0x59, 0xa7, 0xe5, 0x18, 0x27, 0x46, 0x75, 0x8f, 0x68,
+	0x07, 0x7e, 0x0a, 0x65, 0x12, 0xc7, 0xd3, 0x4e, 0xcb, 0x31, 0xc5, 0x91, 0xb2, 0xdc, 0x6f, 0x4a,
+	0x1b, 0x43, 0xd2, 0xc2, 0x25, 0xa3, 0x78, 0x89, 0xfb, 0x1b, 0x41, 0x1a, 0x0e, 0x53, 0x11, 0xcc,
+	0x22, 0xca, 0xc2, 0x47, 0x60, 0x37, 0xe2, 0x68, 0x9e, 0x3a, 0x96, 0x70, 0x4b, 0x03, 0x3b, 0xb0,
+	0x75, 0x1d, 0xa4, 0x59, 0x83, 0x65, 0x4e, 0x49, 0xf8, 0x73, 0x13, 0x63, 0x28, 0x35, 0x58, 0x96,
+	0x3a, 0xf6, 0x89, 0x55, 0x2d, 0x11, 0xf1, 0x8d, 0x9b, 0x60, 0x93, 0x20, 0x0b, 0x63, 0xa7, 0x7c,
+	0x62, 0x55, 0x2b, 0xde, 0x47, 0xb5, 0xbc, 0xf9, 0xda, 0xa6, 0x32, 0x6b, 0x02, 0xdf, 0x8e, 0xb2,
+	0x64, 0x41, 0xe4, 0x5d, 0xfc, 0x09, 0xec, 0x76, 0x83, 0x64, 0xe1, 0xf9, 0x84, 0xa5, 0xf3, 0x49,
+	0xe6, 0x6c, 0x9d, 0x18, 0xd5, 0x8a, 0xf7, 0xae, 0x8e, 0x45, 0xfb, 0x75, 0xd2, 0xf7, 0x79, 0x04,
+	0x8f, 0x87, 0x20, 0x15, 0x01, 0x97, 0xe8, 0xe3, 0x6f, 0x0d, 0x80, 0x4b, 0x3e, 0x03, 0x19, 0xcc,
+	0x05, 0x53, 0x31, 0xb0, 0xef, 0x61, 0x1d, 0x42, 0x20, 0xbc, 0x4e, 0x8b, 0x98, 0x92, 0x11, 0x1a,
+	0x46, 0xe3, 0x09, 0x13, 0x8c, 0xd8, 0x44, 0x59, 0xf8, 0x6d, 0x28, 0xd3, 0x60, 0xca, 0x7c, 0x4f,
+	0x50, 0x62, 0x13, 0x9b, 0x5b, 0xde, 0xca, 0x7d, 0x2e, 0x18, 0x51, 0xee, 0xf3, 0x95, 0xfb, 0xc2,
+	0xb1, 0xb5, 0xfb, 0xe2, 0x78, 0x0c, 0xa0, 0x5b, 0xc4, 0x08, 0xac, 0xd7, 0x6c, 0x21, 0xea, 0xb1,
+	0x09, 0xff, 0xe4, 0x94, 0x7d, 0x15, 0x4c, 0xe6, 0x32, 0xf7, 0x7f, 0xa3, 0x4c, 0xb7, 0x47, 0xe4,
+	0xdd, 0x17, 0xe6, 0xc7, 0x06, 0x97, 0xd7, 0x75, 0xbb, 0xfe, 0x59, 0xfb, 0xff, 0x93, 0x97, 0xb7,
+	0x31, 0xe2, 0x46, 0x75, 0xb9, 0x2e, 0xec, 0xeb, 0xf1, 0x88, 0xdc, 0x08, 0x2c, 0xae, 0x1e, 0x0e,
+	0x2b, 0x11, 0xfe, 0xe9, 0xfe, 0x6d, 0x3c, 0x02, 0x51, 0x0e, 0x22, 0x1a, 0x44, 0x58, 0xc6, 0x85,
+	0x47, 0xe7, 0xd3, 0xdb, 0xd1, 0x28, 0xd7, 0x69, 0x6e, 0xe2, 0x0b, 0xd8, 0x92, 0xb3, 0xe6, 0x52,
+	0xe5, 0x32, 0x3b, 0x2e, 0xcc, 0x55, 0x17, 0x29, 0x20, 0x24, 0x87, 0xe2, 0x13, 0xa8, 0xf4, 0xc2,
+	0x61, 0x36, 0x4f, 0xd8, 0x75, 0x98, 0x72, 0x31, 0x5b, 0x55, 0x9b, 0x14, 0x5d, 0x7a, 0x01, 0xec,
+	0xe2, 0x02, 0x1c, 0x81, 0xdd, 0x8d, 0x23, 0xb6, 0x70, 0xca, 0xd2, 0x2b, 0x0c, 0x4e, 0xe8, 0x65,
+	0xc2, 0x58, 0x93, 0x33, 0x28, 0x04, 0x6a, 0x11, 0xed, 0xe0, 0xa7, 0x5c, 0x92, 0xf2, 0x74, 0x5b,
+	0x9e, 0xae, 0x1c, 0xee, 0x05, 0x60, 0x5d, 0xe6, 0x2c, 0x4e, 0xc3, 0x2c, 0x8c, 0x23, 0xbc, 0x0f,
+	0xe6, 0xec, 0x41, 0x09, 0xc3, 0x9c, 0x3d, 0x08, 0x7b, 0xa1, 0x04, 0x69, 0xce, 0x16, 0xee, 0x77,
+	0x06, 0xa0, 0xc7, 0xdd, 0xf1, 0x29, 0x5c, 0x87, 0x11, 0xeb, 0x8c, 0xd4, 0x45, 0x65, 0xf1, 0xa2,
+	0x65, 0x72, 0x79, 0x5f, 0x1a, 0x7c, 0x63, 0x05, 0x9f, 0x52, 0xcd, 0xe2, 0x1b, 0xbf, 0x80, 0x9d,
+	0x9e, 0x2a, 0x21, 0x15, 0xa4, 0x54, 0xbc, 0x67, 0x6f, 0xa2, 0x33, 0xaf, 0x93, 0x68, 0xb8, 0xfb,
+	0x21, 0x1c, 0x0e, 0x7a, 0xad, 0x7a, 0xbf, 0x2d, 0xe7, 0xd8, 0xb8, 0xbd, 0x19, 0x50, 0xcd, 0xa2,
+	0x51, 0x60, 0xd1, 0x3d, 0x84, 0x83, 0xf5, 0xad, 0x7d, 0xe9, 0x86, 0x8f, 0x5d, 0x14, 0xd7, 0xa0,
+	0xac, 0x76, 0xde, 0x10, 0x95, 0x3c, 0xd5, 0x95, 0x14, 0x5f, 0x04, 0xa2, 0x50, 0xf8, 0x03, 0xd8,
+	0xe7, 0x7e, 0x3a, 0x0b, 0x12, 0x56, 0xec, 0xf7, 0x91, 0xd7, 0xcd, 0xd6, 0x5f, 0x14, 0xae, 0xad,
+	0x4e, 0x34, 0x62, 0x0f, 0x2b, 0xde, 0x72, 0x93, 0x13, 0xca, 0x91, 0x9d, 0x91, 0x63, 0x0a, 0x81,
+	0x28, 0x8b, 0xdf, 0xe8, 0x25, 0xf1, 0x7d, 0x98, 0x9d, 0x29, 0xf6, 0x72, 0x53, 0x9f, 0x78, 0xea,
+	0x39, 0xc8, 0xcd, 0xd3, 0x3f, 0x4d, 0xd8, 0x5d, 0x11, 0xd8, 0xa5, 0x57, 0xf8, 0x08, 0xd0, 0xe0,
+	0xe6, 0xd3, 0x9b, 0xdb, 0x57, 0x7a, 0x97, 0xd0, 0x13, 0xfc, 0x3e, 0xbc, 0xd7, 0xa4, 0xfe, 0xa6,
+	0x7f, 0x06, 0xf4, 0xfd, 0xd2, 0xe0, 0x10, 0xda, 0xdc, 0x04, 0xa1, 0xe8, 0x07, 0x09, 0x69, 0x52,
+	0x7f, 0xd3, 0x03, 0x80, 0x7e, 0x5c, 0x45, 0xd9, 0xb4, 0xd1, 0xe8, 0xa7, 0xa5, 0x81, 0xdf, 0x81,
+	0xc3, 0x26, 0xf5, 0xd7, 0x17, 0x18, 0xfd, 0x2c, 0x0f, 0x68, 0x73, 0xfd, 0x80, 0xa2, 0x5f, 0x96,
+	0x06, 0x3e, 0x86, 0x23, 0xda, 0xf4, 0xff, 0x25, 0x03, 0xf4, 0xeb, 0xd2, 0xc0, 0x0e, 0xe0, 0xb5,
+	0x68, 0x62, 0xee, 0xe8, 0x37, 0x79, 0xb2, 0x16, 0x4e, 0x8c, 0x1f, 0xfd, 0xbe, 0x34, 0x4e, 0xff,
+	0x32, 0x60, 0x5b, 0xbc, 0x6f, 0x67, 0x9d, 0x16, 0x46, 0xb0, 0x2b, 0xbf, 0x07, 0xd1, 0xeb, 0x28,
+	0xfe, 0x1a, 0x3d, 0xc1, 0xfb, 0xea, 0x71, 0x3f, 0x7b, 0x15, 0x4e, 0x46, 0xc8, 0xc0, 0x07, 0x50,
+	0x91, 0xb6, 0x90, 0x19, 0x32, 0xf1, 0x21, 0xec, 0x49, 0x07, 0x1d, 0x06, 0x59, 0xc6, 0x12, 0x64,
+	0xe1, 0x3d, 0xbe, 0xab, 0x02, 0x13, 0x24, 0xa8, 0xa4, 0x83, 0x36, 0xbf, 0x64, 0x49, 0xb2, 0x40,
+	0xb6, 0x0e, 0xda, 0x60, 0x93, 0x09, 0x2a, 0xe3, 0xb7, 0xe0, 0x40, 0xda, 0xbd, 0x30, 0x62, 0xc1,
+	0x6c, 0x36, 0x61, 0x68, 0x4b, 0x83, 0xae, 0x92, 0x60, 0x86, 0xb6, 0x75, 0xe6, 0x6e, 0x10, 0x8d,
+	0x63, 0xb4, 0xc3, 0xa7, 0xab, 0x4a, 0x0b, 0x32, 0x96, 0x4c, 0xd9, 0x24, 0x8e, 0x10, 0xe8, 0x6c,
+	0x8d, 0x20, 0x0a, 0xa2, 0x00, 0x55, 0x4e, 0xff, 0xc8, 0x3b, 0xf4, 0x0a, 0x1d, 0x7a, 0xab, 0x0e,
+	0xf3, 0x30, 0x5e, 0x21, 0x8c, 0xb1, 0xca, 0xee, 0x89, 0xec, 0xe6, 0x2a, 0xbb, 0x27, 0xb3, 0x5b,
+	0x3a, 0x90, 0xea, 0x4a, 0xf7, 0xe9, 0xa9, 0xcc, 0xb6, 0xf6, 0xdc, 0x26, 0x41, 0x34, 0x66, 0x85,
+	0x4e, 0xbd, 0x37, 0x75, 0xea, 0x35, 0xe2, 0xe9, 0x1d, 0xda, 0x6e, 0x1c, 0x7c, 0xb1, 0x97, 0xc4,
+	0x71, 0xf6, 0x3c, 0xdf, 0xc5, 0xbb, 0xb2, 0xf8, 0x3a, 0xff, 0x27, 0x00, 0x00, 0xff, 0xff, 0xa8,
+	0xda, 0x10, 0xb9, 0xf5, 0x08, 0x00, 0x00,
 }

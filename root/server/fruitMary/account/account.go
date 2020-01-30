@@ -15,6 +15,10 @@ type (
 		*protomsg.AccountStorageData
 		*protomsg.AccountGameData
 		SessionId int64
+		FeeCount  int32
+		MaryCount int32
+		LastBet   uint64
+		ResultList []*protomsg.Mary2_Result
 	}
 )
 

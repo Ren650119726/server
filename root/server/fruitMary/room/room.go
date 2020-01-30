@@ -21,6 +21,21 @@ type (
 		roomId    uint32
 		accounts  map[uint32]*account.Account // 进房间的所有人
 		Close     bool
+		bonus     int64 // 奖金池
+		killPersent int32
+
+		bets      []uint64
+		basics    int64 // 奖金池 中将的基础金额系数
+		jackpotRate uint64 // 滚动率
+		FruitRatio map[int32]*protomsg.ENTER_GAME_FRUITMARY_RES_FruitRatio
+		mapPictureNodes map[int]*pictureNode
+		jackLimit int64
+		lineConf  [][5]int
+		mainWheel []*wheelNode
+		freeWheel []*wheelNode
+		maryWheel []*wheelNode
+		weight_ratio [][]int32
+		bonus_pattern map[int]int
 	}
 )
 
@@ -35,11 +50,14 @@ func NewRoom(id uint32) *Room {
 func (self *Room) Init(actor *core.Actor) bool {
 	self.owner = actor
 	self.status = utils.NewFSM()
-	self.status.Add(ERoomStatus_GAME.Int32(), &stop{Room: self, s: ERoomStatus_GAME})
+	self.status.Add(ERoomStatus_GAME.Int32(), &game{Room: self, s: ERoomStatus_GAME})
 
 	self.switchStatus(0, ERoomStatus_GAME)
 	// 200ms 更新一次
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*0.2, -1, self.update)
+
+	self.LoadConfig()
+	self.bonus = 0
 	return true
 }
 
@@ -60,6 +78,10 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ(actor,msg,session)
 	case protomsg.FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ.UInt16(): // 请求离开小玛利房间
 		self.FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ(actor,msg,session)
+	case protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16():
+		self.FRUITMARYMSG_CS_START_MARY_REQ(actor,msg,session)
+	case protomsg.FRUITMARYMSG_CS_START_MARY2_REQ.UInt16():
+		self.FRUITMARYMSG_CS_START_MARY2_REQ(actor,msg,session)
 	default:
 		self.status.Handle(actor, msg, session)
 	}
@@ -105,9 +127,13 @@ func (self *Room) enterRoom(accountId uint32){
 	}
 
 	// 通知玩家进入游戏
-	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_ENTER_GAME_FRUITMARY_RES.UInt16(),&protomsg.ENTER_GAME_FRUITMARY_REQ{
-		AccountID: acc.GetAccountId(),
-		RoomID:    self.roomId,
+	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_ENTER_GAME_FRUITMARY_RES.UInt16(),&protomsg.ENTER_GAME_FRUITMARY_RES{
+		RoomID:self.roomId,
+		Basics:self.basics,
+		Bonus:self.bonus,
+		LastBet:int64(acc.LastBet),
+		Bets:self.bets,
+		Ratio:self.FruitRatio,
 	},acc.SessionId)
 
 	// 通知大厅 玩家进入房间
