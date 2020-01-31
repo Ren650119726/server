@@ -78,12 +78,13 @@ func (self *gameMgr)SendGameInfo(session int64) {
 				games[gamenode.gameType].Rooms = make([]*protomsg.RoomInfo,0)
 				games[gamenode.gameType].GameType = gamenode.gameType
 			}
-			minMoney,t,bets := GameMgr.GetBaseInfo(roomid)
+			minMoney,t,order,bets := GameMgr.GetBaseInfo(roomid)
 			games[gamenode.gameType].Rooms = append(games[gamenode.gameType].Rooms,&protomsg.RoomInfo{
 				RoomID:roomid,
 				MinMoney:minMoney,
 				Type:t,
 				Bets:bets,
+				Order:order,
 			})
 		}
 	}
@@ -96,16 +97,16 @@ func (self *gameMgr)SendGameInfo(session int64) {
 	}
 
 }
-func (self *gameMgr)GetBaseInfo(roomID uint32) (minMoney uint64,t uint32, bet []uint64) {
+func (self *gameMgr)GetBaseInfo(roomID uint32) (minMoney uint64,t uint32,order uint32, bet []uint64) {
 	room := self.rooms[roomID]
 	if room == nil {
 		log.Warn("找不到房间:%v",roomID)
-		return 0,0,nil
+		return 0,0,0,nil
 	}
 	game := self.nodes[room.serverID]
 	if game == nil {
 		log.Warn("房间%v 找不到链接:%v",roomID,room.serverID)
-		return 0,0,nil
+		return 0,0,0,nil
 	}
 	switch common.EGameType(game.gameType) {
 	case common.EGameTypeCATCHFISH:
@@ -114,12 +115,13 @@ func (self *gameMgr)GetBaseInfo(roomID uint32) (minMoney uint64,t uint32, bet []
 		t = uint32(config.Get_mary_room_ConfigInt64(int(roomID),"Type"))
 		betstr := config.Get_mary_room_Config(int(roomID),"Bet")
 		bet = utils.SplitConf2ArrUInt64(betstr)
+		order = uint32(config.Get_mary_room_ConfigInt64(int(roomID),"Order"))
 		return
 	default:
 		log.Warn("GetBaseInfo 找不到的游戏类型:%v ",game.gameType)
-		return 0,0,nil
+		return 0,0,0,nil
 	}
-	return 0,0,nil
+	return 0,0,0,nil
 }
 
 
