@@ -96,5 +96,6 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 		}
 		account.AccountMgr.LoginAccount(acc,uint8(loginMSG.LoginType), strClientIP, session)
 	}
-
+	// 发送游戏房间信息
+	GameMgr.SendGameInfo(session)
 }

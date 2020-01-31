@@ -30,7 +30,8 @@ func (self *Hall) SERVERMSG_GH_ROOM_INFO(actor int32, msg []byte, session int64)
 		}
 	}
 	log.Infof("收到 游戏 房间信息 sid:%v rooms:%v ",roomInfos.GetServerID(),roomInfos.GetRoomsID())
-
+	// 发送游戏房间信息
+	GameMgr.SendGameInfo(0)
 }
 
 
