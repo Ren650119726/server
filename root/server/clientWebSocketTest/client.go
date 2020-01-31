@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"root/common"
 	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
@@ -25,8 +26,8 @@ var Clinet_Global *Client
 func (self *Logic) Init(actor *core.Actor) bool {
 	self.owner = actor
 
-	Clinet_Global = NewWebsocketClient("47.108.87.29:41000","/connect")
-	//Clinet_Global = NewWebsocketClient("192.168.2.100:41000","/connect")
+//	Clinet_Global = NewWebsocketClient("47.108.87.29:41000","/connect")
+	Clinet_Global = NewWebsocketClient("192.168.2.100:41000","/connect")
 	Clinet_Global.connect()
 	fmt.Println("connected success :",Clinet_Global.ws.RemoteAddr())
 	go func() {
@@ -102,6 +103,11 @@ func (self *Logic) HandleMessage(actor int32, msg []byte, session int64) bool {
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.SYNC_SERVER_TIME{}).(*protomsg.SYNC_SERVER_TIME)
 		log.Infof(colorized.Blue("同步服务器时间：%+v"),pb)
 
+	case protomsg.MSG_SC_UPDATE_ROOMLIST.UInt16():
+			pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.UPDATE_ROOMLIST{}).(*protomsg.UPDATE_ROOMLIST)
+			for _,v := range pb.GetGames(){
+				log.Infof(colorized.Blue("服务器更新房间 游戏:%v 房间:%+v"),common.EGameType(v.GetGameType()),v.GetRooms())
+			}
 	}
 
 	return false
