@@ -1,9 +1,7 @@
 package logic
 
 import (
-	"io/ioutil"
-	"net/http"
-	"net/url"
+	"fmt"
 	"regexp"
 	"root/common/config"
 	"root/common/tools"
@@ -11,7 +9,6 @@ import (
 	"root/core/log"
 	"root/core/packet"
 	"root/core/utils"
-	"fmt"
 	"root/protomsg"
 	"root/server/hall/account"
 	"root/server/hall/send_tools"
@@ -51,24 +48,24 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 			return
 		}
 	case uint32(types.LOGIN_TYPE_OTHER.Value()):	// 其他平台登陆
-		go func() {
-				resp, err := http.PostForm("http://47.244.119.129:1000/user/userInfo",
-					url.Values{"channelId": {"GAME"}, "userId": {loginMSG.GetUnique()}})
-
-				if err != nil {
-					log.Warnf("三方平台，http 请求错误:%v", err.Error())
-					return
-				}
-
-				defer resp.Body.Close()
-				body, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Warnf("三方平台，read 错误:%v", err.Error())
-					return
-				}
-				log.Infof(string(body))
-		}()
-		return
+		//go func() {
+		//		resp, err := http.PostForm("http://47.244.119.129:1000/user/userInfo",
+		//			url.Values{"channelId": {"GAME"}, "userId": {loginMSG.GetUnique()}})
+		//
+		//		if err != nil {
+		//			log.Warnf("三方平台，http 请求错误:%v", err.Error())
+		//			return
+		//		}
+		//
+		//		defer resp.Body.Close()
+		//		body, err := ioutil.ReadAll(resp.Body)
+		//		if err != nil {
+		//			log.Warnf("三方平台，read 错误:%v", err.Error())
+		//			return
+		//		}
+		//		log.Infof(string(body))
+		//}()
+		//return
 	default:
 		log.Panicf("不支持的登陆类型:%v", loginMSG.LoginType)
 	}

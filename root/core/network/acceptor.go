@@ -100,7 +100,7 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 		self.curr_sessionid++
 		ws.PayloadType = websocket.BinaryFrame // 此行解决前端收到报错:Could not decode a text frame as UTF-8
 		session := NewSession(self.curr_sessionid, ws, self.offchan, self.callback, 30, 30)
-		log.Infof("new websocket connect:%v", ws.LocalAddr())
+		//log.Infof("new websocket connect:%v", ws.LocalAddr())
 		if session != nil {
 			self.sessions.m[self.curr_sessionid] = session
 			session.DoWork()
