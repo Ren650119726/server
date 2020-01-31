@@ -72,7 +72,7 @@ func (self *gameMgr)SendGameInfo(session int64) {
 	games := make(map[uint32]*protomsg.GameInfo)
 	for roomid,room := range GameMgr.rooms{
 		gamenode,e := GameMgr.nodes[room.serverID]
-		if e{
+		if !e{
 			if games[gamenode.gameType].Rooms == nil {
 				games[gamenode.gameType].Rooms = make([]*protomsg.RoomInfo,0)
 				games[gamenode.gameType].GameType = gamenode.gameType
