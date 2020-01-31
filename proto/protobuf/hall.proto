@@ -38,6 +38,7 @@ enum MSG {
 	SC_UPDATE_MONEY     = 10055;  // 通知更新金币
 	SC_EMAIL_NEW        = 10056;  // 通知获得新邮件
 	SC_BROADCAST_MSG    = 10057;  // 广播跑马灯
+	SC_UPDATE_ROOMLIST  = 10058;  // 通知更新房间列表
 }
 
 // 请求同步服务器时间 10002
@@ -52,7 +53,7 @@ message KICK_OUT_HALL {
 // 客户端请求登陆 10010 
 message LOGIN_HALL_REQ {
 	uint32 LoginType = 1; // 登陆类型 1 游客(设备唯一码) 2 手机号
-	uint32 OSType    = 2; // 登陆类型 1 windows 2 ios 3 android
+	uint32 OSType    = 2; // 登陆类型 1 windows 2 ios 3 android 4 web
 	string Unique    = 3; // 登陆码 设备唯一码
 	string Sign      = 4; // 签名
 }
@@ -74,12 +75,12 @@ message SAFEMONEY_OPERATE_RES {
 	uint32 ret = 1; // 0、操作成功 1、保险箱钱不够取 2、身上钱不够存
 }
 
-// 客户端请求登陆 10016 
+// 玩家绑定手机号 10016
 message BIND_PHONE_REQ {
 	string Phone = 1;
 }
 
-// 客户端请求登陆 10017 
+// 玩家绑定手机号 10017
 message BIND_PHONE_RES {
 	uint32 Ret = 1; 	// 0、成功 1、已经绑定过，不能重复绑定 2、手机号格式不对
 	
@@ -144,5 +145,10 @@ message EMAIL_NEW {
 // 通知客户端跑马灯 10057 
 message BROADCAST_MSG {
 	string content = 1;
+}
+
+// 通知更新房间列表 10058
+message UPDATE_ROOMLIST {
+	map<uint32, GameInfo> games = 1;// key:游戏类型 1.捕鱼达人 2.水果小玛丽 
 }
 

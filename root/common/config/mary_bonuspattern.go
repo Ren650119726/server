@@ -37,6 +37,9 @@ func Load_mary_bonuspattern_Conf() {
 }
 
 func Get_mary_bonuspattern_Config(ID int, key string) string {
+	lock.Lock()
+	defer lock.Unlock()
+
 	roomConfig := Global_mary_bonuspattern_config[ID]
 	if roomConfig == nil {
 		log.Panicf("找不到房间配置Global_mary_pattern_config[%v]", ID)
@@ -50,6 +53,8 @@ func Get_mary_bonuspattern_Config(ID int, key string) string {
 		switch val.(type) {
 		case string:
 			return val.(string)
+		case float64:
+			return strconv.Itoa(int(val.(float64)))
 		default:
 			return strconv.Itoa(val.(int))
 		}

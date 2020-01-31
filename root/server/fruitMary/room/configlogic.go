@@ -80,7 +80,7 @@ func initWheel() (main,free,mary []*wheelNode ) {
 	main = make([]*wheelNode, 0)
 	free = make([]*wheelNode, 0)
 	mary =  make([]*wheelNode, 0)
-	for id,_ := range config.Global_mary_lines_config {
+	for id,_ := range config.Global_mary_real_config {
 		node := new(wheelNode)
 		node.cfPosition = config.Get_mary_real_ConfigInt(id,"Site")
 		if node.cfPosition > 0 {

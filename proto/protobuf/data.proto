@@ -37,3 +37,18 @@ message Email {
 	int64 SendTime   = 5; // 发送时间
 	uint32 IsRead    = 6; // 0 未读，1 已读取
 }
+
+message RoomInfo
+{
+	uint32 RoomID   		= 1;
+    uint64 MinMoney 		= 2; // 最低金币
+	repeated uint64 Bets    = 3; // 可选押注值
+	uint32 type     		= 4; // 房间游戏类型(1.初级 2.中级 3.高级)
+	uint32 Order            = 5; // 房间序列123
+}
+
+message GameInfo
+{
+	uint32 GameType = 1;
+	repeated RoomInfo rooms = 2;
+}

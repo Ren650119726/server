@@ -37,9 +37,12 @@ func Load_mary_real_Conf() {
 }
 
 func Get_mary_real_Config(ID int, key string) string {
+	lock.Lock()
+	defer lock.Unlock()
+
 	roomConfig := Global_mary_real_config[ID]
 	if roomConfig == nil {
-		log.Panicf("找不到房间配置Global_mary_real_config[%v]", ID)
+		log.Panicf("找不到配置Global_mary_real_config[%v]", ID)
 	}
 
 	m := roomConfig.(map[string]interface{})
@@ -50,6 +53,8 @@ func Get_mary_real_Config(ID int, key string) string {
 		switch val.(type) {
 		case string:
 			return val.(string)
+		case float64:
+			return strconv.Itoa(int(val.(float64)))
 		default:
 			return strconv.Itoa(val.(int))
 		}

@@ -2,9 +2,14 @@ package logic
 
 import (
 	"root/common"
+	"root/common/config"
 	"root/core"
 	"root/core/log"
+	"root/core/utils"
+	"root/protomsg"
+	"root/server/hall/account"
 	"root/server/hall/event"
+	"root/server/hall/send_tools"
 )
 
 var GameMgr = newGameMgr()
@@ -61,6 +66,59 @@ func (self *gameMgr)GameDisconnect(session int64)  {
 			break
 		}
 	}
+}
+
+func (self *gameMgr)SendGameInfo(session int64) {
+	games := make(map[uint32]*protomsg.GameInfo)
+	for roomid,room := range GameMgr.rooms{
+		gamenode,e := GameMgr.nodes[room.serverID]
+		if e{
+			if games[gamenode.gameType].Rooms == nil {
+				games[gamenode.gameType].Rooms = make([]*protomsg.RoomInfo,0)
+				games[gamenode.gameType].GameType = gamenode.gameType
+			}
+			minMoney,t,bets := GameMgr.GetBaseInfo(roomid)
+			games[gamenode.gameType].Rooms = append(games[gamenode.gameType].Rooms,&protomsg.RoomInfo{
+				RoomID:roomid,
+				MinMoney:minMoney,
+				Type:t,
+				Bets:bets,
+			})
+		}
+	}
+
+	if session != 0{
+		// 发送房间列表
+		send_tools.Send2Account(protomsg.MSG_SC_UPDATE_ROOMLIST.UInt16(),&protomsg.UPDATE_ROOMLIST{Games:games},session)
+	}else {
+		account.AccountMgr.SendBroadcast(protomsg.MSG_SC_UPDATE_ROOMLIST.UInt16(),&protomsg.UPDATE_ROOMLIST{Games:games},1)
+	}
+
+}
+func (self *gameMgr)GetBaseInfo(roomID uint32) (minMoney uint64,t uint32, bet []uint64) {
+	room := self.rooms[roomID]
+	if room == nil {
+		log.Warn("找不到房间:%v",roomID)
+		return 0,0,nil
+	}
+	game := self.nodes[room.serverID]
+	if game == nil {
+		log.Warn("房间%v 找不到链接:%v",roomID,room.serverID)
+		return 0,0,nil
+	}
+	switch common.EGameType(game.gameType) {
+	case common.EGameTypeCATCHFISH:
+	case common.EGameTypeFRUITMARY:
+		minMoney = uint64(config.Get_mary_room_ConfigInt64(int(roomID),"GlodNeed"))
+		t = uint32(config.Get_mary_room_ConfigInt64(int(roomID),"Type"))
+		betstr := config.Get_mary_room_Config(int(roomID),"Bet")
+		bet = utils.SplitConf2ArrUInt64(betstr)
+		return
+	default:
+		log.Warn("GetBaseInfo 找不到的游戏类型:%v ",game.gameType)
+		return 0,0,nil
+	}
+	return 0,0,nil
 }
 
 

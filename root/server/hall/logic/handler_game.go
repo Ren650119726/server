@@ -15,6 +15,9 @@ func (self *Hall) SERVERMSG_GH_GAME_CONNECT_HALL(actor int32, msg []byte, sessio
 }
 
 // 游戏通知大厅，房间信息
+/*
+ 	房间由游戏主动创建，通知大厅展示
+ */
 func (self *Hall) SERVERMSG_GH_ROOM_INFO(actor int32, msg []byte, session int64) {
 	roomInfos := packet.PBUnmarshal(msg,&inner.ROOM_INFO{}).(*inner.ROOM_INFO)
 	for _,id := range roomInfos.GetRoomsID(){
@@ -27,6 +30,7 @@ func (self *Hall) SERVERMSG_GH_ROOM_INFO(actor int32, msg []byte, session int64)
 		}
 	}
 	log.Infof("收到 游戏 房间信息 sid:%v rooms:%v ",roomInfos.GetServerID(),roomInfos.GetRoomsID())
+
 }
 
 
