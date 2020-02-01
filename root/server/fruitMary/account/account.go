@@ -55,7 +55,7 @@ func (self *Account) AddMoney(iValue int64, index uint8, operate common.EOperate
 			Time:        strTime,
 			RoomID:      self.GetRoomID(),
 		}
-		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange)
+		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange) // fruitMary
 		db.HSet(rediskey.PlayerId(uint32(self.AccountId)), "Money", self.Money)
 	}
 	self.Money = uint64(money)

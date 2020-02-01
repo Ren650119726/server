@@ -202,9 +202,9 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 
 	//---------------------------- 游戏相关 ---------------------------------------------
 	case inner.SERVERMSG_GH_SERVERFEE_LOG.UInt16(): // 服务费日志
-		self.SERVERMSG_GH_SERVERFEE_LOG(actor, msg, session)
+		self.SERVERMSG_GH_SERVERFEE_LOG(actor, pack.ReadBytes(), session)
 	case inner.SERVERMSG_GH_MONEYCHANGE.UInt16(): // 金币改变日志
-		self.SERVERMSG_GH_MONEYCHANGE(actor, msg, session)
+		self.SERVERMSG_GH_MONEYCHANGE(actor, pack.ReadBytes(), session)
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到测试网络消息 SessionID:%v", session)

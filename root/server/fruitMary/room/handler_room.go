@@ -105,16 +105,16 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 			break
 		}
 	}
-		log.Debugf("结果->>>>>>> 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
-			resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
-
 	if msgBetNum < uint64(self.jackLimit){
 		reward = 0
 	}
 
 	acc.MaryCount = int32(maryCount)
 	acc.AddMoney(reward+sumOdds*int64(BetNum/9),0, common.EOperateType_FRUIT_MARY_WIN)
-	//self.UpdateUserScoreFunc(user.UserID, , 0)
+
+	log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
+		acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
+
 	sub := self.bonus - reward
 	if sub < 0{
 		self.bonus = 0

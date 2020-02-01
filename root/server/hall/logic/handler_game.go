@@ -46,5 +46,5 @@ func (self *Hall) SERVERMSG_GH_MONEYCHANGE(actor int32, msg []byte, session int6
 	data := packet.PBUnmarshal(msg,&inner.MONEYCHANGE{}).(*inner.MONEYCHANGE)
 	logcache.LogCache.AddMoneyChangeLog(data) // 游戏通知回存金币改变日志
 	acc := account.AccountMgr.GetAccountByIDAssert(data.GetAccountID())
-	acc.Money = uint64(data.GetValue() + data.GetChangeValue())
+	acc.Money = uint64(data.GetValue())
 }
