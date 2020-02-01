@@ -12,6 +12,7 @@ import (
 func init() {
 	core.Cmd.Regist("login", login, true)
 	core.Cmd.Regist("time", time, true)
+	core.Cmd.Regist("engame", engame, true)
 
 }
 
@@ -50,4 +51,7 @@ func login(s []string) {
 
 func time(s []string) {
 	Send2Hall(protomsg.MSG_CS_SYNC_SERVER_TIME.UInt16(),nil)
+}
+func engame(s []string) {
+	Send2Hall(protomsg.MSG_CS_ENTER_ROOM_REQ.UInt16(),&protomsg.ENTER_ROOM_REQ{RoomID:1001})
 }

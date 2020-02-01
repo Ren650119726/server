@@ -42,12 +42,12 @@ func (self *Hall) MSG_CS_ENTER_ROOM_REQ(actor int32, msg []byte, session int64) 
 // 游戏通知大厅，可以让玩家进入房间
 func (self *Hall) SERVERMSG_GH_PLAYER_DATA_RES(actor int32, msg []byte, session int64) {
 	pbMsg := packet.PBUnmarshal(msg,&inner.PLAYER_DATA_RES{}).(*inner.PLAYER_DATA_RES)
-	acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
+	acc := account.AccountMgr.GetAccountByIDAssert(pbMsg.GetAccountID())
 	if acc.GetRoomID() != 0{
 		log.Warnf("玩家:%v已经在房间:[%v]内，不能进入新房间:[%v]",acc.GetAccountId(),acc.GetRoomID(),pbMsg.GetRoomID())
 		return
 	}
-	send_tools.Send2Account(protomsg.MSG_SC_ENTER_ROOM_RES.UInt16(),&protomsg.ENTER_ROOM_RES{Ret:2,RoomID:pbMsg.GetRoomID()},session)
+	send_tools.Send2Account(protomsg.MSG_SC_ENTER_ROOM_RES.UInt16(),&protomsg.ENTER_ROOM_RES{Ret:0,RoomID:pbMsg.GetRoomID()},acc.SessionId)
 	log.Infof("通知玩家:%v 进入房间:%v",acc.GetAccountId(),pbMsg.GetRoomID())
 }
 
