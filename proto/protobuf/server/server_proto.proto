@@ -7,7 +7,8 @@ import "protobuf/data.proto";
 enum SERVERMSG {
 	UNKNOW = 0;
 	HD_HELLO_DB     	 = 100; // 大厅向db建立链接
-	SS_TEST_NETWORK      = 101; // 網絡測試
+	SS_TEST_NETWORK      = 101; // 网络测试
+	SS_CLOSE_SERVER      = 102; // 关闭服务器消息
 	HD_ALL_DATA          = 105; // 开服获取所有数据
 	DH_ALL_ACCOUNT_RESP  = 106; // db返回所有 账号 给大厅
 	DH_ALL_EMAIL_RESP    = 107; // db返回所有 邮件 给大厅

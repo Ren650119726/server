@@ -22,6 +22,7 @@ type (
 	FruitMary struct {
 		owner     *core.Actor
 		init bool // 是否是第一次启动程序
+		close bool // 关服
 	}
 )
 
@@ -79,8 +80,8 @@ func (self *FruitMary) StartService() {
 	customer = append(customer, self.owner)
 	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""),
 		beego.AppConfig.DefaultString(core.Appname+"::listenHttp", ""))
-	child := core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 10000))
-	core.CoreRegisteActor(child)
+	room.ServerActor = core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 10000))
+	core.CoreRegisteActor(room.ServerActor)
 }
 
 func (self *FruitMary) Stop() {
@@ -88,8 +89,19 @@ func (self *FruitMary) Stop() {
 }
 
 func (self *FruitMary) HandleMessage(actor int32, msg []byte, session int64) bool {
+	if self.close{
+		return true
+	}
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
+	case inner.SERVERMSG_SS_CLOSE_SERVER.UInt16():
+		self.close = true
+		self.owner.AddTimer(1000,-1, func(dt int64) {
+			if room.RoomMgr.RoomCount() == 0{
+				log.Infof("所有房间关闭完成，可以关闭服务器!")
+				self.owner.Suspend()
+			}
+		})
 	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():	// 心跳
 		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(),nil, session)
 	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
@@ -102,16 +114,15 @@ func (self *FruitMary) HandleMessage(actor int32, msg []byte, session int64) boo
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到来自大厅的测试网络消息 SessionID:%v", session)
-		req := packet.NewPacket(nil)
-		req.SetMsgID(inner.SERVERMSG_SS_TEST_NETWORK.UInt16())
-		send_tools.Send2Hall(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(),nil)
 	default: // 客户端游戏消息，统一发送给房间处理
 		acc := account.AccountMgr.GetAccountBySessionID(session)
 		if acc == nil {
 			log.Warnf("找不到session 关联的玩家 session:%v msgId：%v", session, pack.GetMsgID())
 			return false
 		}
-		core.CoreSend(self.owner.Id, int32(acc.RoomID), msg, session)
+		if room.RoomMgr.Exist(acc.RoomID){
+			core.CoreSend(self.owner.Id, int32(acc.RoomID), msg, session)
+		}
 		break
 	}
 	return true

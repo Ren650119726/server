@@ -48,9 +48,6 @@ func (self *roomMgr) SendRoomInfo2Hall() {
 		RoomsID:    rooms,
 	})
 }
-func (self *roomMgr) SaveWaterLine() {
-}
-
 func (self *roomMgr) CreateRoom(id uint32)  {
 	room := NewRoom(id)
 	self.rooms[id] = id
@@ -64,4 +61,9 @@ func (self *roomMgr) CreateRoom(id uint32)  {
 
 func (self *roomMgr) RoomCount() int {
 	return len(self.rooms)
+}
+
+func (self *roomMgr) Exist(roomId uint32) bool {
+	_,e := self.rooms[roomId]
+	return e
 }

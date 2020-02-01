@@ -34,7 +34,6 @@ func (self *Hall) SERVERMSG_GH_ROOM_INFO(actor int32, msg []byte, session int64)
 	GameMgr.SendGameInfo(0)
 }
 
-
 // 游戏服务费
 func (self *Hall) SERVERMSG_GH_SERVERFEE_LOG(actor int32, msg []byte, session int64) {
 	data := packet.PBUnmarshal(msg,&inner.SERVERFEE_LOG{}).(*inner.SERVERFEE_LOG)

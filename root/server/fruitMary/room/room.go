@@ -62,16 +62,24 @@ func (self *Room) Init(actor *core.Actor) bool {
 }
 
 func (self *Room) Stop() {
-	RoomMgr.SaveWaterLine()
+	log.Infof("房间:%v 关闭，回存房间水池:%v ",self.roomId,self.bonus)
 }
 func (self *Room) close() {
+	log.Infof("房间:%v 正在关闭",self.roomId)
+	roomId := self.roomId
+	core.LocalCoreSend(0,common.EActorType_MAIN.Int32(), func() {
+		delete(RoomMgr.rooms,roomId)
+	})
 	self.Close = true
+	self.owner.Suspend()
 }
 
 // 消息处理
 func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
+	case inner.SERVERMSG_SS_CLOSE_SERVER.UInt16(): //关服通知
+		self.close()
 	case utils.ID_DISCONNECT: // 有连接断开
 		self.Disconnect(session)
 	case protomsg.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ.UInt16(): // 请求进入小玛利房间
