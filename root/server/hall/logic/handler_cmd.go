@@ -276,3 +276,6 @@ func CMD_Save(s []string) {
 	account.AccountMgr.ArchiveAll()
 	log.Infof("====== Hall 命令执行成功 ======")
 }
+func (self *Hall)CMD_Stop(s []string) {
+	self.ListenActor.Suspend()
+}

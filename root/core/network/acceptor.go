@@ -14,6 +14,7 @@ import (
 /* TCP 接受器 */
 type Acceptor struct {
 	listener *net.TCPListener // 监听socket
+	httpser  *http.Server
 	offchan  chan int64       // 断线的channel
 	newchan  chan net.Conn    // 新的链接channel
 	sessions struct {
@@ -68,6 +69,7 @@ func (self *Acceptor) Stop() {
 	defer self.sessions.RUnlock()
 
 	self.listener.Close()
+	self.httpser.Shutdown(nil)
 
 	for _, sess := range self.sessions.m {
 		sess.Kick()
@@ -95,6 +97,8 @@ func (self *Acceptor) DoListen() {
 }
 
 func (self *Acceptor) DoListenHttp(httpAddr string) {
+	self.httpser = &http.Server{Addr:httpAddr}
+
 	http.Handle("/connect", websocket.Handler(func(ws *websocket.Conn) {
 		self.sessions.Lock()
 		self.curr_sessionid++
@@ -113,17 +117,9 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 		}
 	}))
 	log.Infof("监听websocket:%v",httpAddr)
-	if err := http.ListenAndServe(httpAddr,nil); err != nil {
-		log.Panicf("http监听失败: err:%v ",err.Error())
+	if err := self.httpser.ListenAndServe(); err != nil {
+		log.Infof("http监听失败: err:%v ",err.Error())
 	}
-}
-// 监听go程
-func (self *Acceptor) DoListenWebSocket() {
-	core.Gwg.Add(1)
-	defer func() {
-		core.Gwg.Done()
-	}()
-
 }
 
 /* 检查session */

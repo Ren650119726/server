@@ -63,6 +63,7 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	core.Cmd.Regist("get-robot-id", CMD_Get_Robot_ID, true)
 	core.Cmd.Regist("todb", CMD_ToDB, true)
 	core.Cmd.Regist("save", CMD_Save, true)
+	core.Cmd.Regist("stop", self.CMD_Stop, true)
 	return true
 }
 
