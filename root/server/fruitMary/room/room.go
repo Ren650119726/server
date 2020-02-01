@@ -75,13 +75,13 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 	case utils.ID_DISCONNECT: // 有连接断开
 		self.Disconnect(session)
 	case protomsg.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ.UInt16(): // 请求进入小玛利房间
-		self.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ(actor,msg,session)
+		self.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ(actor,pack.ReadBytes(),session)
 	case protomsg.FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ.UInt16(): // 请求离开小玛利房间
-		self.FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ(actor,msg,session)
+		self.FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ(actor,pack.ReadBytes(),session)
 	case protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16():
-		self.FRUITMARYMSG_CS_START_MARY_REQ(actor,msg,session)
+		self.FRUITMARYMSG_CS_START_MARY_REQ(actor,pack.ReadBytes(),session)
 	case protomsg.FRUITMARYMSG_CS_START_MARY2_REQ.UInt16():
-		self.FRUITMARYMSG_CS_START_MARY2_REQ(actor,msg,session)
+		self.FRUITMARYMSG_CS_START_MARY2_REQ(actor,pack.ReadBytes(),session)
 	default:
 		self.status.Handle(actor, msg, session)
 	}
@@ -121,9 +121,9 @@ func (self *Room) enterRoom(accountId uint32){
 	self.accounts[accountId] = acc
 
 	if acc.Robot == 0 {
-		log.Infof(colorized.Cyan("-> In roomid:%v Player:%v accid:%v name:%v money:%v %v %v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), ERoomStatus(self.status.State()).String(), acc.SessionId)
+		log.Infof(colorized.Cyan("-> In roomid:%v Player:%v name:%v money:%v %v %v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), ERoomStatus(self.status.State()).String(), acc.SessionId)
 	} else {
-		log.Infof(colorized.Cyan("-> In roomid:%v Robot:%v accid:%v name:%v money:%v %v %v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), ERoomStatus(self.status.State()).String(), acc.SessionId)
+		log.Infof(colorized.Cyan("-> In roomid:%v Robot:%v name:%v money:%v %v %v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), ERoomStatus(self.status.State()).String(), acc.SessionId)
 	}
 
 	// 通知玩家进入游戏
@@ -144,6 +144,10 @@ func (self *Room) enterRoom(accountId uint32){
 	return
 }
 
+func (self *Room)canleave(accountId uint32) bool  {
+	return true
+}
+
 // 离开房间
 func (self *Room) leaveRoom(accountId uint32) {
 	acc := self.accounts[accountId]
@@ -151,10 +155,6 @@ func (self *Room) leaveRoom(accountId uint32) {
 		log.Debugf("离开房间找不到玩家:%v", accountId)
 		return
 	}
-
-	core.LocalCoreSend(self.owner.Id, common.EActorType_MAIN.Int32(), func() {
-		account.AccountMgr.DisconnectAccount(acc)
-	})
 
 	delete(self.accounts, accountId)
 
@@ -164,9 +164,8 @@ func (self *Room) leaveRoom(accountId uint32) {
 		log.Infof(colorized.Cyan("-> Out roomid:%v Robot:%v name:%v money:%v %v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.SessionId)
 	}
 
-	// 通知玩家 离开房间
-	send_tools.Send2Hall(protomsg.FRUITMARYMSG_SC_LEAVE_GAME_FRUITMARY_RES.UInt16(),&protomsg.LEAVE_GAME_FRUITMARY_RES{
-		RoomID:    self.roomId,
+	core.LocalCoreSend(self.owner.Id, common.EActorType_MAIN.Int32(), func() {
+		account.AccountMgr.DisconnectAccount(acc)
 	})
 
 	// 通知大厅 玩家离开房间

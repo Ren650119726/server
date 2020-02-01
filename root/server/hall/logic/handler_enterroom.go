@@ -67,11 +67,10 @@ func (self *Hall) SERVERMSG_GH_PLAYER_ENTER_ROOM(actor int32, msg []byte, sessio
 func (self *Hall) SERVERMSG_GH_PLAYER_LEAVE_ROOM(actor int32, msg []byte, session int64) {
 	pbMsg := packet.PBUnmarshal(msg,&inner.PLAYER_LEAVE_ROOM{}).(*inner.PLAYER_LEAVE_ROOM)
 	acc := account.AccountMgr.GetAccountByIDAssert(pbMsg.GetAccountID())
-	if acc.GetRoomID() != 0{
-		log.Warnf("玩家:%v已经在房间:[%v]内，不能进入新房间:[%v]",acc.GetAccountId(),acc.GetRoomID(),pbMsg.GetRoomID())
+	if acc.GetRoomID() == 0{
+		log.Warnf("房间:%v 通知大厅玩家:%v 退出房间，但是玩家不在任何房间内！！！需要排查异常情况",pbMsg.GetRoomID(),acc.GetAccountId())
 		return
 	}
 	log.Infof("玩家%v 离开房间:%v",acc.GetAccountId(),pbMsg.GetRoomID())
 	acc.RoomID = 0
-
 }

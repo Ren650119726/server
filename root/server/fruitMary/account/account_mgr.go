@@ -33,6 +33,14 @@ func (self *accountMgr) SetAccountByID(acc *Account) {
 	defer self.Lock.Unlock()
 	self.accountbyID[acc.GetAccountId()] = acc
 }
+func (self *accountMgr) SetAccountBySession(acc *Account,session int64) {
+	self.Lock.Lock()
+	defer self.Lock.Unlock()
+	if _,e := self.accountbySessionID[acc.SessionId];e{
+		delete(self.accountbySessionID,acc.SessionId)
+	}
+	self.accountbySessionID[session] = acc
+}
 
 func (self *accountMgr) GetAccountByIDAssert(id uint32) *Account {
 	self.Lock.Lock()

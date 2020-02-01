@@ -21,7 +21,14 @@ func (self *Room) FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ(actor int32, msg []by
 // 玩家离开
 func (self *Room) FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ(actor int32, msg []byte, session int64) {
 	enterPB := packet.PBUnmarshal(msg,&protomsg.LEAVE_GAME_FRUITMARY_REQ{}).(*protomsg.LEAVE_GAME_FRUITMARY_REQ)
-	self.leaveRoom(enterPB.GetAccountID())
+	ret := uint32(1)
+	if self.canleave(enterPB.GetAccountID()){
+		ret = 0
+	}
+	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_LEAVE_GAME_FRUITMARY_RES.UInt16(),&protomsg.LEAVE_GAME_FRUITMARY_RES{
+		Ret:ret,
+		RoomID:    self.roomId,
+	},session)
 }
 
 // 玩家请求开始游戏
@@ -69,7 +76,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		a := BetNum * self.jackpotRate
 		self.bonus += int64(a)
 		// todo 记录水池
-		//self.UpdateUserScoreFunc(user.UserID, int64(-(BetNum)), 0)
+		acc.AddMoney(int64(-(BetNum)),0, common.EOperateType_FRUIT_MARY_BET)
 	}
 	resluts := make([]*protomsg.FRUITMARY_Result, 0)
 	pArr := make([]int32, 0)

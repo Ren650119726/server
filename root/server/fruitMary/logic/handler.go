@@ -6,7 +6,6 @@ import (
 	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/fruitMary/account"
-	"root/server/fruitMary/room"
 	"root/server/fruitMary/send_tools"
 )
 
@@ -33,6 +32,7 @@ func (self *FruitMary) FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ(actor int32, dat
 	enterPB := packet.PBUnmarshal(data,&protomsg.ENTER_GAME_FRUITMARY_REQ{}).(*protomsg.ENTER_GAME_FRUITMARY_REQ)
 	acc := account.AccountMgr.GetAccountByIDAssert(enterPB.GetAccountID())
 	acc.SessionId = session
+	account.AccountMgr.SetAccountBySession(acc,session)
 
 	actorId := int32(enterPB.GetRoomID())
 	if actorId == 0 {
@@ -42,19 +42,4 @@ func (self *FruitMary) FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ(actor int32, dat
 
 	acc.RoomID = enterPB.GetRoomID()
 	return int32(enterPB.GetRoomID())
-}
-
-func (self *FruitMary) Old_MSGID_ENTER_GAME(actor int32, msg []byte, session int64) {
-	pack := packet.NewPacket(msg)
-	accountId := pack.ReadUInt32()
-	roomId := pack.ReadUInt32()
-	if room.RoomMgr.IsMaintenance == true {
-		return
-	}
-
-	b := account.AccountMgr.EnterAccount(accountId, roomId, session)
-
-	if b {
-
-	}
 }

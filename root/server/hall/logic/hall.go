@@ -102,8 +102,8 @@ func (self *Hall) Stop() {
 }
 
 func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
-	log.Infof("msg:%v", msg)
 	pack := packet.NewPacket(msg)
+	log.Infof("收到消息:%v ", pack.GetMsgID())
 	switch pack.GetMsgID() {
 	case utils.ID_DISCONNECT: // 客户端或游戏进程断开连接
 		self.MSGID_CLOSE_CONNECT(actor, msg, session)

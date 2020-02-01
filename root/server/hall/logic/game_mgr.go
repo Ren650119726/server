@@ -57,10 +57,24 @@ func (self *gameMgr)GameDisconnect(session int64)  {
 	for sid,node := range self.nodes{
 		if node.session == session{
 			log.Infof("服务器断开连接 sid:%v session:%v ",sid, session)
+
+			// 检索属于该服务器的所有房间，关闭
+			roomIds := []uint32{}
 			for roomId,room := range self.rooms{
 				if room.serverID == sid{
+					roomIds = append(roomIds, roomId)
 					log.Infof("清除房间:%v", roomId)
 					delete(self.rooms,roomId)
+				}
+			}
+
+			for _,acc := range account.AccountMgr.AccountbyID{
+				// 玩家在清楚的房间内，设置玩家房间为0
+				for _,rid := range roomIds{
+					if acc.RoomID == rid{
+						acc.RoomID = 0
+						break
+					}
 				}
 			}
 			break

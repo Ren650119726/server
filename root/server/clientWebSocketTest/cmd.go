@@ -7,12 +7,14 @@ import (
 	"root/core/log"
 	"root/core/packet"
 	"root/protomsg"
+	"strconv"
 )
 
 func init() {
 	core.Cmd.Regist("login", login, true)
 	core.Cmd.Regist("time", time, true)
 	core.Cmd.Regist("engame", engame, true)
+	core.Cmd.Regist("start1", start1, true)
 
 }
 
@@ -31,7 +33,7 @@ func Send2Hall(msgId uint16, pb proto.Message) {
 	req := packet.NewPacket(nil)
 	req.SetMsgID(msgId)
 	req.WriteBytes(bytes)
-	Clinet_Global.SendMessage(req.GetData())
+	client_Global.SendMessage(req.GetData())
 }
 
 func login(s []string) {
@@ -52,6 +54,17 @@ func login(s []string) {
 func time(s []string) {
 	Send2Hall(protomsg.MSG_CS_SYNC_SERVER_TIME.UInt16(),nil)
 }
+
 func engame(s []string) {
 	Send2Hall(protomsg.MSG_CS_ENTER_ROOM_REQ.UInt16(),&protomsg.ENTER_ROOM_REQ{RoomID:1001})
+}
+
+func start1(s []string) {
+	if len(s) < 1 {
+		fmt.Printf("× 参数错误 \r\n")
+		return
+	}
+	str := s[0]
+	bet,_ := strconv.Atoi(str)
+	Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(bet)})
 }

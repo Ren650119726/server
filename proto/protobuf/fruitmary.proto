@@ -6,9 +6,9 @@ option go_package = "root/protomsg";
 enum FRUITMARYMSG {
 	UNKNOW_FRUITMARY = 0;
 	CS_ENTER_GAME_FRUITMARY_REQ = 20001; // 玩家请求进入房间
-	SC_ENTER_GAME_FRUITMARY_RES = 20002; 
+	SC_ENTER_GAME_FRUITMARY_RES = 20002;
 	CS_LEAVE_GAME_FRUITMARY_REQ = 20003; // 玩家请求退出房间
-	SC_LEAVE_GAME_FRUITMARY_RES = 20004; 
+	SC_LEAVE_GAME_FRUITMARY_RES = 20004;
 	
 	CS_START_MARY_REQ           = 20008;// 请求开始游戏1
 	SC_START_MARY_RES           = 20009;
@@ -82,7 +82,8 @@ message LEAVE_GAME_FRUITMARY_REQ {
 }
 
 message LEAVE_GAME_FRUITMARY_RES {
-	uint32 RoomID = 1; // 房间ID
+    uint32 Ret    = 1; // 0.可以退出  1.不能退出房间
+	uint32 RoomID = 2; // 房间ID
 }
 
 ////////////////////////////////////////////// 游戏1 /////////////////////////////////////////////

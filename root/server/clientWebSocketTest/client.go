@@ -19,22 +19,22 @@ type (
 	}
 )
 
-var AccountID = 0
+var AccountID = uint32(0)
 func NewLogic() *Logic {
 	return &Logic{}
 }
-var Clinet_Global *Client
+var client_Global *Client
 func (self *Logic) Init(actor *core.Actor) bool {
 	self.owner = actor
 
-	//Clinet_Global = NewWebsocketClient("47.108.87.29:41000","/connect")
-	Clinet_Global = NewWebsocketClient("192.168.2.100:41000","/connect")
-	Clinet_Global.connect()
-	fmt.Println("connected success :",Clinet_Global.ws.RemoteAddr())
+	//client_Global = NewWebsocketClient("47.108.87.29:41000","/connect")
+	client_Global = NewWebsocketClient("192.168.2.100:41000","/connect")
+	client_Global.connect()
+	fmt.Println("connected success :", client_Global.ws.RemoteAddr())
 	go func() {
 		for {
 			recv := make([]byte,65535)
-			n,err := Clinet_Global.ws.Read(recv)
+			n,err := client_Global.ws.Read(recv)
 			if err != nil{
 				log.Warnf("err:%v",err.Error())
 				continue
@@ -98,7 +98,14 @@ func (self *Logic) HandleMessage(actor int32, msg []byte, session int64) bool {
 	switch pack.GetMsgID() {
 	case protomsg.MSG_SC_LOGIN_HALL_RES.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.LOGIN_HALL_RES{}).(*protomsg.LOGIN_HALL_RES)
+		AccountID = pb.GetAccount().AccountId
 		log.Infof(colorized.Blue("登陆成功：%+v"),pb)
+		if pb.AccountData.RoomID !=0 {
+			game := NewGame()
+			msgchan := make(chan core.IMessage, 10000)
+			actor := core.NewActor(common.EActorType_MAIN.Int32(), game, msgchan)
+			core.CoreRegisteActor(actor)
+		}
 
 	case protomsg.MSG_SC_SYNC_SERVER_TIME.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.SYNC_SERVER_TIME{}).(*protomsg.SYNC_SERVER_TIME)
@@ -112,6 +119,11 @@ func (self *Logic) HandleMessage(actor int32, msg []byte, session int64) bool {
 	case protomsg.MSG_SC_ENTER_ROOM_RES.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.ENTER_ROOM_RES{}).(*protomsg.ENTER_ROOM_RES)
 		log.Infof(colorized.Blue("可以进入房间 房间:%+v"),pb)
+
+		game := NewGame()
+		msgchan := make(chan core.IMessage, 10000)
+		actor := core.NewActor(common.EActorType_MAIN.Int32(), game, msgchan)
+		core.CoreRegisteActor(actor)
 	}
 
 	return false
