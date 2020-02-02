@@ -123,19 +123,11 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	}
 
 	// 统计玩家本局获得金币
-	//user.SumWinScore += float32(BetNum) * sumOdds
-	isUpdateFreeCount := false
 	if isFree {
 		acc.FeeCount -= 1
-		isUpdateFreeCount = true
 	}
 	if gainFreeCount > 0 {
 		acc.FeeCount += int32(gainFreeCount)
-		isUpdateFreeCount = true
-	}
-	if isUpdateFreeCount {
-		// 更新免费次数
-		//self.updateFreeCount(user)
 	}
 
 	resultMsg := &protomsg.START_MARY_RES{
