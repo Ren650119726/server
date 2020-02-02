@@ -72,6 +72,7 @@ message ENTER_GAME_FRUITMARY_RES {
 	repeated uint64 Bets 		 	= 5; // 可以选择的押注金额
 	map<int32, FruitRatio> Ratio    = 6; // 水果赔率
 	START_MARY2_RES Mary2_Result    = 7; // 小玛利结果
+	int32 FeeCount                  = 8; // 免费次数
 }
 
 
