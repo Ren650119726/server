@@ -13,7 +13,7 @@ import (
 func (self *Hall) MSG_CS_ENTER_ROOM_REQ(actor int32, msg []byte, session int64) {
 	pbMsg := packet.PBUnmarshal(msg,&protomsg.ENTER_ROOM_REQ{}).(*protomsg.ENTER_ROOM_REQ)
 	acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
-	if acc.GetRoomID() != 0{
+	if acc.GetRoomID() != 0 && acc.GetRoomID() != pbMsg.RoomID{
 		log.Warnf("玩家:%v已经在房间:[%v]内，不能进入新房间:[%v]",acc.GetAccountId(),acc.GetRoomID(),pbMsg.GetRoomID())
 		return
 	}
