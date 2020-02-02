@@ -175,7 +175,7 @@ func (self *Session) doread() {
 		self.exit_chan <- true
 		if !self.iskick { // 对端退出的
 			if err := self.conn.Close(); err != nil {
-				log.Warnf("tcp关闭报错:%v", err.Error())
+				log.Infof("链接关闭:%v", err.Error())
 			}
 		}
 		core.Gwg.Done()

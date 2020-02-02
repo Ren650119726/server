@@ -43,7 +43,7 @@ func (self *Hall) MSG_CS_ENTER_ROOM_REQ(actor int32, msg []byte, session int64) 
 func (self *Hall) SERVERMSG_GH_PLAYER_DATA_RES(actor int32, msg []byte, session int64) {
 	pbMsg := packet.PBUnmarshal(msg,&inner.PLAYER_DATA_RES{}).(*inner.PLAYER_DATA_RES)
 	acc := account.AccountMgr.GetAccountByIDAssert(pbMsg.GetAccountID())
-	if acc.GetRoomID() != 0{
+	if acc.GetRoomID() != 0 && acc.GetRoomID() != pbMsg.RoomID{
 		log.Warnf("玩家:%v已经在房间:[%v]内，不能进入新房间:[%v]",acc.GetAccountId(),acc.GetRoomID(),pbMsg.GetRoomID())
 		return
 	}
