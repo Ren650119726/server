@@ -97,7 +97,7 @@ message START_MARY_RES {
 	int64  SumOdds 					  = 2; // 9条线总赔率
 	repeated FRUITMARY_Result Results = 3; // 中奖线列表
 	repeated int32 PictureList        = 4; // 图形列表( [0-14] 即15个图形)
-	int64 Bonus                       = 5; // 水池里的金币
+	int64 Bonus                       = 5; // 赢得水池里的金币
 	int64 Money                       = 6; // 身上的钱
 	int64 FreeCount                   = 7; // 获得免费次数
 	int64 MaryCount                   = 8; // 触发小玛丽次数

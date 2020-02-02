@@ -153,6 +153,14 @@ func (self *Room) enterRoom(accountId uint32){
 }
 
 func (self *Room)canleave(accountId uint32) bool  {
+	acc := self.accounts[accountId]
+	if acc == nil {
+		log.Warnf("找不到玩家:%v ",accountId)
+		return false
+	}
+	if acc.FeeCount > 0 || acc.MaryCount > 0{
+		return false
+	}
 	return true
 }
 

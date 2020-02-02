@@ -143,7 +143,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		SumOdds:sumOdds,
 		Results:resluts,
 		PictureList:pArr,
-		Bonus:self.bonus,
+		Bonus:reward,
 		Money:int64(acc.GetMoney()),
 		FreeCount:int64(acc.FeeCount),
 		MaryCount:int64(acc.MaryCount),
