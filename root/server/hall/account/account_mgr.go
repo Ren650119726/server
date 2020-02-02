@@ -7,7 +7,6 @@ import (
 	"root/common/model/rediskey"
 	"root/core/db"
 	"root/core/log"
-	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
 	"root/server/hall/send_tools"
@@ -240,11 +239,7 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChanne
 
 func (self *accountMgr) LoginAccount(acc *Account, nLoginType uint8, IP string, session int64) {
 	if acc.SessionId > 0 && acc.SessionId != session {
-		send := packet.NewPacket(nil)
-		send.SetMsgID(protomsg.MSG_SC_KICK_OUT_HALL.UInt16())
-		send.WriteUInt8(1) // 顶号被踢出游戏
 		send_tools.Send2Account(protomsg.MSG_SC_KICK_OUT_HALL.UInt16(),&protomsg.KICK_OUT_HALL{Ret:2}, acc.SessionId)
-
 		// 取消之前的SessionID的关联
 		delete(self.accountbySessionID, acc.SessionId)
 	}
