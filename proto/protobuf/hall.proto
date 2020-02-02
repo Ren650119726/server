@@ -46,7 +46,7 @@ message SYNC_SERVER_TIME {
 	uint64 ServerTimeStamp = 1; //  服务器当前时间戳(毫秒)
 }
 
-// 服务器踢下线 10011
+// 服务器踢下线 10004
 message KICK_OUT_HALL {
 	uint32 Ret 				   	   = 1; 	// 1、服务器维护 2、顶号
 }
