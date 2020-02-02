@@ -47,8 +47,19 @@ func (self *Hall) SERVERMSG_GH_PLAYER_DATA_RES(actor int32, msg []byte, session 
 		log.Warnf("玩家:%v已经在房间:[%v]内，不能进入新房间:[%v]",acc.GetAccountId(),acc.GetRoomID(),pbMsg.GetRoomID())
 		return
 	}
-	send_tools.Send2Account(protomsg.MSG_SC_ENTER_ROOM_RES.UInt16(),&protomsg.ENTER_ROOM_RES{Ret:0,RoomID:pbMsg.GetRoomID()},acc.SessionId)
-	log.Infof("通知玩家:%v 进入房间:%v",acc.GetAccountId(),pbMsg.GetRoomID())
+	roominfo := GameMgr.rooms[pbMsg.RoomID]
+	if roominfo == nil {
+		log.Warnf("找不到房间:%v",roominfo)
+		return
+	}
+
+	node := GameMgr.nodes[roominfo.serverID]
+	if node == nil {
+		log.Warnf("找不到房间所在节点:%v %v ",roominfo,roominfo.serverID)
+		return
+	}
+	send_tools.Send2Account(protomsg.MSG_SC_ENTER_ROOM_RES.UInt16(),&protomsg.ENTER_ROOM_RES{Ret:0,RoomID:pbMsg.GetRoomID(),GameType:node.gameType},acc.SessionId)
+	log.Infof("通知玩家:%v 进入房间:%v 游戏:%v ",acc.GetAccountId(),pbMsg.GetRoomID(),node.gameType)
 }
 
 // 游戏通知大厅，玩家进入房间
