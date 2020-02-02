@@ -95,11 +95,12 @@ func (self *accountMgr) GetAccountByIDAssert(id uint32) *Account {
 }
 
 func (self *accountMgr) GetAccountBySessionIDAssert(session int64) *Account {
-	if session == 0 {
+	acc := self.accountbySessionID[session]
+	if acc == nil{
 		log.Panicf("找不到玩家:%v ",session)
 		return nil
 	}
-	return self.accountbySessionID[session]
+	return acc
 }
 
 func (self *accountMgr) RemoveAccountBySessionID(session int64) {
