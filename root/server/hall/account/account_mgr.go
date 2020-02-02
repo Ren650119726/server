@@ -102,6 +102,13 @@ func (self *accountMgr) GetAccountBySessionIDAssert(session int64) *Account {
 	}
 	return acc
 }
+func (self *accountMgr) GetAccountBySessionID(session int64) *Account {
+	acc := self.accountbySessionID[session]
+	if acc == nil{
+		return nil
+	}
+	return acc
+}
 
 func (self *accountMgr) RemoveAccountBySessionID(session int64) {
 	delete(self.accountbySessionID, session)

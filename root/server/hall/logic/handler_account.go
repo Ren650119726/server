@@ -15,7 +15,7 @@ import (
 
 // 有客户端断开连接, 可能是游戏, 也可能是玩家
 func (self *Hall) MSGID_CLOSE_CONNECT(actor int32, msg []byte, session int64) {
-	tAccount := account.AccountMgr.GetAccountBySessionIDAssert(session)
+	tAccount := account.AccountMgr.GetAccountBySessionID(session)
 	// 游戏进程断开连接相关处理
 	if tAccount == nil {
 		GameMgr.GameDisconnect(session)
