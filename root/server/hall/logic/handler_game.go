@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"root/common"
 	"root/core/log"
 	"root/core/packet"
 	"root/protomsg/inner"
@@ -45,5 +46,5 @@ func (self *Hall) SERVERMSG_GH_MONEYCHANGE(actor int32, msg []byte, session int6
 	data := packet.PBUnmarshal(msg,&inner.MONEYCHANGE{}).(*inner.MONEYCHANGE)
 	logcache.LogCache.AddMoneyChangeLog(data) // 游戏通知回存金币改变日志
 	acc := account.AccountMgr.GetAccountByIDAssert(data.GetAccountID())
-	acc.Money = uint64(data.GetValue())
+	acc.AddMoney(data.GetChangeValue(),common.EOperateType(data.GetOperate()))
 }

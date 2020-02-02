@@ -218,6 +218,8 @@ func (self *Room) Disconnect(session int64) {
 	if acc == nil {
 		return
 	}
-	// 如果玩家发了红包，暂时不能离开游戏todo
-	self.leaveRoom(acc.AccountId)
+
+	if self.canleave(acc.GetAccountId()) {
+		self.leaveRoom(acc.AccountId)
+	}
 }
