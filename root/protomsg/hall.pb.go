@@ -121,7 +121,7 @@ func (m *SYNC_SERVER_TIME) GetServerTimeStamp() uint64 {
 	return 0
 }
 
-// 服务器踢下线 10011
+// 服务器踢下线 10004
 type KICK_OUT_HALL struct {
 	Ret uint32 `protobuf:"varint,1,opt,name=Ret" json:"Ret,omitempty"`
 }

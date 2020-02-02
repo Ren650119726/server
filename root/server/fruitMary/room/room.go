@@ -142,6 +142,8 @@ func (self *Room) enterRoom(accountId uint32){
 		LastBet:int64(acc.LastBet),
 		Bets:self.bets,
 		Ratio:self.FruitRatio,
+		FeeCount:acc.FeeCount,
+		Mary2_Result:&protomsg.START_MARY2_RES{Result:acc.ResultList,MarySpareCount:acc.MaryCount},
 	},acc.SessionId)
 
 	// 通知大厅 玩家进入房间
