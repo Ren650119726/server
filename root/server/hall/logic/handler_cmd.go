@@ -19,13 +19,10 @@ func CMD_Help(sParam []string) {
 	fmt.Println("=========================================================================")
 	fmt.Println("=========================================================================")
 	fmt.Println("=========================================================================")
-	fmt.Println(" 重要: 关服更新或维护流程说明!!!!")
-	fmt.Println(" 步骤1. Hall    执行stopall命令; 参数: 停服维护时间(分钟)")
-	fmt.Println(" 步骤2. Hall    等待所有游戏通知大厅可以关闭后, 会有提示")
-	fmt.Println(" 步骤3. Game    异常若长时间都未通知大厅可以关闭, 在游戏服务器, 手动踢玩家和关闭游戏进程")
-	fmt.Println(" 步骤4. Hall    执行kickall命令, 必须在所有游戏通知大厅可以关闭后, ")
-	fmt.Println(" 步骤5. Hall    执行saveall命令, 等待提示ctrl+c")
-	fmt.Println(" 步骤6. Supervisord执行stop all命令, 开始执行更新exe和config等流程")
+	fmt.Println("指令表 参数用一个英文空格隔开，不需要输入[]")
+	fmt.Println("rmb [账号id] [修改金币]     说明：玩家不能在游戏内，增加 减少金币(负数为减少)")
+	fmt.Println("reload                     说明：热更新所有配置表")
+	fmt.Println("kill [账号id] [杀数]        说明：设置玩家杀数")
 	fmt.Println("=========================================================================")
 	fmt.Println("=========================================================================")
 	fmt.Println("=========================================================================")
@@ -214,13 +211,7 @@ func CMD_Del_Email(sParam []string) {
 	}
 	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
-
-func CMD_Check(sParam []string) {
-
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
-
-func CMD_Add_RMB(sParam []string) {
+func CMD_Add_Money(sParam []string) {
 	if len(sParam) < 1 {
 		fmt.Printf("× 参数错误, 参数1: 玩家ID; 参数2: 改变元宝数量\r\n")
 		return
@@ -245,42 +236,61 @@ func CMD_Add_RMB(sParam []string) {
 	m := acc.GetMoney()
 	if acc.Robot == 0 {
 		if acc.RoomID == 0{
+			if changeValue < 0 && -changeValue > int(acc.GetMoney()){
+				changeValue = int(-acc.GetMoney())
+			}
 			acc.AddMoney(int64(changeValue), common.EOperateType_CMD)
 		}else{
 			fmt.Printf("玩家:%v 在房间:%v内，不能执行修改金币命令，请先退出房间", acc.GetAccountId(), acc.RoomID)
+			return
 		}
 	}
 	fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", acc.GetAccountId(),m, changeValue, acc.GetMoney())
 }
 
-func CMD_Get_Robot_ID(sParam []string) {
-
+func CMD_Kill(sParam []string) {
 	if len(sParam) < 1 {
-		fmt.Printf("× 参数错误, 参数1: 需要机器人ID数量\r\n")
+		fmt.Printf("× 参数错误, 参数1: 玩家ID; 参数2: 杀数\r\n")
 		return
 	}
-
-	nGetLen, err := strconv.Atoi(sParam[0])
+	changeValue, err := strconv.Atoi(sParam[1])
 	if err != nil {
-		fmt.Printf("× 参数错误, 参数1: 需要机器人ID数量\r\n")
+		fmt.Printf("× 参数错误, 参数1: 玩家ID; 参数2: 杀数\r\n")
 		return
 	}
 
-	var nNewID uint32
-	for i := 0; i < nGetLen; i++ {
-		account.AccountMgr.IDAssign, nNewID = utils.RandomSliceAndRemoveReturn(account.AccountMgr.IDAssign)
-		log.Infof("%v", nNewID)
+	accID, err := strconv.Atoi(sParam[0])
+	if err != nil || accID < 0 {
+		fmt.Printf("× 参数错误, 参数1: 玩家ID; 参数2: 杀数\r\n")
+		return
 	}
-	log.Infof("====== 命令执行成功 ======")
+
+	acc := account.AccountMgr.GetAccountByID(uint32(accID))
+	if acc == nil {
+		fmt.Printf("× 找不到指定ID的玩家, 请输入正确的玩家ID\r\n")
+		return
+	}
+
+	if acc.RoomID != 0{
+		fmt.Printf("玩家:%v 在房间:%v内，请先退出房间", acc.GetAccountId(), acc.RoomID)
+		return
+	}
+
+	k := acc.Kill
+	acc.Kill = int32(changeValue)
+	fmt.Printf("====== 命令执行成功 玩家:%v 当前杀数:%v 修改为:%v ======\r\n", acc.GetAccountId(),k, changeValue)
 }
+
 
 func CMD_ToDB(s []string) {
 	send_tools.Send2DB(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(), nil)
 }
 func CMD_Save(s []string) {
 	account.AccountMgr.ArchiveAll()
-	log.Infof("====== 命令执行成功 ======")
+	GameMgr.Save()
+	log.Infof("====== 回存命令执行成功 ======")
 }
 func (self *Hall)CMD_Stop(s []string) {
+	CMD_Save(nil)
 	self.ListenActor.Suspend()
 }
