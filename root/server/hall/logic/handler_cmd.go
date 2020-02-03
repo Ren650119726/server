@@ -20,7 +20,7 @@ func CMD_Help(sParam []string) {
 	fmt.Println("=========================================================================")
 	fmt.Println("=========================================================================")
 	fmt.Println("指令表 参数用一个英文空格隔开，不需要输入[]")
-	fmt.Println("rmb [账号id] [修改金币]     说明：玩家不能在游戏内，增加 减少金币(负数为减少)")
+	fmt.Println("rmb [账号id] [修改金币]     说明：增加 减少金币(负数为减少),(8位数以内)")
 	fmt.Println("reload                     说明：热更新所有配置表")
 	fmt.Println("kill [账号id] [杀数]        说明：设置玩家杀数")
 	fmt.Println("=========================================================================")
@@ -234,16 +234,19 @@ func CMD_Add_Money(sParam []string) {
 		return
 	}
 	m := acc.GetMoney()
-	if acc.Robot == 0 {
-		if acc.RoomID == 0{
-			if changeValue < 0 && -changeValue > int(acc.GetMoney()){
-				changeValue = int(-acc.GetMoney())
-			}
-			acc.AddMoney(int64(changeValue), common.EOperateType_CMD)
-		}else{
-			fmt.Printf("玩家:%v 在房间:%v内，不能执行修改金币命令，请先退出房间", acc.GetAccountId(), acc.RoomID)
-			return
+	if acc.RoomID == 0{
+		if changeValue < 0 && -changeValue > int(acc.GetMoney()){
+			changeValue = int(-acc.GetMoney())
 		}
+		acc.AddMoney(int64(changeValue), common.EOperateType_CMD)
+	}else{
+		GameMgr.Send2Game(inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(),&inner.NOTIFY_ALTER_DATE{
+			AccountID:  acc.GetAccountId(),
+			Type:       1,
+			AlterValue: int64(changeValue),
+			RoomID:     acc.RoomID,
+			OperateType:common.EOperateType_CMD,
+		}, acc.RoomID)
 	}
 	fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", acc.GetAccountId(),m, changeValue, acc.GetMoney())
 }
@@ -272,12 +275,18 @@ func CMD_Kill(sParam []string) {
 	}
 
 	if acc.RoomID != 0{
-		fmt.Printf("玩家:%v 在房间:%v内，请先退出房间", acc.GetAccountId(), acc.RoomID)
-		return
+		GameMgr.Send2Game(inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(),&inner.NOTIFY_ALTER_DATE{
+			AccountID:  acc.GetAccountId(),
+			Type:       2,
+			AlterValue: int64(changeValue),
+			RoomID:     acc.RoomID,
+		}, acc.RoomID)
 	}
 
 	k := acc.Kill
 	acc.Kill = int32(changeValue)
+
+
 	fmt.Printf("====== 命令执行成功 玩家:%v 当前杀数:%v 修改为:%v ======\r\n", acc.GetAccountId(),k, changeValue)
 }
 

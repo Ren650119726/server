@@ -7,9 +7,10 @@
 		"JackpotRole": 200,
 		"KillPersent": 0,
 		"Lines": 9,
+		"Name": "初级场",
 		"Order": 1,
-		"RobotNum": 10,
-		"Type": 1
+		"Real": 1,
+		"RobotNum": 10
 	},
 	"1002": {
 		"Bet": "10000,20000,30000,40000,50000,60000,70000,80000,90000,100000",
@@ -19,9 +20,10 @@
 		"JackpotRole": 200,
 		"KillPersent": 0,
 		"Lines": 9,
+		"Name": "中级场",
 		"Order": 2,
-		"RobotNum": 6,
-		"Type": 2
+		"Real": 1,
+		"RobotNum": 6
 	},
 	"1003": {
 		"Bet": "100000,200000,300000,400000,500000,600000,700000,800000,900000,1000000",
@@ -31,8 +33,9 @@
 		"JackpotRole": 200,
 		"KillPersent": 0,
 		"Lines": 9,
+		"Name": "高级场",
 		"Order": 3,
-		"RobotNum": 3,
-		"Type": 3
+		"Real": 1,
+		"RobotNum": 3
 	}
 }

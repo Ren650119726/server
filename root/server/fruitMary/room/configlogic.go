@@ -73,14 +73,19 @@ func (self *Room) LoadConfig()  {
 			self.lineConf[id][i-1] = val-1
 		}
 	}
-	self.mainWheel,self.freeWheel,self.maryWheel = initWheel()
+	self.mainWheel,self.freeWheel,self.maryWheel = initWheel(config.Get_mary_room_ConfigInt64(int(self.roomId),"Real"))
+
+	log.Infof("房间:%v 配置加载完成",self.roomId)
 }
 
-func initWheel() (main,free,mary []*wheelNode ) {
+func initWheel(group int64) (main,free,mary []*wheelNode ) {
 	main = make([]*wheelNode, 0)
 	free = make([]*wheelNode, 0)
 	mary =  make([]*wheelNode, 0)
 	for id,_ := range config.Global_mary_real_config {
+		if config.Get_mary_real_ConfigInt(id,"Group_id")  != int(group){
+			continue
+		}
 		node := new(wheelNode)
 		node.cfPosition = config.Get_mary_real_ConfigInt(id,"Site")
 		if node.cfPosition > 0 {

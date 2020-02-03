@@ -35,7 +35,7 @@ func (self *Account) IsOnline() bool {
 	return self.LoginTime - self.LogoutTime > 0
 }
 
-func (self *Account) AddMoney(iValue int64, index uint8, operate common.EOperateType) {
+func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 	if iValue == 0 {
 		return
 	}

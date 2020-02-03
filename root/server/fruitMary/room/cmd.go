@@ -38,6 +38,12 @@ func reload(s []string) {
 	config.Load_mary_lines_Conf()
 	config.Load_mary_pattern_Conf()
 	config.Load_mary_real_Conf()
+
+	msg := packet.NewPacket(nil)
+	msg.SetMsgID(inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16())
+	for roomID,_ := range RoomMgr.rooms{
+		core.CoreSend(0,int32(roomID),msg.GetData(),0)
+	}
 }
 
 func info(s []string) {

@@ -9,6 +9,7 @@ enum SERVERMSG {
 	HD_HELLO_DB     	 = 100; // 大厅向db建立链接
 	SS_TEST_NETWORK      = 101; // 网络测试
 	SS_CLOSE_SERVER      = 102; // 关闭服务器消息
+	SS_RELOAD_CONFIG     = 103; // 更新配置
 	HD_ALL_DATA          = 105; // 开服获取所有数据
 	DH_ALL_ACCOUNT_RESP  = 106; // db返回所有 账号 给大厅
 	DH_ALL_EMAIL_RESP    = 107; // db返回所有 邮件 给大厅
@@ -27,7 +28,8 @@ enum SERVERMSG {
 	GH_ROOM_INFO         = 171; // 游戏上报房间信息给大厅
 	
 	GH_SERVERFEE_LOG     = 175;// 回存服务费
-	GH_MONEYCHANGE       = 176;// 游戏改变金币，通知大厅
+	HG_NOTIFY_ALTER_DATE = 176;// 大厅通知游戏，修改玩家数据
+	GH_MONEYCHANGE       = 177;// 游戏改变金币，通知大厅
 	
 	HG_PLAYER_DATA_REQ   = 180; // 大厅给游戏发送玩家数据
 	GH_PLAYER_DATA_RES   = 181; // 游戏回复大厅，收到玩家数据，大厅通知玩家进入
@@ -84,19 +86,19 @@ message SAVE_ROOM_BONUS {
 	 uint64 Value  = 2;
 }
 
-// 游戏连接大厅
+// 游戏连接大厅 170
 message GAME_CONNECT_HALL {
 	 uint32 ServerID = 1;
 	 uint32 GameType = 2;
 }
 
-// 游戏上报房间信息给大厅
+// 游戏上报房间信息给大厅 171
 message ROOM_INFO {
 	uint32 ServerID = 1; // 服务器id
 	repeated uint32 RoomsID = 2; // 房间ID
 }
 
-// 向大厅发送服务费
+// 回存服务费 175
 message SERVERFEE_LOG {
 	 uint32 AccountID = 1;
 	 uint32 ServerFee = 2;
@@ -105,7 +107,16 @@ message SERVERFEE_LOG {
 	 uint32 RoomID    = 5;
 }
 
-// 向大厅发送金币改变日志
+// 大厅通知游戏，修改玩家数据 176
+message NOTIFY_ALTER_DATE {
+	 uint32 AccountID   = 1;
+	 int32  Type        = 2; // 1金币 2杀数
+	 int64  AlterValue  = 3; // 改变值
+	 uint32 RoomID      = 4; // 玩家所在房间
+	 int32  operateType = 5; // 操作
+}
+
+// 游戏改变金币，通知大厅 177
 message MONEYCHANGE {
 	 uint32 AccountID   = 1;
 	 int64  ChangeValue = 2;

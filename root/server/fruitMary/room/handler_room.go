@@ -77,7 +77,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		a := BetNum * self.jackpotRate
 		self.bonus += int64(a)
 		// todo 记录水池
-		acc.AddMoney(int64(-(BetNum)),0, common.EOperateType_FRUIT_MARY_BET)
+		acc.AddMoney(int64(-(BetNum)), common.EOperateType_FRUIT_MARY_BET)
 	}
 	resluts := make([]*protomsg.FRUITMARY_Result, 0)
 	pArr := make([]int32, 0)
@@ -111,7 +111,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	}
 
 	acc.MaryCount = int32(maryCount)
-	acc.AddMoney(reward+sumOdds*int64(BetNum/9),0, common.EOperateType_FRUIT_MARY_WIN)
+	acc.AddMoney(reward+sumOdds*int64(BetNum/9), common.EOperateType_FRUIT_MARY_WIN)
 
 	log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
 		acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
@@ -231,14 +231,14 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY2_REQ(actor int32, msg []byte, sessi
 		profit2 := acc.LastBet * uint64(cr)
 		result.Profit1 = profit1
 		result.Profit2 = int32(profit2)
-		acc.AddMoney(int64(uint64(profit1)+profit2),0,common.EOperateType_FRUIT_MARY2_WIN)
+		acc.AddMoney(int64(uint64(profit1)+profit2),common.EOperateType_FRUIT_MARY2_WIN)
 		resultList.Result = append(resultList.Result,result)
 	}
 	acc.ResultList = resultList.Result
 	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY2_RES.UInt16(),resultList,session)
 }
 
-// 玩家请求开始游戏2
+// 请求玩家列表
 func (self *Room) FRUITMARYMSG_CS_PLAYERS_LIST_REQ(actor int32, msg []byte, session int64) {
 	account.AccountMgr.GetAccountBySessionIDAssert(session)
 
@@ -255,4 +255,23 @@ func (self *Room) SERVERMSG_HG_ROOM_BONUS_RES(actor int32, msg []byte, session i
 	data := packet.PBUnmarshal(msg,&inner.ROOM_BONUS_RES{}).(*inner.ROOM_BONUS_RES)
 	log.Infof("大厅返回房间:[%v] 水池金额:[%v]",self.roomId,data.GetValue())
 	self.bonus = int64(data.GetValue())
+}
+
+// 大厅请求修改玩家数据
+func (self *Room) SERVERMSG_HG_NOTIFY_ALTER_DATE(actor int32, msg []byte, session int64) {
+	if session != 0{
+		log.Warnf("此消息只能大厅发送 %v",session)
+		return
+	}
+	data := packet.PBUnmarshal(msg,&inner.NOTIFY_ALTER_DATE{}).(*inner.NOTIFY_ALTER_DATE)
+	acc := account.AccountMgr.GetAccountByIDAssert(data.GetAccountID())
+	if data.GetType() == 1{ // 修改金币
+		changeValue := int(data.GetAlterValue())
+		if changeValue < 0 && -changeValue > int(acc.GetMoney()){
+			changeValue = int(-acc.GetMoney())
+		}
+		acc.AddMoney(int64(changeValue),common.EOperateType(data.GetOperateType()))
+	}else if data.GetType() == 2{ // 修改杀数
+		acc.Kill = int32(data.GetAlterValue())
+	}
 }

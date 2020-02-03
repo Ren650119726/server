@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"github.com/golang/protobuf/proto"
 	"root/common"
 	"root/common/config"
 	"root/core"
@@ -166,6 +167,21 @@ func (self *gameMgr) Save() {
 		}
 		self.savebounus = false
 	}
+}
+
+// 回存一些房间数据
+func (self *gameMgr) Send2Game(msgId uint16, pb proto.Message, RoomID uint32) {
+	room := self.rooms[RoomID]
+	if room == nil{
+		log.Warnf("找不到房间:%v ",RoomID)
+		return
+	}
+	node := self.nodes[room.serverID]
+	if node == nil{
+		log.Warnf("找不到房间所在节点 :%v %v",RoomID,room.serverID)
+		return
+	}
+	send_tools.Send2Game(msgId,pb,node.session)
 }
 
 
