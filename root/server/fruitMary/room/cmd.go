@@ -1,11 +1,15 @@
 package room
 
 import (
+	"fmt"
 	"root/common"
 	"root/common/config"
 	"root/core"
+	"root/core/log"
 	"root/core/packet"
 	"root/protomsg/inner"
+	"root/server/fruitMary/account"
+	"strconv"
 )
 
 var ServerActor *core.Actor
@@ -15,6 +19,8 @@ func init() {
 	core.Cmd.Regist("reload", reload, true)
 	core.Cmd.Regist("info", info, true)
 	core.Cmd.Regist("stop", Close, true)
+	core.Cmd.Regist("mc", MaryCount, true)
+	core.Cmd.Regist("fc", FeeCount, true)
 
 }
 
@@ -49,6 +55,7 @@ func reload(s []string) {
 func info(s []string) {
 
 }
+
 func Close(s []string) {
 	ServerActor.Suspend()
 
@@ -58,4 +65,47 @@ func Close(s []string) {
 	for _,room := range RoomMgr.rooms{
 		core.CoreSend(0, int32(room), send.GetData(), 0)
 	}
+}
+
+func MaryCount(sParam []string) {
+	if len(sParam) < 1 {
+		fmt.Printf("× 参数错误\r\n")
+		return
+	}
+
+	accID, err := strconv.Atoi(sParam[0])
+	if err != nil || accID < 0 {
+		fmt.Printf("× 参数错误\r\n")
+		return
+	}
+
+	changeValue, err := strconv.Atoi(sParam[1])
+	if err != nil {
+		fmt.Printf("× 参数错误\r\n")
+		return
+	}
+	acc := account.AccountMgr.GetAccountByIDAssert(uint32(accID))
+	acc.MaryCount = int32(changeValue)
+	log.Info("小玛利次数修改:%v",changeValue)
+}
+func FeeCount(sParam []string) {
+	if len(sParam) < 1 {
+		fmt.Printf("× 参数错误\r\n")
+		return
+	}
+
+	accID, err := strconv.Atoi(sParam[0])
+	if err != nil || accID < 0 {
+		fmt.Printf("× 参数错误\r\n")
+		return
+	}
+
+	changeValue, err := strconv.Atoi(sParam[1])
+	if err != nil {
+		fmt.Printf("× 参数错误\r\n")
+		return
+	}
+	acc := account.AccountMgr.GetAccountByIDAssert(uint32(accID))
+	acc.FeeCount = int32(changeValue)
+	log.Info("免费次数修改:%v",changeValue)
 }
