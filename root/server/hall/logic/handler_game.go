@@ -1,12 +1,14 @@
 package logic
 
 import (
+	"github.com/golang/protobuf/proto"
 	"root/common"
 	"root/core/log"
 	"root/core/packet"
 	"root/protomsg/inner"
 	"root/server/hall/account"
 	"root/server/hall/logcache"
+	"root/server/hall/send_tools"
 )
 
 // 游戏连接hall
@@ -47,4 +49,37 @@ func (self *Hall) SERVERMSG_GH_MONEYCHANGE(actor int32, msg []byte, session int6
 	logcache.LogCache.AddMoneyChangeLog(data) // 游戏通知回存金币改变日志
 	acc := account.AccountMgr.GetAccountByIDAssert(data.GetAccountID())
 	acc.AddMoney(data.GetChangeValue(),common.EOperateType(data.GetOperate()))
+}
+
+// 游戏请求水池金额
+func (self *Hall) SERVERMSG_GH_ROOM_BONUS_REQ(actor int32, msg []byte, session int64) {
+	data := packet.PBUnmarshal(msg,&inner.ROOM_BONUS_REQ{}).(*inner.ROOM_BONUS_REQ)
+	v := GameMgr.bonus[data.GetRoomID()]
+	log.Infof("房间:%v 请求水池金额:%v ",data.RoomID,v)
+	send_tools.Send2Game(inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16(),&inner.ROOM_BONUS_RES{Value:uint64(v),RoomID:data.GetRoomID()},session)
+}
+
+// 游戏请求回存水池金额
+func (self *Hall) SERVERMSG_GH_ROOM_BONUS_SAVE(actor int32, msg []byte, session int64) {
+	data := packet.PBUnmarshal(msg,&inner.ROOM_BONUS_SAVE{}).(*inner.ROOM_BONUS_SAVE)
+	GameMgr.bonus[data.GetRoomID()] = int64(data.GetValue())
+	GameMgr.savebounus = true
+}
+
+// db返回的所有房间水池
+func (self *Hall) SERVERMSG_DH_ALL_ROOM_BONUS(actor int32, msg []byte, session int64) {
+	if session != 0 {
+		log.Infof("Error: 不是来自于DB服务器的消息, MSGID_GH_ALL_EMAIL, SessionID:%v", session)
+		return
+	}
+	all_bonus := &inner.ALL_ROOM_BONUS{}
+	err := proto.Unmarshal(msg, all_bonus)
+	if err != nil {
+		log.Errorf("房间水池数据读取错误:%v", err)
+		return
+	}
+	for _,b := range all_bonus.Bonus{
+		GameMgr.bonus[b.GetRoomID()] = int64(b.GetValue())
+		log.Infof("初始化房间:%v 水池:%v",b.GetRoomID(),b.GetValue())
+	}
 }

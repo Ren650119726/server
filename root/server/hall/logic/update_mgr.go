@@ -16,7 +16,7 @@ func OnSpeakerUpdate(dt int64) {
 
 // 每分钟更新
 func OneMinuteUpdate(dt int64) {
-
+	GameMgr.Save()
 }
 
 // 每30秒更新一次

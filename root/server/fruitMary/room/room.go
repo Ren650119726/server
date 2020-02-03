@@ -58,6 +58,11 @@ func (self *Room) Init(actor *core.Actor) bool {
 
 	self.LoadConfig()
 	self.bonus = 0
+
+	// 请求水池金额
+	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_REQ.UInt16(),&inner.ROOM_BONUS_REQ{
+		RoomID:    self.roomId,
+	})
 	return true
 }
 
@@ -92,6 +97,8 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.FRUITMARYMSG_CS_START_MARY2_REQ(actor,pack.ReadBytes(),session)
 	case protomsg.FRUITMARYMSG_CS_PLAYERS_LIST_REQ.UInt16():// 请求玩家列表
 		self.FRUITMARYMSG_CS_PLAYERS_LIST_REQ(actor,pack.ReadBytes(),session)
+	case inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16():// 水池金额
+		self.SERVERMSG_HG_ROOM_BONUS_RES(actor,pack.ReadBytes(),session)
 	default:
 		self.status.Handle(actor, msg, session)
 	}

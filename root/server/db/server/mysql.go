@@ -172,6 +172,23 @@ func (self *mysql_server) SERVERMSG_HD_ALL_DATA(pbmsg []byte, session int64) {
 	}
 	send_tools.Send2Hall(inner.SERVERMSG_DH_ALL_WATER_LINE.UInt16(), sendWaterLine)
 
+	// 所有房间水池-----------------------------------------------------------------
+	all_room_bonus := inst.GetAllRoomBonus()
+	count = maxsend
+	sendRoomBonus := &inner.ALL_ROOM_BONUS{}
+	for _, room_bouns:= range all_room_bonus {
+		pb:= &inner.SAVE_ROOM_BONUS{}
+		tools.CopyProtoData(room_bouns, pb)
+		sendRoomBonus.Bonus =  append(sendRoomBonus.Bonus, pb)
+		count--
+		if count <= 0 {
+			send_tools.Send2Hall(inner.SERVERMSG_DH_ALL_WATER_LINE.UInt16(), sendRoomBonus)
+			sendWaterLine = &inner.ALL_WATER_LINE{}
+			count = maxsend
+		}
+	}
+	send_tools.Send2Hall(inner.SERVERMSG_DH_ALL_ROOM_BONUS.UInt16(), sendRoomBonus)
+
 	// todo 所有数据发送完毕
 	send_tools.Send2Hall(inner.SERVERMSG_DH_FINISH_DATA.UInt16(), nil)
 }

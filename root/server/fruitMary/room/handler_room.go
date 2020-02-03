@@ -7,6 +7,7 @@ import (
 	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
+	"root/protomsg/inner"
 	"root/server/fruitMary/account"
 	"root/server/fruitMary/send_tools"
 	"time"
@@ -145,6 +146,9 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	for _,acc := range self.accounts {
 		send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_UPDATE_MARY_BONUS.UInt16(),&protomsg.UPDATE_MARY_BONUS{Bonus:self.bonus},acc.SessionId)
 	}
+
+	// 回存水池
+	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(),&inner.ROOM_BONUS_SAVE{Value:uint64(self.bonus),RoomID:self.roomId})
 }
 
 // 玩家请求开始游戏2
@@ -244,4 +248,11 @@ func (self *Room) FRUITMARYMSG_CS_PLAYERS_LIST_REQ(actor int32, msg []byte, sess
 		ret.Players = append(ret.Players,p.AccountStorageData)
 	}
 	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_PLAYERS_LIST_RES.UInt16(),ret,session)
+}
+
+// 大厅返回水池金额
+func (self *Room) SERVERMSG_HG_ROOM_BONUS_RES(actor int32, msg []byte, session int64) {
+	data := packet.PBUnmarshal(msg,&inner.ROOM_BONUS_RES{}).(*inner.ROOM_BONUS_RES)
+	log.Infof("大厅返回房间:[%v] 水池金额:[%v]",self.roomId,data.GetValue())
+	self.bonus = int64(data.GetValue())
 }

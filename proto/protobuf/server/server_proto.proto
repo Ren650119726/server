@@ -13,12 +13,14 @@ enum SERVERMSG {
 	DH_ALL_ACCOUNT_RESP  = 106; // db返回所有 账号 给大厅
 	DH_ALL_EMAIL_RESP    = 107; // db返回所有 邮件 给大厅
 	DH_ALL_WATER_LINE    = 108; // db返回所有水位线
+	DH_ALL_ROOM_BONUS    = 109; // db返回所有房间水池
 	DH_FINISH_DATA       = 120; // db通知大厅,所有数据发送完成
 	
 	HD_SQL_SYNTAX        = 131; // 大厅发送sql语句给db执行
 	HD_SAVE_ACCOUNT 	 = 135; // 大厅回存玩家数据
 	HD_SAVE_EMAIL_PERSON = 136; // 通知DB回存玩家邮件
 	HD_SAVE_WATER_LINE   = 137; // 回存水位线
+	HD_SAVE_ROOM_BONUS   = 138; // 回存房间水池
 	HD_SAVE_ALL          = 150; // 通知DB回存的所有数据发送完成
 	
 	GH_GAME_CONNECT_HALL = 170; // 游戏连接大厅
@@ -31,7 +33,10 @@ enum SERVERMSG {
 	GH_PLAYER_DATA_RES   = 181; // 游戏回复大厅，收到玩家数据，大厅通知玩家进入
 	GH_PLAYER_ENTER_ROOM = 182; // 游戏通知大厅，玩家进入房间
 	GH_PLAYER_LEAVE_ROOM = 183; // 游戏通知大厅，玩家退出房间
-	
+
+	GH_ROOM_BONUS_REQ    = 185; // 请求房间水池金额
+	HG_ROOM_BONUS_RES    = 186; //
+	GH_ROOM_BONUS_SAVE   = 187; // 回存房间水池金额
 }
 
 // 发送到db执行 sql syntax
@@ -47,6 +52,12 @@ message ALL_ACCOUNT_RESP {
 message ALL_WATER_LINE {
 	repeated SAVE_WATER_LINE Line = 1;
 }
+
+// db返回所有房间水池
+message ALL_ROOM_BONUS {
+	repeated SAVE_ROOM_BONUS Bonus = 1;
+}
+
 // 请求邮件信息
 message ALL_EMAIL_RESP {
 	repeated SAVE_EMAIL_PERSON AcccountMail = 1;
@@ -66,6 +77,11 @@ message SAVE_WATER_LINE {
 	 uint32 ServerID = 1;
 	 uint32  GameType = 2;
 	 string WaterLine = 3;
+}
+// 水池
+message SAVE_ROOM_BONUS {
+	 uint32 RoomID = 1;
+	 uint64 Value  = 2;
 }
 
 // 游戏连接大厅
@@ -124,5 +140,21 @@ message PLAYER_ENTER_ROOM {
 message PLAYER_LEAVE_ROOM {
 	uint32 AccountID = 2;
 	uint32 RoomID    = 3;
+}
+
+// 请求房间水池金额 185
+message ROOM_BONUS_REQ {
+	uint32 RoomID    = 1;
+}
+
+message ROOM_BONUS_RES {
+    uint32 RoomID    = 1;
+	uint64 Value     = 2;// 房间水池金额
+}
+
+// 回存房间水池金额
+message ROOM_BONUS_SAVE {
+    uint32 RoomID    = 1;
+	uint64 Value     = 2;// 房间水池金额
 }
 

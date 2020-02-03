@@ -90,6 +90,7 @@ func registTable() {
 	db.RegisteModel(&inst.AccountModel{})
 	db.RegisteModel(&inst.EmailModel{})
 	db.RegisteModel(&inst.WaterLineModel{})
+	db.RegisteModel(&inst.RoomBonusModel{})
 
 	// 日志表
 	db.RegisteModel_log(&logdb.MoneyDailyModel{})

@@ -126,6 +126,8 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.SERVERMSG_DH_ALL_EMAIL_RESP(actor, pack.ReadBytes(), session)
 	case inner.SERVERMSG_DH_ALL_WATER_LINE.UInt16():   // 水位线
 		//self.SERVERMSG_DH_ALL_WATER_LINE(actor, pack.ReadBytes(), session)
+	case inner.SERVERMSG_DH_ALL_ROOM_BONUS.UInt16():   // 水池
+		self.SERVERMSG_DH_ALL_ROOM_BONUS(actor, pack.ReadBytes(), session)
 	case inner.SERVERMSG_DH_FINISH_DATA.UInt16(): 	   // 所有数据初始化完成
 		self.SERVERMSG_DH_FINISH_DATA(session)
 	case inner.SERVERMSG_HD_SAVE_ALL.UInt16(): 		   // 所有数据完成回存
@@ -158,54 +160,17 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.MSG_CS_EMAIL_REWARD_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.MSG_CS_EMAIL_DEL_REQ.UInt16(): // Client请求删除邮件
 		self.MSG_CS_EMAIL_DEL_REQ(actor, pack.ReadBytes(), session)
-	//case protomsg.Old_MSGID_CREATE_ROOM.UInt16(): // 客户端申请创建房间
-	//	self.Old_MSGID_CREATE_ROOM(actor, msg, session)
-	//case protomsg.Old_MSGID_CREATE_ROOM_RET.UInt16(): // 客户端申请创建房间结果
-	//	self.Old_MSGID_CREATE_ROOM_RESULT(actor, msg, session)
-	//case protomsg.Old_MSGID_ENTER_ROOM.UInt16(): // 客户端进入房间
-	//	self.Old_MSGID_ENTER_ROOM(actor, msg, session)
-	//case protomsg.Old_MSGID_RECV_ACCOUNT_INFO.UInt16(): // 游戏通知接收帐号数据完成
-	//	self.Old_MSGID_RECV_ACCOUNT_INFO(actor, msg, session)
-	//case protomsg.Old_MSGID_SYNC_TO_HALL_MONEY.UInt16(): // 游戏同步元宝到大厅
-	//	self.Old_MSGID_SYNC_TO_HALL_MONEY(actor, msg, session)
-	//case protomsg.MSGID_SAVE_RMB_CHANGE_LOG.UInt16(): // 元宝变动日志缓存到大厅, 统一处理
-	//	self.MSGID_SAVE_RMB_CHANGE_LOG(actor, msg, session)
-	//case protomsg.Old_MSGID_GET_ROOM_LIST.UInt16(): // 客户端请求房间列表
-	//	self.Old_MSGID_GET_ROOM_LIST(actor, msg, session)
-	//case protomsg.Old_MSGID_OPEN_DESK_UPDATE.UInt16(): // 客户端开启桌子更新
-	//	self.Old_MSGID_OPEN_DESK_UPDATE(actor, msg, session)
-	//case protomsg.Old_MSGID_CLOSE_DESK_UPDATE.UInt16(): // 客户端关闭桌子更新
-	//	self.Old_MSGID_CLOSE_DESK_UPDATE(actor, msg, session)
-	//case protomsg.Old_MSGID_UPDATE_SERVICE_FEE.UInt16(): // 游戏通知大厅更新玩家服务费
-	//	self.Old_MSGID_UPDATE_SERVICE_FEE(actor, msg, session)
-	//case protomsg.Old_MSGID_UPDATE_ACCOUNT.UInt16(): // 游戏通知大厅更新玩家数据
-	//	self.Old_MSGID_UPDATE_ACCOUNT(actor, msg, session)
-	//case protomsg.Old_MSGID_UPDATE_INDEX.UInt16(): // 游戏通知玩家更新座位索引
-	//	self.Old_MSGID_UPDATE_INDEX(actor, msg, session)
-	//case protomsg.Old_MSGID_UPDATE_ENTER.UInt16(): // 游戏通知玩家进入房间
-	//	self.Old_MSGID_UPDATE_ENTER(actor, msg, session)
-	//case protomsg.Old_MSGID_UPDATE_LEAVE.UInt16(): // 游戏通知玩家离开房间
-	//	self.Old_MSGID_UPDATE_LEAVE(actor, msg, session)
-	//case protomsg.Old_MSGID_UPDATE_DESTROY_ROOM.UInt16(): // 游戏通知大厅销毁房间
-	//	self.Old_MSGID_UPDATE_DESTROY_ROOM(actor, msg, session)
-	//case protomsg.Old_MSGID_SEND_RANK_LIST.UInt16(): // 客户端请求排行榜数据
-	//	self.Old_MSGID_SEND_RANK_LIST(actor, msg, session)
-	//case protomsg.MSGID_OPERATE_SAFE_BOX.UInt16(): // 客户端操作保险箱
-	//	self.MSGID_OPERATE_SAFE_BOX(actor, msg, session)
-	//case protomsg.MSGID_OPERATE_SAFE_BOX_RESPOND.UInt16(): // 游戏返回操作保险箱
-	//	self.MSGID_OPERATE_SAFE_BOX(actor, msg, session)
-	//case protomsg.Old_MSGID_MAINTENANCE_NOTICE.UInt16(): // 游戏可关闭通知大厅
-	//	self.Old_MSGID_MAINTENANCE_NOTICE(actor, msg, session)
-	//case protomsg.MSGID_CH_SELEChT_MATCH_RESULT.UInt16(): // 选择匹配结果
-	//	self.MSGID_CH_SELECT_MATCH_RESULT(actor, msg, session)
-	//case protomsg.MSGID_HG_REENTER_OTHER_GAME.UInt16():
-	//	self.MSGID_HG_REENTER_OTHER_GAME(actor, msg, session)
+
 
 	//---------------------------- 游戏相关 ---------------------------------------------
 	case inner.SERVERMSG_GH_SERVERFEE_LOG.UInt16(): // 服务费日志
 		self.SERVERMSG_GH_SERVERFEE_LOG(actor, pack.ReadBytes(), session)
 	case inner.SERVERMSG_GH_MONEYCHANGE.UInt16(): // 金币改变日志
 		self.SERVERMSG_GH_MONEYCHANGE(actor, pack.ReadBytes(), session)
+	case inner.SERVERMSG_GH_ROOM_BONUS_REQ.UInt16(): // 游戏请求水池金额
+		self.SERVERMSG_GH_ROOM_BONUS_REQ(actor, pack.ReadBytes(), session)
+	case inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(): // 游戏请求回存水池金额
+		self.SERVERMSG_GH_ROOM_BONUS_SAVE(actor, pack.ReadBytes(), session)
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到测试网络消息 SessionID:%v", session)

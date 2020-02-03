@@ -7,6 +7,7 @@ import (
 	"root/core/log"
 	"root/core/utils"
 	"root/protomsg"
+	"root/protomsg/inner"
 	"root/server/hall/account"
 	"root/server/hall/event"
 	"root/server/hall/send_tools"
@@ -29,6 +30,8 @@ type (
 	gameMgr struct {
 		nodes map[uint32]*nodeInfo // 游戏节点 key:sid
 		rooms map[uint32]*roomInfo // 所有房间 key:roomID
+		bonus map[uint32]int64 // 房间水池金额
+		savebounus bool
 	}
 )
 
@@ -36,6 +39,7 @@ func newGameMgr() *gameMgr {
 	hall := &gameMgr{
 		nodes: make(map[uint32]*nodeInfo),
 		rooms: make(map[uint32]*roomInfo),
+		bonus: make(map[uint32]int64),
 	}
 	event.Dispatcher.AddEventListener(event.EventType_UpdateCharge, hall)
 	return hall
@@ -150,6 +154,18 @@ func (self *gameMgr) PrintSign(strServerIP string) {
 	//} else {
 	//	log.Infof("=========== 白名单功能:已关闭;          ServerIP:%v\r\n", strServerIP)
 	//}
+}
+// 回存一些房间数据
+func (self *gameMgr) Save() {
+	if self.savebounus {
+		for roomid,bounusValue:= range self.bonus{
+			send_tools.Send2DB(inner.SERVERMSG_HD_SAVE_ROOM_BONUS.UInt16(),&inner.ROOM_BONUS_SAVE{
+				RoomID: roomid,
+				Value:  uint64(bounusValue),
+			})
+		}
+		self.savebounus = false
+	}
 }
 
 
