@@ -225,28 +225,32 @@ func CMD_Add_RMB(sParam []string) {
 		fmt.Printf("× 参数错误, 参数1: 玩家ID; 参数2: 改变元宝数量\r\n")
 		return
 	}
-	iChangeRMB, err := strconv.Atoi(sParam[1])
+	changeValue, err := strconv.Atoi(sParam[1])
 	if err != nil {
 		fmt.Printf("× 参数错误, 参数1: 玩家ID; 参数2: 改变元宝数量\r\n")
 		return
 	}
 
-	iAccountID, err := strconv.Atoi(sParam[0])
-	if err != nil || iAccountID < 0 {
+	accID, err := strconv.Atoi(sParam[0])
+	if err != nil || accID < 0 {
 		fmt.Printf("× 参数错误, 参数1: 玩家ID; 参数2: 改变元宝数量\r\n")
 		return
 	}
 
-	tAccount := account.AccountMgr.GetAccountByID(uint32(iAccountID))
-	if tAccount == nil {
+	acc := account.AccountMgr.GetAccountByID(uint32(accID))
+	if acc == nil {
 		fmt.Printf("× 找不到指定ID的玩家, 请输入正确的玩家ID\r\n")
 		return
 	}
-	m := tAccount.GetMoney()
-	if tAccount.Robot == 0 {
-		tAccount.AddMoney(int64(iChangeRMB), common.EOperateType_CMD)
+	m := acc.GetMoney()
+	if acc.Robot == 0 {
+		if acc.RoomID == 0{
+			acc.AddMoney(int64(changeValue), common.EOperateType_CMD)
+		}else{
+			fmt.Printf("玩家:%v 在房间:%v内，不能执行修改金币命令，请先退出房间", acc.GetAccountId(), acc.RoomID)
+		}
 	}
-	fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", tAccount.GetAccountId(),m,iChangeRMB,tAccount.GetMoney())
+	fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", acc.GetAccountId(),m, changeValue, acc.GetMoney())
 }
 
 func CMD_Get_Robot_ID(sParam []string) {

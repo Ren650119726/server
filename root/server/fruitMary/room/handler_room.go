@@ -85,7 +85,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	sumOdds := int64(0)
 	reward := int64(0)
 	maryCount := 0
-	sumKillP := self.killPersent //+ user.KillPersent
+	sumKillP := self.killPersent + acc.GetKill()
 	log.Debugf("玩家的 杀数为: %d", sumKillP)
 	rNum := rand.Int31n(10000) + 1
 	isKill := false

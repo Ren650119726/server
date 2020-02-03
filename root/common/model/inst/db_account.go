@@ -25,6 +25,7 @@ type AccountModel struct {
 	LoginTime          int64  `gorm:"column:gd_LoginTime; not null; default:0"`
 	LogoutTime         int64  `gorm:"column:gd_LogoutTime; not null; default:0"`
 	Robot              uint32 `gorm:"column:gd_Robot; not null; default:0"`
+	Kill               int32 `gorm:"column:gd_Kill; not null; default:0"`
 }
 
 func (self *AccountModel) Reset()         { self = &AccountModel{} }

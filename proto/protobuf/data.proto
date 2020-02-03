@@ -22,6 +22,7 @@ message AccountStorageData {
   int64  LoginTime  =  16;// 登录时间
   int64  LogoutTime =  17;// 登出时间
   uint32 Robot      =  18;// 是否是机器人
+  int32  Kill       =  19;// 玩家杀数
 }
 
 // 玩家游戏信息
