@@ -44,7 +44,7 @@ func (self *Hall) CMD_LoadConfig(sParam []string) {
 
 	strServerIP := utils.GetLocalIP()
 	GameMgr.PrintSign(strServerIP)
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_Count(sParam []string) {
@@ -62,7 +62,7 @@ func CMD_Count(sParam []string) {
 		}
 	}
 	fmt.Printf("总注册:%v  当前在线玩家:%v  当前离线玩家:%v  机器人个数:%v  可分配帐号ID个数:%v\r\n", nRegCount, nOnline, nOffline, nRobot, len(account.AccountMgr.IDAssign))
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_Player(sParam []string) {
@@ -96,7 +96,7 @@ func CMD_Player(sParam []string) {
 
 		fmt.Printf("%v 头像URL:%v\r\n", strType, tAccount.HeadURL)
 	}
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_On(sParam []string) {
@@ -114,7 +114,7 @@ func CMD_On(sParam []string) {
 		}
 	}
 	fmt.Printf("%v 总在线:%v 全服玩家身上元宝:%v, 保险箱元宝:%v, 总计:%v\r\n", utils.DateString(), nCount, nTotalRMB, nTotalSafeRMB, (nTotalRMB+nTotalSafeRMB))
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 func CMD_Off(sParam []string) {
 	nCount := 0
@@ -125,20 +125,20 @@ func CMD_Off(sParam []string) {
 		}
 	}
 	fmt.Printf("离线玩家人数:%v\r\n", nCount)
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_Print_Speaker(sParam []string) {
 
 	speaker.SpeakerMgr.PrintAll()
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 func CMD_Del_Speaker(sParam []string) {
 
 	speaker.SpeakerMgr.PrintAll()
 	speaker.SpeakerMgr.RemoveSpeaker(-1)
 	speaker.SpeakerMgr.PrintAll()
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_Add_Speaker(sParam []string) {
@@ -160,7 +160,7 @@ func CMD_Add_Speaker(sParam []string) {
 	nIntervalTime := uint16(20)
 
 	speaker.SpeakerMgr.AddSpeaker(nStartTime, nDelTime, nIntervalTime, 2, strContent)
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_Print_Email(sParam []string) {
@@ -183,7 +183,7 @@ func CMD_Print_Email(sParam []string) {
 	}
 
 	account.EmailMgr.PrintEmail(uint32(nAccountID))
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_Del_Email(sParam []string) {
@@ -212,12 +212,12 @@ func CMD_Del_Email(sParam []string) {
 	} else {
 		fmt.Printf("====== 删除邮件失败 ====== 错误码:%v\r\n", ret)
 	}
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_Check(sParam []string) {
 
-	fmt.Printf("====== Hall 命令执行成功 ======\r\n")
+	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
 func CMD_Add_RMB(sParam []string) {
@@ -242,10 +242,11 @@ func CMD_Add_RMB(sParam []string) {
 		fmt.Printf("× 找不到指定ID的玩家, 请输入正确的玩家ID\r\n")
 		return
 	}
+	m := tAccount.GetMoney()
 	if tAccount.Robot == 0 {
 		tAccount.AddMoney(int64(iChangeRMB), common.EOperateType_CMD)
 	}
-	fmt.Printf("====== Hall 命令执行成功 玩家:%v 当前金币:%v ======\r\n", tAccount.GetAccountId(),tAccount.GetMoney())
+	fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", tAccount.GetAccountId(),m,iChangeRMB,tAccount.GetMoney())
 }
 
 func CMD_Get_Robot_ID(sParam []string) {
@@ -266,7 +267,7 @@ func CMD_Get_Robot_ID(sParam []string) {
 		account.AccountMgr.IDAssign, nNewID = utils.RandomSliceAndRemoveReturn(account.AccountMgr.IDAssign)
 		log.Infof("%v", nNewID)
 	}
-	log.Infof("====== Hall 命令执行成功 ======")
+	log.Infof("====== 命令执行成功 ======")
 }
 
 func CMD_ToDB(s []string) {
@@ -274,7 +275,7 @@ func CMD_ToDB(s []string) {
 }
 func CMD_Save(s []string) {
 	account.AccountMgr.ArchiveAll()
-	log.Infof("====== Hall 命令执行成功 ======")
+	log.Infof("====== 命令执行成功 ======")
 }
 func (self *Hall)CMD_Stop(s []string) {
 	self.ListenActor.Suspend()
