@@ -2,6 +2,8 @@ syntax = "proto3";
 package protomsg;
 option go_package = "root/protomsg";
 
+import "protobuf/data.proto";
+
 // 网络消息
 enum FRUITMARYMSG {
 	UNKNOW_FRUITMARY = 0;
@@ -19,6 +21,9 @@ enum FRUITMARYMSG {
 	SC_START_MARY2_RES           = 20012;
 	
 	CS_NEXT_MARY_RESULT          = 20013; // 客户通知服务器播放下一个结果
+
+	CS_PLAYERS_LIST_REQ          = 20015; // 请求在线玩家列表
+	SC_PLAYERS_LIST_RES          = 20016;
 }
 
 // 游戏1 图案枚举
@@ -141,8 +146,10 @@ message Mary2_Result {
 message NEXT_MARY_RESULT  {
 }
 
-
-
+// 请求小玛利玩家列表
+message PLAYERS_LIST_RES{
+   repeated AccountStorageData players = 1; // 房间捏所有的玩家
+}
 
 
 

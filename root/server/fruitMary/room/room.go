@@ -86,10 +86,12 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ(actor,pack.ReadBytes(),session)
 	case protomsg.FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ.UInt16(): // 请求离开小玛利房间
 		self.FRUITMARYMSG_CS_LEAVE_GAME_FRUITMARY_REQ(actor,pack.ReadBytes(),session)
-	case protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16():
+	case protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(): // 请求开始游戏1
 		self.FRUITMARYMSG_CS_START_MARY_REQ(actor,pack.ReadBytes(),session)
-	case protomsg.FRUITMARYMSG_CS_START_MARY2_REQ.UInt16():
+	case protomsg.FRUITMARYMSG_CS_START_MARY2_REQ.UInt16():// 请求开始游戏2
 		self.FRUITMARYMSG_CS_START_MARY2_REQ(actor,pack.ReadBytes(),session)
+	case protomsg.FRUITMARYMSG_CS_PLAYERS_LIST_REQ.UInt16():// 请求玩家列表
+		self.FRUITMARYMSG_CS_PLAYERS_LIST_REQ(actor,pack.ReadBytes(),session)
 	default:
 		self.status.Handle(actor, msg, session)
 	}

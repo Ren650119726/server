@@ -233,3 +233,15 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY2_REQ(actor int32, msg []byte, sessi
 	acc.ResultList = resultList.Result
 	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY2_RES.UInt16(),resultList,session)
 }
+
+// 玩家请求开始游戏2
+func (self *Room) FRUITMARYMSG_CS_PLAYERS_LIST_REQ(actor int32, msg []byte, session int64) {
+	account.AccountMgr.GetAccountBySessionIDAssert(session)
+
+	ret := &protomsg.PLAYERS_LIST_RES{}
+	ret.Players = make([]*protomsg.AccountStorageData,0)
+	for _,p := range self.accounts{
+		ret.Players = append(ret.Players,p.AccountStorageData)
+	}
+	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_PLAYERS_LIST_RES.UInt16(),ret,session)
+}
