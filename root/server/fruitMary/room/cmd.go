@@ -86,7 +86,7 @@ func MaryCount(sParam []string) {
 	}
 	acc := account.AccountMgr.GetAccountByIDAssert(uint32(accID))
 	acc.MaryCount = int32(changeValue)
-	log.Info("小玛利次数修改:%v",changeValue)
+	log.Infof("小玛利次数修改:%v",changeValue)
 }
 func FeeCount(sParam []string) {
 	if len(sParam) < 1 {
@@ -107,5 +107,5 @@ func FeeCount(sParam []string) {
 	}
 	acc := account.AccountMgr.GetAccountByIDAssert(uint32(accID))
 	acc.FeeCount = int32(changeValue)
-	log.Info("免费次数修改:%v",changeValue)
+	log.Infof("免费次数修改:%v",changeValue)
 }
