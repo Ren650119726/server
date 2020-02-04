@@ -69,7 +69,10 @@ func (self *Acceptor) Stop() {
 	defer self.sessions.RUnlock()
 
 	self.listener.Close()
-	self.httpser.Shutdown(nil)
+	if self.httpser != nil {
+		self.httpser.Shutdown(nil)
+	}
+
 
 	for _, sess := range self.sessions.m {
 		sess.Kick()
