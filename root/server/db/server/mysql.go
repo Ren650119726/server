@@ -54,6 +54,8 @@ func (self *mysql_server) HandleMessage(actor int32, msg []byte, session int64) 
 		self.SERVERMSG_HD_SAVE_EMAIL_PERSON(pack, session)
 	case inner.SERVERMSG_HD_SAVE_WATER_LINE.UInt16(): // 回存水位线
 		self.SERVERMSG_HD_SAVE_WATER_LINE(pack, session)
+	case inner.SERVERMSG_HD_SAVE_ROOM_BONUS.UInt16(): // 回存水池
+		self.SERVERMSG_HD_SAVE_ROOM_BONUS(pack, session)
 	case inner.SERVERMSG_HD_SAVE_ALL.UInt16(): // 通知大厅完成所有数据回存
 		if dataInst := db.GetInst().Where("select 1"); dataInst.Error == nil {
 			if dataLog := db.GetLog().Where("select 1"); dataLog.Error == nil {
@@ -262,5 +264,30 @@ func (self *mysql_server) SERVERMSG_HD_SAVE_WATER_LINE(pack packet.IPacket, sess
 	}
 	if save_err != nil {
 		log.Warnf("回存水位线数据出错,数据:%+v 错误:%v", *saveWaterLine, save_err.Error())
+	}
+}
+
+// 回存房间水池
+func (self *mysql_server) SERVERMSG_HD_SAVE_ROOM_BONUS(pack packet.IPacket, session int64) {
+	pbData := pack.ReadBytes()
+	room_bonus := &inner.ROOM_BONUS_SAVE{}
+	err := proto.Unmarshal(pbData, room_bonus)
+	if err != nil {
+		log.Errorf("解析出错:%v", err)
+		return
+	}
+	saveRoomBouns := &inst.RoomBonusModel{}
+	tools.CopyProtoData(room_bonus, saveRoomBouns)
+
+	log.Infof("MSGID_HG_SAVE_WATER_LINE:%v", room_bonus.String())
+	time_before := utils.MilliSecondTimeSince1970()
+	save_err := saveRoomBouns.Save()
+	time_after := utils.MilliSecondTimeSince1970()
+
+	if time_diff := time_after - time_before; time_diff > 200 {
+		log.Warnf("回存水位线时间:%v sytnax:%+v", time_diff, *saveRoomBouns)
+	}
+	if save_err != nil {
+		log.Warnf("回存水位线数据出错,数据:%+v 错误:%v", *saveRoomBouns, save_err.Error())
 	}
 }
