@@ -9,12 +9,14 @@ import (
 	"root/core/log/colorized"
 	"root/core/packet"
 	"root/protomsg"
+	time2 "time"
 )
 
 type (
 	Game struct {
 		owner          *core.Actor
 		init           bool // 重新建立连接是否需要拉取所有数据
+		roomID         uint32
 	}
 )
 
@@ -53,7 +55,7 @@ func (self *Game) Init(actor *core.Actor) bool {
 
 	Send2Game(protomsg.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ.UInt16(),&protomsg.ENTER_GAME_FRUITMARY_REQ{
 		AccountID:AccountID,
-		RoomID:1001,
+		RoomID:self.roomID,
 	})
 
 	self.owner.AddTimer(30000,-1, func(dt int64) {
@@ -115,15 +117,22 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 		fee = int(pb.GetFreeCount())
 		if fee > 0{
 			fee--
-			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(1)})
+			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(100)})
 			break
 		}
 
 		count--
 		if count > 0 {
-			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(1)})
+			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(100)})
+		}else{
+			log.Infof("身上的钱--:%v", pb.GetMoney())
 		}
 
+		if count % 50000 == 0{
+			log.Infof("sleep start")
+			time2.Sleep(1*time2.Second)
+			log.Infof("sleep end")
+		}
 
 	case protomsg.FRUITMARYMSG_SC_START_MARY2_RES.UInt16():
 		//pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_MARY2_RES{}).(*protomsg.START_MARY2_RES)

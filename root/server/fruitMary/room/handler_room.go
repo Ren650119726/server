@@ -55,7 +55,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 			}
 		}
 		if !isFind {
-			log.Warnf("没有该档次")
+			log.Warnf("没有该档次%v",msgBetNum)
 			return
 		}
 
@@ -74,9 +74,8 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 
 	//抽水的分加进水池
 	if !isFree {
-		a := BetNum * self.jackpotRate
+		a := BetNum * self.jackpotRate/10000
 		self.bonus += int64(a)
-		// todo 记录水池
 		acc.AddMoney(int64(-(BetNum)), common.EOperateType_FRUIT_MARY_BET)
 	}
 	resluts := make([]*protomsg.FRUITMARY_Result, 0)
@@ -86,7 +85,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	reward := int64(0)
 	maryCount := 0
 	sumKillP := self.killPersent + acc.GetKill()
-	log.Debugf("玩家的 杀数为: %d", sumKillP)
+	//log.Debugf("玩家的 杀数为: %d", sumKillP)
 	rNum := rand.Int31n(10000) + 1
 	isKill := false
 	maxLoop := 1
@@ -127,6 +126,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	if isFree {
 		acc.FeeCount -= 1
 	}
+
 	if gainFreeCount > 0 {
 		acc.FeeCount += int32(gainFreeCount)
 	}

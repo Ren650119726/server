@@ -121,6 +121,7 @@ func (self *Logic) HandleMessage(actor int32, msg []byte, session int64) bool {
 		log.Infof(colorized.Blue("可以进入房间 房间:%+v"),pb)
 
 		game := NewGame()
+		game.roomID = pb.GetRoomID()
 		msgchan := make(chan core.IMessage, 10000)
 		actor := core.NewActor(common.EActorType_MAIN.Int32(), game, msgchan)
 		core.CoreRegisteActor(actor)

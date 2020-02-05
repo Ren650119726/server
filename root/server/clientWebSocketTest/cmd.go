@@ -57,7 +57,12 @@ func time(s []string) {
 }
 
 func engame(s []string) {
-	Send2Hall(protomsg.MSG_CS_ENTER_ROOM_REQ.UInt16(),&protomsg.ENTER_ROOM_REQ{RoomID:1001})
+	if len(s) < 1 {
+		fmt.Printf("× 参数错误 \r\n")
+		return
+	}
+	room,_ := strconv.Atoi(s[0])
+	Send2Hall(protomsg.MSG_CS_ENTER_ROOM_REQ.UInt16(),&protomsg.ENTER_ROOM_REQ{RoomID:uint32(room)})
 }
 
 func start1(s []string) {
@@ -71,6 +76,7 @@ func start1(s []string) {
 		c = 1
 	}
 	count = c
+	log.Infof("请求开始:%v",count)
 	Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(bet)})
 }
 func show(s []string) {

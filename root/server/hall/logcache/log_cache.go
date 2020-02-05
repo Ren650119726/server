@@ -73,6 +73,10 @@ func (self *LogCacheLog) AddMoneyChangeLog(serverfee_log *inner.MONEYCHANGE) {
 	portion := int(serverfee_log.GetAccountID() % 10)
 	strLog := fmt.Sprintf("(%v, %v, %v, %v, '%v',%v),",serverfee_log.GetAccountID(), serverfee_log.GetChangeValue(), serverfee_log.GetValue(),serverfee_log.GetOperate(),serverfee_log.GetTime(),serverfee_log.GetRoomID())
 	self.saveMoneyChangeLog[portion] = append(self.saveMoneyChangeLog[portion], strLog) //
+
+	if len(self.saveMoneyChangeLog[portion]) >= 50{
+		self.SendMoneyChangeLog(portion)
+	}
 }
 
 // 每30秒执行一次组装SQL和回存

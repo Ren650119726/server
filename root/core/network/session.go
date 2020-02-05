@@ -140,7 +140,7 @@ func (self *Session) SyncSend(data []byte) bool {
 		return true
 	default:
 		// TODO:缓冲区满
-		log.Warn("syncSend logcache full ", len(self.sendchan))
+		log.Warn("syncSend logcache full session:%v ", len(self.sendchan),self.id)
 		return false
 	}
 	return true

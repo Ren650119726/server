@@ -253,7 +253,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 			val := config.Get_mary_pattern_ConfigInt32(3,fmt.Sprintf("Jackpot%v",count))
 			reward = reward * int64(val) / 10000
 			if reward != 0{
-				log.Infof("中大奖了！！！！！中獎綫:%v bingo == 3 count:%v reward:%v",lid,count,reward)
+				log.Infof("中大奖了！！！！！中獎綫:%v bingo == 3 count:%v reward:%v val:%v self.basics:%v betNum:%v self.bonus:%v",lid,count,reward,val,self.basics,betNum,self.bonus)
 			}
 		}
 
@@ -262,9 +262,9 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 		if m > 0 {
 			if !test{
 				for i:=0;i < 3;i++{
-					log.Infof("%v", b[i])
+					//log.Infof("%v", b[i])
 				}
-				log.Infof("检测图片组:%v 中獎綫:%v bingo == %v count:%v 单线赔率:%v 总赔率:%v ",tempArr,lid,bingo,count,m ,sumOdds)
+				//log.Infof("检测图片组:%v 中獎綫:%v bingo == %v count:%v 单线赔率:%v 总赔率:%v ",tempArr,lid,bingo,count,m ,sumOdds)
 			}
 			bingocount++
 			tmp = append(tmp, &protomsg.FRUITMARY_Result{LineId: int32(lid), Count: int32(count), Odds: int32(m), Positions: positions})
