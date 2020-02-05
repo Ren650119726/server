@@ -288,6 +288,7 @@ func (self *Room) win(arr []int)  (count,maxMary,bingo int){
 	count = 1
 	maryCount := 0
 	cont := true
+	next := true
 	for i:=0;i < 5;i++{
 		// 特殊判断连续1的个数
 		if arr[i] == 1{
@@ -303,8 +304,12 @@ func (self *Room) win(arr []int)  (count,maxMary,bingo int){
 			continue
 		}
 
-		if number == 1 && arr[i] != 2 && arr[i] != 3{
-			number = arr[i]
+		if number == 1 && next{
+			if arr[i] != 2 && arr[i] != 3{
+				number = arr[i]
+			}else{
+				next = false
+			}
 		}
 
 		if !cont || (arr[i] != number && (arr[i] != 1 || number == 2 || number == 3)){
