@@ -239,6 +239,7 @@ func CMD_Add_Money(sParam []string) {
 			changeValue = int(-acc.GetMoney())
 		}
 		acc.AddMoney(int64(changeValue), common.EOperateType_CMD)
+		fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", acc.GetAccountId(),m, changeValue,acc.GetMoney())
 	}else{
 		GameMgr.Send2Game(inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(),&inner.NOTIFY_ALTER_DATE{
 			AccountID:  acc.GetAccountId(),
@@ -247,8 +248,9 @@ func CMD_Add_Money(sParam []string) {
 			RoomID:     acc.RoomID,
 			OperateType:common.EOperateType_CMD,
 		}, acc.RoomID)
+		fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v) 请在玩家房间内查看金币 ======\r\n", acc.GetAccountId(),m, changeValue)
 	}
-	fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", acc.GetAccountId(),m, changeValue, acc.GetMoney())
+
 }
 
 func CMD_Kill(sParam []string) {

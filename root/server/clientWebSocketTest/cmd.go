@@ -15,6 +15,7 @@ func init() {
 	core.Cmd.Regist("time", time, true)
 	core.Cmd.Regist("engame", engame, true)
 	core.Cmd.Regist("start1", start1, true)
+	core.Cmd.Regist("show", show, true)
 
 }
 
@@ -60,11 +61,18 @@ func engame(s []string) {
 }
 
 func start1(s []string) {
-	if len(s) < 1 {
+	if len(s) < 2 {
 		fmt.Printf("× 参数错误 \r\n")
 		return
 	}
-	str := s[0]
-	bet,_ := strconv.Atoi(str)
+	bet,_ := strconv.Atoi(s[0])
+	c,_ := strconv.Atoi(s[1])
+	if c == 0{
+		c = 1
+	}
+	count = c
 	Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(bet)})
+}
+func show(s []string) {
+	log.Infof("count:%v fee:%v", count,fee)
 }

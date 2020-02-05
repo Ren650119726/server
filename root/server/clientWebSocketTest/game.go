@@ -18,6 +18,8 @@ type (
 	}
 )
 
+var count = 0
+var fee = 0
 func NewGame() *Game {
 	return &Game{}
 }
@@ -105,10 +107,30 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 
 	case protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_MARY_RES{}).(*protomsg.START_MARY_RES)
-		log.Infof(colorized.Blue("开始游戏：%+v"),pb)
+		//log.Infof(colorized.Blue("开始游戏：%+v"),pb)
+
+		for i:= pb.GetMaryCount();i > 0;i--{
+			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY2_REQ.UInt16(),&protomsg.START_MARY2_REQ{})
+		}
+		fee = int(pb.GetFreeCount())
+		if fee > 0{
+			fee--
+			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(1)})
+			break
+		}
+
+		count--
+		if count > 0 {
+			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(1)})
+		}
+
+
+	case protomsg.FRUITMARYMSG_SC_START_MARY2_RES.UInt16():
+		//pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_MARY2_RES{}).(*protomsg.START_MARY2_RES)
+		//log.Infof(colorized.Blue("开始游戏2：%+v"),pb)
 	}
 
-	return false
+	return true
 }
 
 
