@@ -116,6 +116,13 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
 		acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
 
+	if utils.Probability(50){
+		gainFreeCount = 1
+		maryCount = 1
+	}
+
+
+
 	sub := self.bonus - reward
 	if sub < 0{
 		self.bonus = 0
