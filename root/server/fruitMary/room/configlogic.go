@@ -214,6 +214,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 	freeCount := 0
 	if spcifity_2_count >= 3{
 		freeCount = int(config.Get_mary_pattern_ConfigInt32(2,fmt.Sprintf("Free%v",spcifity_2_count)))
+		log.Infof("获得免费:%+v",pos)
 	}else{
 		pos = []*protomsg.FRUITMARYPosition{}
 	}
