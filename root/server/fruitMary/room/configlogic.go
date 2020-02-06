@@ -187,6 +187,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 	ccc := 0
 	spcifity_2_count := 0
 	pos := []*protomsg.FRUITMARYPosition{}
+	f5 := []*protomsg.FRUITMARYPosition{nil,nil,nil,nil,nil}
 	for i := 0; i < 5; i++ {
 		c := f()
 		b[0][i] = self.mapPictureNodes[nodes[c[0]].ids[i]].cfId
@@ -197,7 +198,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 
 		for j := 0; j < 3; j++ {
 			if 2 == b[j][i] {
-				pos = append(pos, &protomsg.FRUITMARYPosition{Px:int32(j),Py:int32(i)})
+				f5[i] = &protomsg.FRUITMARYPosition{Px:int32(j),Py:int32(i)}
 				ccc++
 				if spcifity_2_count < ccc{
 					spcifity_2_count = ccc
@@ -207,18 +208,26 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 			}
 		}
 		if !e {
-			if len(pos) < 3 {
-				pos = []*protomsg.FRUITMARYPosition{}
-			}
 			ccc = 0
 		}
 	}
 	freeCount := 0
 	if spcifity_2_count >= 3{
+		ct := 0
+		for i,v := range f5{
+			if v != nil{
+				ct++
+				if ct == spcifity_2_count{
+					pos = f5[i+1-spcifity_2_count:i+1]
+					break
+				}
+			}else{
+				ct = 0
+			}
+		}
 		freeCount = int(config.Get_mary_pattern_ConfigInt32(2,fmt.Sprintf("Free%v",spcifity_2_count)))
 		log.Infof("获得免费:%+v",pos)
-	}else{
-		pos = []*protomsg.FRUITMARYPosition{}
+		log.Infof("获得免费f5:%+v",f5)
 	}
 
 	tmp := make([]*protomsg.FRUITMARY_Result, 0)
