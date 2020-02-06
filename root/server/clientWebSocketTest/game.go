@@ -109,7 +109,7 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 
 	case protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_MARY_RES{}).(*protomsg.START_MARY_RES)
-		//log.Infof(colorized.Blue("开始游戏：%+v"),pb)
+		log.Infof(colorized.Blue("开始游戏：%+v"),pb)
 
 		for i:= pb.GetMaryCount();i > 0;i--{
 			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY2_REQ.UInt16(),&protomsg.START_MARY2_REQ{})

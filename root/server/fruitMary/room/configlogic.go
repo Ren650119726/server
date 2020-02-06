@@ -207,7 +207,9 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 			}
 		}
 		if !e {
-			pos = []*protomsg.FRUITMARYPosition{}
+			if len(pos) < 3 {
+				pos = []*protomsg.FRUITMARYPosition{}
+			}
 			ccc = 0
 		}
 	}
