@@ -107,6 +107,7 @@ message START_MARY_RES {
 	int64 Money                       = 6; // 身上的钱
 	int64 FreeCount                   = 7; // 获得免费次数
 	int64 MaryCount                   = 8; // 触发小玛丽次数
+	repeated FRUITMARY_position FeePositions = 9; //中免费的坐标
 }
 
 message FRUITMARY_position{

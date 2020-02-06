@@ -83,6 +83,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	gainFreeCount := int(0)
 	sumOdds := int64(0)
 	reward := int64(0)
+	var feepos []*protomsg.FRUITMARYPosition
 	maryCount := 0
 	sumKillP := self.killPersent + acc.GetKill()
 	//log.Debugf("玩家的 杀数为: %d", sumKillP)
@@ -95,9 +96,9 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	}
 	for i := 0; i < maxLoop; i++ {
 		if freeCount > 0 {
-			resluts, pArr, gainFreeCount, maryCount,sumOdds, reward = self.selectWheel(self.freeWheel, int64(BetNum), isKill,false)
+			resluts, pArr, gainFreeCount, maryCount,sumOdds, reward,feepos = self.selectWheel(self.freeWheel, int64(BetNum), isKill,false)
 		} else {
-			resluts, pArr, gainFreeCount, maryCount,sumOdds, reward = self.selectWheel(self.mainWheel, int64(BetNum), isKill,false)
+			resluts, pArr, gainFreeCount, maryCount,sumOdds, reward,feepos = self.selectWheel(self.mainWheel, int64(BetNum), isKill,false)
 		}
 		if maxLoop > 1 && sumOdds > 0 && i < (maxLoop-1) {
 			continue
@@ -140,6 +141,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		Money:int64(acc.GetMoney()),
 		FreeCount:int64(acc.FeeCount),
 		MaryCount:int64(acc.MaryCount),
+		FeePositions:feepos,
 	}
 	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16(),resultMsg,session)
 

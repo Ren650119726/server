@@ -159,7 +159,7 @@ return:
 	@ args[3] 中奖总倍数
 	@ args[4] 获得大奖的数量
 */
-func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool) ([]*protomsg.FRUITMARY_Result, []int32, int, int,int64, int64) {
+func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool) ([]*protomsg.FRUITMARY_Result, []int32, int, int,int64, int64,[]*protomsg.FRUITMARYPosition) {
 	rand.Seed(time.Now().UnixNano() + int64(rand.Int31n(int32(10000))))
 	// 随机一个索引x 组成一个集合 [x-1,x,x+1]
 	f := func() [3]int {
@@ -186,6 +186,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 
 	ccc := 0
 	spcifity_2_count := 0
+	pos := []*protomsg.FRUITMARYPosition{}
 	for i := 0; i < 5; i++ {
 		c := f()
 		b[0][i] = self.mapPictureNodes[nodes[c[0]].ids[i]].cfId
@@ -193,8 +194,10 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 		b[2][i] = self.mapPictureNodes[nodes[c[2]].ids[i]].cfId
 
 		e := false
+
 		for j := 0; j < 3; j++ {
 			if 2 == b[j][i] {
+				pos = append(pos, &protomsg.FRUITMARYPosition{Px:int32(j),Py:int32(i)})
 				ccc++
 				if spcifity_2_count < ccc{
 					spcifity_2_count = ccc
@@ -204,12 +207,15 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 			}
 		}
 		if !e {
+			pos = []*protomsg.FRUITMARYPosition{}
 			ccc = 0
 		}
 	}
 	freeCount := 0
 	if spcifity_2_count >= 3{
 		freeCount = int(config.Get_mary_pattern_ConfigInt32(2,fmt.Sprintf("Free%v",spcifity_2_count)))
+	}else{
+		pos = []*protomsg.FRUITMARYPosition{}
 	}
 
 	tmp := make([]*protomsg.FRUITMARY_Result, 0)
@@ -278,7 +284,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 		picA = append(picA, int32(b[2][i]))
 	}
 
-	return tmp, picA, freeCount, maryCount, int64(sumOdds), reward
+	return tmp, picA, freeCount, maryCount, int64(sumOdds), reward,pos
 }
 
 // 返回中奖的连数，以及触发小玛利次数, 中奖的图片ID
