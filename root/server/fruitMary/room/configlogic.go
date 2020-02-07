@@ -226,8 +226,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 			}
 		}
 		freeCount = int(config.Get_mary_pattern_ConfigInt32(2,fmt.Sprintf("Free%v",spcifity_2_count)))
-		log.Infof("获得免费:%+v",pos)
-		log.Infof("获得免费f5:%+v",f5)
+		log.Infof("中免费 坐标:%v",pos)
 	}
 
 	tmp := make([]*protomsg.FRUITMARY_Result, 0)
@@ -242,14 +241,16 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 		}
 		positions := make([]*protomsg.FRUITMARYPosition, 0)
 		tempArr := []int{} // 中奖线图片组
+		tempposs := []*protomsg.FRUITMARYPosition{}
 		for _,pos := range line {
 			x := pos % 3
 			y := pos / 3
 			id := b[x][y]
 			tempArr = append(tempArr, id)
+			tempposs = append(tempposs,&protomsg.FRUITMARYPosition{Px:int32(x),Py:int32(y)})
 		}
 
-		count,spicify_1,bingo := self.win(tempArr)
+		count,spicify_1,bingo,marypos := self.win(tempArr,tempposs)
 
 		ii := 0
 		for _,pos := range line {
@@ -263,7 +264,19 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 		}
 
 		if spicify_1 >= 3 {
+			ct := 0
+			for i,v := range marypos{
+				if v != nil {
+					ct++
+					if ct == spicify_1{
+						pos = append(pos, marypos[i+1-spicify_1:i+1]...)
+					}
+				}else{
+					ct = 0
+				}
+			}
 			maryCount +=int(config.Get_mary_pattern_ConfigInt32(1,fmt.Sprintf("Bouns%v",spicify_1)))
+			log.Infof("中小玛利 坐标:%v",pos)
 		}
 		// 中奖金了
 		if bingo == 3 && count >= 3{
@@ -299,17 +312,20 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 	return tmp, picA, freeCount, maryCount, int64(sumOdds), reward,pos
 }
 
-// 返回中奖的连数，以及触发小玛利次数, 中奖的图片ID
-func (self *Room) win(arr []int)  (count,maxMary,bingo int){
+// 返回中奖的连数，以及触发小玛利次数, 中奖的图片ID,中小玛利次数的图片坐标
+func (self *Room) win(arr []int,inpos []*protomsg.FRUITMARYPosition)  (count,maxMary,bingo int,pos []*protomsg.FRUITMARYPosition){
 	//判断是否中奖
 	number := arr[0]
 	count = 1
 	maryCount := 0
 	cont := true
 	next := true
+	m5 := []*protomsg.FRUITMARYPosition{nil,nil,nil,nil,nil}
+	pos = make([]*protomsg.FRUITMARYPosition,0)
 	for i:=0;i < 5;i++{
 		// 特殊判断连续1的个数
 		if arr[i] == 1{
+			m5[i] = inpos[i]
 			maryCount++
 			if maxMary < maryCount{
 				maxMary = maryCount
@@ -337,5 +353,5 @@ func (self *Room) win(arr []int)  (count,maxMary,bingo int){
 		count++
 	}
 	bingo = number
-	return count,maxMary,bingo
+	return count,maxMary,bingo,pos
 }

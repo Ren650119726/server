@@ -1,7 +1,11 @@
 package logic
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"regexp"
 	"root/common/config"
 	"root/common/tools"
@@ -30,7 +34,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 	strCheckSign := fmt.Sprintf("%v%v%v%v",  loginMSG.GetLoginType(), loginMSG.GetOSType(),loginMSG.GetUnique(), LOGIN_SIGN_KEY)
 	strCheckSign = tools.MD5(strCheckSign)
 	if strCheckSign != loginMSG.GetSign() {
-		log.Warnf("Error, not match sign, loginType:%v, OsType:%v unique:%v Session:%v",loginMSG.GetLoginType(), loginMSG.GetOSType(),loginMSG.GetUnique(), session)
+		//log.Warnf("Error, not match sign, loginType:%v, OsType:%v unique:%v Session:%v",loginMSG.GetLoginType(), loginMSG.GetOSType(),loginMSG.GetUnique(), session)
 		//return
 	}
 	strClientIP := core.GetRemoteIP(session)
@@ -48,24 +52,41 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 			return
 		}
 	case uint32(types.LOGIN_TYPE_OTHER.Value()):	// 其他平台登陆
-		//go func() {
-		//		resp, err := http.PostForm("http://47.244.119.129:1000/user/userInfo",
-		//			url.Values{"channelId": {"GAME"}, "userId": {loginMSG.GetUnique()}})
-		//
-		//		if err != nil {
-		//			log.Warnf("三方平台，http 请求错误:%v", err.Error())
-		//			return
-		//		}
-		//
-		//		defer resp.Body.Close()
-		//		body, err := ioutil.ReadAll(resp.Body)
-		//		if err != nil {
-		//			log.Warnf("三方平台，read 错误:%v", err.Error())
-		//			return
-		//		}
-		//		log.Infof(string(body))
-		//}()
-		//return
+		log.Infof("请求登录type:%v osType:%v unique:%v",loginMSG.LoginType, loginMSG.OSType,loginMSG.Unique)
+		go func() {
+				resp, err := http.PostForm("http://47.244.119.129:1000/user/userInfo",
+					url.Values{"channelId": {"GAME"}, "userId": {loginMSG.GetUnique()}})
+
+				if err != nil {
+					log.Warnf("三方平台，http 请求错误:%v", err.Error())
+					return
+				}
+
+				defer resp.Body.Close()
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					log.Warnf("三方平台，read 错误:%v", err.Error())
+					return
+				}
+				errorCode := map[int]string{
+					1001:"channel 填写错误",
+					1002:"userId 填写错误",
+					1003:"渠道不存在",
+					1004:"渠道权限错误",
+					1005:"找不到用户",
+				}
+				var jsonstr map[string]interface{}
+				e := json.Unmarshal(body,&jsonstr)
+				if e != nil {
+					log.Warnf("json 解析错误:%v ",e.Error())
+					return
+				}
+				if err := jsonstr["status"]; err != 0{
+					log.Warnf("平台返回错误码:%v ",errorCode[int(err.(float64))])
+					return
+				}
+		}()
+		return
 	default:
 		log.Panicf("不支持的登陆类型:%v", loginMSG.LoginType)
 	}

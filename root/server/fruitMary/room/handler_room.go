@@ -144,7 +144,6 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		MaryCount:int64(acc.MaryCount),
 		FeePositions:feepos,
 	}
-	log.Infof("-----------免费次数 坐标:%+v -------------",resultMsg.FeePositions)
 	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16(),resultMsg,session)
 
 	for _,acc := range self.accounts {
