@@ -45,7 +45,7 @@ func login(s []string) {
 
 	acc := s[0]
 	Send2Hall(protomsg.MSG_CS_LOGIN_HALL_REQ.UInt16(),&protomsg.LOGIN_HALL_REQ{
-		LoginType: uint32(4),	// 1 游客 2 手机 3 微信
+		LoginType: uint32(1),	// 1 游客 2 手机 3 微信
 		OSType:    1,
 		Unique:    acc,
 		Sign:      "",

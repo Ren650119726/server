@@ -320,12 +320,11 @@ func (self *Room) win(arr []int,inpos []*protomsg.FRUITMARYPosition)  (count,max
 	maryCount := 0
 	cont := true
 	next := true
-	m5 := []*protomsg.FRUITMARYPosition{nil,nil,nil,nil,nil}
-	pos = make([]*protomsg.FRUITMARYPosition,0)
+	pos = []*protomsg.FRUITMARYPosition{nil,nil,nil,nil,nil}
 	for i:=0;i < 5;i++{
 		// 特殊判断连续1的个数
 		if arr[i] == 1{
-			m5[i] = inpos[i]
+			pos[i] = inpos[i]
 			maryCount++
 			if maxMary < maryCount{
 				maxMary = maryCount
