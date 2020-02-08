@@ -92,6 +92,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 						userID := jsonstr["userId"].(string)
 						name := jsonstr["nickName"].(string)
 						gold := jsonstr["gold"].(float64)
+						log.Debugf("登录:%v %v %v ",userID,name,gold)
 						loginFun(userID,name,4,int64(gold))
 					})
 				}
