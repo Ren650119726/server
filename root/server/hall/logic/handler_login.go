@@ -77,6 +77,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 					1004:"渠道权限错误",
 					1005:"找不到用户",
 				}
+				log.Debugf("%v",string(body))
 				var jsonstr map[string]interface{}
 				e := json.Unmarshal(body,&jsonstr)
 				if e != nil {
@@ -84,11 +85,11 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 					return
 				}
 				log.Debugf(":%v",jsonstr)
-				if err := jsonstr["status"]; err != 0{
+				if err,e := jsonstr["status"];e && err != 0{
 					log.Warnf("平台返回错误码:%v ",errorCode[int(err.(float64))])
 					return
 				}else{
-					log.Infof("平台登录成功 data:%v",jsonstr)
+					log.Infof("平台登录成功 data:%v",jsonstr["data"])
 					core.LocalCoreSend(0,common.EActorType_MAIN.Int32(), func() {
 						userID := jsonstr["userId"].(string)
 						name := jsonstr["nickName"].(string)
