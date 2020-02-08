@@ -19,6 +19,7 @@ type (
 		MaryCount int32
 		LastBet   uint64
 		ResultList []*protomsg.Mary2_Result
+		Forbid bool
 	}
 )
 

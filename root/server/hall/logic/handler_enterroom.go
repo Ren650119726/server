@@ -34,6 +34,7 @@ func (self *Hall) MSG_CS_ENTER_ROOM_REQ(actor int32, msg []byte, session int64) 
 		Account:acc.AccountStorageData,
 		AccountData:acc.AccountGameData,
 		RoomID:pbMsg.GetRoomID(),
+		Reback:true,
 	}
 	send_tools.Send2Game(inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(),sendPB,node.session)
 	log.Infof("玩家:[%v] 请求进入房间:%v 给游戏:%v 发送数据 ",acc.GetAccountId(),pbMsg.GetRoomID(),room.serverID)

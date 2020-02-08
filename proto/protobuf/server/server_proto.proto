@@ -131,6 +131,7 @@ message PLAYER_DATA_REQ {
 	AccountStorageData Account 	   = 1; 	// 玩家基础信息
 	AccountGameData    AccountData = 2; 	// 玩家游戏信息
 	uint32 RoomID                  = 3;
+	bool reback                    = 4; // 是否需要返回
 }
 
 // 游戏回复大厅，收到玩家数据，大厅通知玩家进入

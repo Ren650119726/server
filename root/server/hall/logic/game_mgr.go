@@ -169,7 +169,7 @@ func (self *gameMgr) Save() {
 	}
 }
 
-// 回存一些房间数据
+// 发送数据给房间
 func (self *gameMgr) Send2Game(msgId uint16, pb proto.Message, RoomID uint32) {
 	room := self.rooms[RoomID]
 	if room == nil{

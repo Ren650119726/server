@@ -38,9 +38,12 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 	msgBetNum := start.GetBet()
 	BetNum :=msgBetNum*9
 	acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
-
 	if acc.MaryCount > 0{
 		log.Warnf("doBet 玩家[%v]还有小玛丽剩余次数 %v次，不能下注", acc.GetAccountId(),acc.MaryCount)
+		return
+	}
+	if acc.Forbid {
+		log.Warnf("userID:%v,还未收到平台返回，禁止操作",acc.UnDevice)
 		return
 	}
 
@@ -71,88 +74,106 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		}
 	}
 	acc.LastBet = BetNum
+	acc.Forbid = true
+	gameFun := func() {
+		resluts := make([]*protomsg.FRUITMARY_Result, 0)
+		pArr := make([]int32, 0)
+		gainFreeCount := int(0)
+		sumOdds := int64(0)
+		reward := int64(0)
+		var feepos []*protomsg.FRUITMARYPosition
+		maryCount := 0
+		sumKillP := self.killPersent + acc.GetKill()
+		//log.Debugf("玩家的 杀数为: %d", sumKillP)
+		rNum := rand.Int31n(10000) + 1
+		isKill := false
+		maxLoop := 1
+		if rNum <= sumKillP {
+			isKill = true
+			maxLoop = 30
+		}
+		for i := 0; i < maxLoop; i++ {
+			if freeCount > 0 {
+				resluts, pArr, gainFreeCount, maryCount,sumOdds, reward,feepos = self.selectWheel(self.freeWheel, int64(BetNum), isKill,false)
+			} else {
+				resluts, pArr, gainFreeCount, maryCount,sumOdds, reward,feepos = self.selectWheel(self.mainWheel, int64(BetNum), isKill,false)
+			}
+			if maxLoop > 1 && sumOdds > 0 && i < (maxLoop-1) {
+				continue
+			} else {
+				break
+			}
+		}
+		if msgBetNum < uint64(self.jackLimit){
+			reward = 0
+		}
+
+
+		acc.MaryCount = int32(maryCount)
+		val := reward+sumOdds*int64(BetNum/9)
+		acc.AddMoney(val, common.EOperateType_FRUIT_MARY_WIN)
+		asyn_addMoney(acc.UnDevice,val,int32(self.roomId), nil)
+
+		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
+			acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
+		log.Debugf("免费和小玛利 中奖坐标:%v",feepos)
+
+		sub := self.bonus - reward
+		if sub < 0{
+			self.bonus = 0
+		}else{
+			self.bonus = sub
+		}
+
+		// 统计玩家本局获得金币
+		if isFree {
+			acc.FeeCount -= 1
+		}
+
+		if gainFreeCount > 0 {
+			acc.FeeCount += int32(gainFreeCount)
+		}
+
+		resultMsg := &protomsg.START_MARY_RES{
+			Ret:0,
+			SumOdds:sumOdds,
+			Results:resluts,
+			PictureList:pArr,
+			Bonus:reward,
+			Money:int64(acc.GetMoney()),
+			FreeCount:int64(acc.FeeCount),
+			MaryCount:int64(acc.MaryCount),
+			FeePositions:feepos,
+		}
+		send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16(),resultMsg,session)
+
+		for _,acc := range self.accounts {
+			send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_UPDATE_MARY_BONUS.UInt16(),&protomsg.UPDATE_MARY_BONUS{Bonus:self.bonus},acc.SessionId)
+		}
+
+		// 回存水池
+		send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(),&inner.ROOM_BONUS_SAVE{Value:uint64(self.bonus),RoomID:self.roomId})
+		acc.Forbid = false
+	}
 
 	//抽水的分加进水池
 	if !isFree {
-		a := BetNum * self.jackpotRate/10000
-		self.bonus += int64(a)
-		acc.AddMoney(int64(-(BetNum)), common.EOperateType_FRUIT_MARY_BET)
-	}
-	resluts := make([]*protomsg.FRUITMARY_Result, 0)
-	pArr := make([]int32, 0)
-	gainFreeCount := int(0)
-	sumOdds := int64(0)
-	reward := int64(0)
-	var feepos []*protomsg.FRUITMARYPosition
-	maryCount := 0
-	sumKillP := self.killPersent + acc.GetKill()
-	//log.Debugf("玩家的 杀数为: %d", sumKillP)
-	rNum := rand.Int31n(10000) + 1
-	isKill := false
-	maxLoop := 1
-	if rNum <= sumKillP {
-		isKill = true
-		maxLoop = 30
-	}
-	for i := 0; i < maxLoop; i++ {
-		if freeCount > 0 {
-			resluts, pArr, gainFreeCount, maryCount,sumOdds, reward,feepos = self.selectWheel(self.freeWheel, int64(BetNum), isKill,false)
-		} else {
-			resluts, pArr, gainFreeCount, maryCount,sumOdds, reward,feepos = self.selectWheel(self.mainWheel, int64(BetNum), isKill,false)
-		}
-		if maxLoop > 1 && sumOdds > 0 && i < (maxLoop-1) {
-			continue
-		} else {
-			break
-		}
-	}
-	if msgBetNum < uint64(self.jackLimit){
-		reward = 0
-	}
-
-
-	acc.MaryCount = int32(maryCount)
-	acc.AddMoney(reward+sumOdds*int64(BetNum/9), common.EOperateType_FRUIT_MARY_WIN)
-
-	log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
-		acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
-	log.Debugf("免费和小玛利 中奖坐标:%v",feepos)
-
-	sub := self.bonus - reward
-	if sub < 0{
-		self.bonus = 0
+		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId), func(backunique string, backmoney int64) {
+			a := BetNum * self.jackpotRate/10000
+			self.bonus += int64(a)
+			if acc.GetMoney() - BetNum != uint64(backmoney){
+				log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v",acc.GetUnDevice(),acc.GetMoney(),BetNum,backmoney)
+				acc.AddMoney(backmoney - int64(acc.GetMoney()),common.EOperateType_INIT)
+			}else{
+				acc.AddMoney(int64(-(BetNum)), common.EOperateType_FRUIT_MARY_BET)
+			}
+			gameFun()
+		})
 	}else{
-		self.bonus = sub
+		gameFun()
 	}
 
-	// 统计玩家本局获得金币
-	if isFree {
-		acc.FeeCount -= 1
-	}
 
-	if gainFreeCount > 0 {
-		acc.FeeCount += int32(gainFreeCount)
-	}
-
-	resultMsg := &protomsg.START_MARY_RES{
-		Ret:0,
-		SumOdds:sumOdds,
-		Results:resluts,
-		PictureList:pArr,
-		Bonus:reward,
-		Money:int64(acc.GetMoney()),
-		FreeCount:int64(acc.FeeCount),
-		MaryCount:int64(acc.MaryCount),
-		FeePositions:feepos,
-	}
-	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16(),resultMsg,session)
-
-	for _,acc := range self.accounts {
-		send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_UPDATE_MARY_BONUS.UInt16(),&protomsg.UPDATE_MARY_BONUS{Bonus:self.bonus},acc.SessionId)
-	}
-
-	// 回存水池
-	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(),&inner.ROOM_BONUS_SAVE{Value:uint64(self.bonus),RoomID:self.roomId})
 }
 
 // 玩家请求开始游戏2

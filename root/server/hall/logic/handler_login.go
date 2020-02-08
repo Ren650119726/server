@@ -15,6 +15,7 @@ import (
 	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
+	"root/protomsg/inner"
 	"root/server/hall/account"
 	"root/server/hall/send_tools"
 	"root/server/hall/types"
@@ -70,8 +71,16 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 			}
 			if LoginType == 4 {
 				acc.Money = uint64(Gold)
+				if acc.RoomID != 0{
+					sendPB := &inner.PLAYER_DATA_REQ{
+						Account:acc.AccountStorageData,
+						AccountData:acc.AccountGameData,
+						RoomID:acc.RoomID,
+						Reback:true,
+					}
+					GameMgr.Send2Game(inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(),sendPB,acc.RoomID)
+				}
 			}
-
 			account.AccountMgr.LoginAccount(acc,LoginType, strClientIP, session)
 		}
 		// 发送游戏房间信息
@@ -115,25 +124,22 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 					1004:"渠道权限错误",
 					1005:"找不到用户",
 				}
-				log.Debugf("%v",string(body))
+				log.Infof("平台返回:%v",string(body))
 				var jsonstr map[string]interface{}
 				e := json.Unmarshal(body,&jsonstr)
 				if e != nil {
 					log.Warnf("json 解析错误:%v ",e.Error())
 					return
 				}
-				log.Debugf("%v",jsonstr)
 				if err,e := jsonstr["status"];e && int(err.(float64)) != 0{
 					log.Warnf("平台返回错误码:%v ",errorCode[int(err.(float64))])
 					return
 				}else{
 					data := jsonstr["data"].(map[string]interface{})
-					log.Infof("平台登录成功 data:%v",data)
 					core.LocalCoreSend(0,common.EActorType_MAIN.Int32(), func() {
 						userID := data["userId"].(float64)
 						name := data["nickName"].(string)
 						gold := data["gold"].(float64)
-						log.Debugf("登录:%v %v %v ",int(userID),name,gold)
 						loginFun(strconv.Itoa(int(userID)),name,4,int64(gold))
 					})
 				}

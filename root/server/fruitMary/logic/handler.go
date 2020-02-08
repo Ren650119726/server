@@ -18,13 +18,19 @@ func (self *FruitMary) SERVERMSG_HG_PLAYER_DATA_REQ(actor int32, msg []byte, ses
 	}else {
 		account.AccountMgr.SetAccountByID(account.NewAccount(accPB.GetAccount()))
 	}
-	
-	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_DATA_RES.UInt16(),&inner.PLAYER_DATA_RES{
-		Ret:       0,
-		AccountID: accPB.GetAccount().GetAccountId(),
-		RoomID:    accPB.GetRoomID(),
-	})
-	log.Infof("大厅发送玩家数据:%v 想进入的房间:%v",accPB.GetAccount().GetAccountId(),accPB.GetRoomID())
+
+	if accPB.Reback{
+		send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_DATA_RES.UInt16(),&inner.PLAYER_DATA_RES{
+			Ret:       0,
+			AccountID: accPB.GetAccount().GetAccountId(),
+			RoomID:    accPB.GetRoomID(),
+		})
+		log.Infof("大厅发送玩家数据:%v",accPB.GetAccount().GetAccountId())
+	}else{
+		log.Infof("大厅发送玩家数据:%v 想进入的房间:%v",accPB.GetAccount().GetAccountId(),accPB.GetRoomID())
+	}
+
+
 }
 
 // 玩家请求进入小玛利房间
