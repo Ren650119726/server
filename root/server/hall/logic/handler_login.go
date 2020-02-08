@@ -83,6 +83,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 					log.Warnf("json 解析错误:%v ",e.Error())
 					return
 				}
+				log.Debugf(":%v",jsonstr)
 				if err := jsonstr["status"]; err != 0{
 					log.Warnf("平台返回错误码:%v ",errorCode[int(err.(float64))])
 					return
