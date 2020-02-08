@@ -68,7 +68,7 @@ func (self *accountMgr) GetAllAccount() map[uint32]*Account {
 func (self *accountMgr) GetAccountByType(identifier string, loginType uint8) *Account {
 
 	switch loginType {
-	case types.LOGIN_TYPE_DEVICE.Value():
+	case types.LOGIN_TYPE_DEVICE.Value(),types.LOGIN_TYPE_OTHER.Value():
 		return self.accountbyUnDevice[identifier]
 	case types.LOGIN_TYPE_PHONE.Value():
 		return self.accountbyPhone[identifier]
@@ -186,7 +186,7 @@ func (self *accountMgr) SendBroadcast(msgID uint16,pb proto.Message, t uint8) {
 }
 
 // 创建账号
-func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChannelID uint16, strName string,strHeadURL string, nOSType uint8, strClientIP string, session int64, nRobot uint32) *Account {
+func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChannelID uint16, strName string,strHeadURL string, nOSType uint8, strClientIP string, session int64, nRobot uint32,money uint64) *Account {
 	strNowTime := utils.DateString()
 	var nNewAccountID uint32
 	nLen := len(self.IDAssign)
@@ -219,7 +219,7 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChanne
 	tNewAccount.AccountId = nNewAccountID
 	tNewAccount.Name = strName
 	tNewAccount.HeadURL = strHeadURL
-	tNewAccount.Money = 0
+	tNewAccount.Money = money
 	tNewAccount.SessionId = session
 	tNewAccount.Robot = nRobot
 	tNewAccount.ActiveIP = strClientIP
