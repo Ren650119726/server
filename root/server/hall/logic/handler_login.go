@@ -39,8 +39,45 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 		//log.Warnf("Error, not match sign, loginType:%v, OsType:%v unique:%v Session:%v",loginMSG.GetLoginType(), loginMSG.GetOSType(),loginMSG.GetUnique(), session)
 		//return
 	}
-	var loginFun func(Unique,Name string,LoginType uint8, Gold int64)
+
 	strClientIP := core.GetRemoteIP(session)
+
+	var loginFun func(Unique,Name string,LoginType uint8, Gold int64)
+	loginFun = func(Unique,Name string,LoginType uint8, Gold int64) {
+		openWhiteList := config.GetPublicConfig_Int64("1")
+		acc := account.AccountMgr.GetAccountByType(Unique, LoginType)
+		if acc == nil {	// 注册新账号
+			if openWhiteList == 1 {
+				// 开启登录白名单功能后, 只允许特定帐号ID的玩家登录; 不允许注册
+				log.Infof("登录白名单已开, 禁止登录; unique:%v, LoginType:%v, ClientIP:%v", Unique, LoginType, strClientIP)
+				return
+			}
+			acc = account.AccountMgr.CreateAccount(Unique, uint8(loginMSG.GetLoginType()), 0, Name, "",uint8( loginMSG.GetOSType()), strClientIP, session, 0,uint64(Gold))
+		} else { // 登陆账号
+			if openWhiteList == 1 {
+				WHITE_LOGIN_LIST := config.GetPublicConfig_String("2")
+				mWhiteList := utils.SplitConf2Mapii(WHITE_LOGIN_LIST)
+				if _, isExist := mWhiteList[int(acc.AccountId)]; isExist == false {
+					log.Infof("登录白名单已开, 禁止登录; Account:%v, LoginType:%v, ClientIP:%v", Unique, LoginType, strClientIP)
+					return
+				}
+			}
+			// account was frozen
+			frozenTime := acc.GetFrozenTime()
+			if utils.MilliSecondTimeSince1970() < int64(frozenTime) {
+				// 账号被冻结
+				return
+			}
+			if LoginType == 4 {
+				acc.Money = uint64(Gold)
+			}
+
+			account.AccountMgr.LoginAccount(acc,LoginType, strClientIP, session)
+		}
+		// 发送游戏房间信息
+		GameMgr.SendGameInfo(session)
+	}
+
 	switch loginMSG.LoginType {
 	case uint32(types.LOGIN_TYPE_DEVICE.Value()):
 
@@ -96,7 +133,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 						userID := data["userId"].(float64)
 						name := data["nickName"].(string)
 						gold := data["gold"].(float64)
-						log.Debugf("登录:%v %v %v ",userID,name,gold)
+						log.Debugf("登录:%v %v %v ",int(userID),name,gold)
 						loginFun(strconv.Itoa(int(userID)),name,4,int64(gold))
 					})
 				}
@@ -104,41 +141,6 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 		return
 	default:
 		log.Panicf("不支持的登陆类型:%v", loginMSG.LoginType)
-	}
-
-	loginFun = func(Unique,Name string,LoginType uint8, Gold int64) {
-		openWhiteList := config.GetPublicConfig_Int64("1")
-		acc := account.AccountMgr.GetAccountByType(Unique, LoginType)
-		if acc == nil {	// 注册新账号
-			if openWhiteList == 1 {
-				// 开启登录白名单功能后, 只允许特定帐号ID的玩家登录; 不允许注册
-				log.Infof("登录白名单已开, 禁止登录; unique:%v, LoginType:%v, ClientIP:%v", Unique, LoginType, strClientIP)
-				return
-			}
-			acc = account.AccountMgr.CreateAccount(Unique, uint8(loginMSG.GetLoginType()), 0, Name, "",uint8( loginMSG.GetOSType()), strClientIP, session, 0,uint64(Gold))
-		} else { // 登陆账号
-			if openWhiteList == 1 {
-				WHITE_LOGIN_LIST := config.GetPublicConfig_String("2")
-				mWhiteList := utils.SplitConf2Mapii(WHITE_LOGIN_LIST)
-				if _, isExist := mWhiteList[int(acc.AccountId)]; isExist == false {
-					log.Infof("登录白名单已开, 禁止登录; Account:%v, LoginType:%v, ClientIP:%v", Unique, LoginType, strClientIP)
-					return
-				}
-			}
-			// account was frozen
-			frozenTime := acc.GetFrozenTime()
-			if utils.MilliSecondTimeSince1970() < int64(frozenTime) {
-				// 账号被冻结
-				return
-			}
-			if LoginType == 4 {
-				acc.Money = uint64(Gold)
-			}
-
-			account.AccountMgr.LoginAccount(acc,LoginType, strClientIP, session)
-		}
-		// 发送游戏房间信息
-		GameMgr.SendGameInfo(session)
 	}
 
 	loginFun(loginMSG.GetUnique(),"",uint8(loginMSG.GetLoginType()),0)
