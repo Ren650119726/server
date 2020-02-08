@@ -10,9 +10,10 @@ import (
 	"root/core"
 	"root/core/log"
 	"strconv"
+	"time"
 )
 
-func asyn_addMoney(unique string,num int64,roomID int32, back func(backunique string,backmoney int64))  {
+func asyn_addMoney(unique string,num int64,roomID int32, back func(backunique string,backmoney int64),errback func())  {
 	go func() {
 		send := url.Values{"channelId": {"DDHYLC"},
 			"gameId": {"fruitMary"},
@@ -26,7 +27,24 @@ func asyn_addMoney(unique string,num int64,roomID int32, back func(backunique st
 
 		if err != nil {
 			log.Errorf("三方平台，http 请求错误:%v", err.Error())
-			return
+			for i := 0;i < 10;i++{
+				time.Sleep(1*time.Second)
+				resp, err = http.PostForm(config.ALTERUSERGOLD_URL,
+					send)
+				if err == nil {
+					break
+				}
+			}
+
+			// 10次请求以后，如果还有错，就直接返回了
+			if err != nil {
+				if errback != nil {
+					core.LocalCoreSend(0,roomID, func() {
+						errback()
+					})
+				}
+				return
+			}
 		}
 
 		defer resp.Body.Close()
