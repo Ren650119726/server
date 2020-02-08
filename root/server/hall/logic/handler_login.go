@@ -103,7 +103,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 	case uint32(types.LOGIN_TYPE_OTHER.Value()):	// 其他平台登陆
 		log.Infof("请求平台登录userId:%v type:%v",loginMSG.Unique,loginMSG.LoginType,)
 		go func() {
-				resp, err := http.PostForm("http://47.244.119.129:1000/user/userInfo",
+				resp, err := http.PostForm(config.GETUSERINFO_URL,
 					url.Values{"channelId": {"DDHYLC"}, "userId": {loginMSG.Unique}})
 
 				if err != nil {

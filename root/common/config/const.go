@@ -17,4 +17,7 @@ const (
 	FQZS_MAX_PLAYER   = 300   // 飞禽走兽房间最大人数
 	PDK_HN_MAX_PLAYER = 2     // 跑得快湖南版房间最大人数
 	SG_MAX_PLAYER     = 8     // 三公房间最大人数
+
+	GETUSERINFO_URL = "http://47.244.119.129:1000/user/userInfo"
+	ALTERUSERGOLD_URL = "http://47.244.119.129:1000/user/updateGold"
 )

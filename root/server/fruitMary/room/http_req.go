@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"root/common/config"
 	"root/core"
 	"root/core/log"
 	"strconv"
@@ -19,7 +20,7 @@ func asyn_addMoney(unique string,num int64,roomID int32, back func(backunique st
 			"num": {strconv.Itoa(int(num))},
 			"desc": {fmt.Sprintf("水果小玛利请求下注:%v",num)},
 		}
-		resp, err := http.PostForm("http://47.244.119.129:1000/user/updateGold",
+		resp, err := http.PostForm(config.ALTERUSERGOLD_URL,
 			send)
 		log.Infof("小玛利请求下注:%v",send)
 
@@ -52,7 +53,6 @@ func asyn_addMoney(unique string,num int64,roomID int32, back func(backunique st
 					back(unique,int64(gold))
 				})
 			}
-
 		}
 	}()
 }

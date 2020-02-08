@@ -112,7 +112,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		acc.MaryCount = int32(maryCount)
 		val := reward+sumOdds*int64(BetNum/9)
 		acc.AddMoney(val, common.EOperateType_FRUIT_MARY_WIN)
-		asyn_addMoney(acc.UnDevice,val,int32(self.roomId), nil)
+		asyn_addMoney(acc.UnDevice,val,int32(self.roomId), nil) //中奖
 
 		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
 			acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
@@ -158,7 +158,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 
 	//抽水的分加进水池
 	if !isFree {
-		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId), func(backunique string, backmoney int64) {
+		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId), func(backunique string, backmoney int64) { // 押注
 			a := BetNum * self.jackpotRate/10000
 			self.bonus += int64(a)
 			if acc.GetMoney() - BetNum != uint64(backmoney){
