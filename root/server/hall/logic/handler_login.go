@@ -90,11 +90,12 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 					log.Warnf("平台返回错误码:%v ",errorCode[int(err.(float64))])
 					return
 				}else{
-					log.Infof("平台登录成功 data:%v",jsonstr["data"])
+					data := jsonstr["data"].(map[string]interface{})
+					log.Infof("平台登录成功 data:%v",data)
 					core.LocalCoreSend(0,common.EActorType_MAIN.Int32(), func() {
-						userID := jsonstr["userId"].(float64)
-						name := jsonstr["nickName"].(string)
-						gold := jsonstr["gold"].(float64)
+						userID := data["userId"].(float64)
+						name := data["nickName"].(string)
+						gold := data["gold"].(float64)
 						log.Debugf("登录:%v %v %v ",userID,name,gold)
 						loginFun(strconv.Itoa(int(userID)),name,4,int64(gold))
 					})
