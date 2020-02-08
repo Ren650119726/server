@@ -31,9 +31,9 @@ func main() {
 		for _, filename := range dir_list {
 			ret := regexp.MustCompile(`xlsx`).FindStringIndex(filename.Name())
 			if ret != nil {
-				name := input + "\\" + filename.Name()
+				name := input + "/" + filename.Name()
 				jsonname := filename.Name()[:ret[0]] + "json"
-				outjson := output + "\\" + jsonname
+				outjson := output + "/" + jsonname
 				transform2json(name, outjson)
 				fmt.Printf("解析文件:%-70v %-30v\n",name,jsonname)
 			}
