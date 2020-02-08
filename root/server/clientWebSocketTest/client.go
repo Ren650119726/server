@@ -27,8 +27,8 @@ var client_Global *Client
 func (self *Logic) Init(actor *core.Actor) bool {
 	self.owner = actor
 
-	//client_Global = NewWebsocketClient("47.108.87.29:41000","/connect")
-	client_Global = NewWebsocketClient("192.168.2.100:41000","/connect")
+	client_Global = NewWebsocketClient("47.108.87.29:41000","/connect")
+	//client_Global = NewWebsocketClient("192.168.2.100:41000","/connect")
 	client_Global.connect()
 	fmt.Println("connected success :", client_Global.ws.RemoteAddr())
 	go func() {

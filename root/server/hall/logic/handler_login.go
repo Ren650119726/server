@@ -57,7 +57,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 		log.Infof("请求登录type:%v osType:%v unique:%v",loginMSG.LoginType, loginMSG.OSType,loginMSG.Unique)
 		go func() {
 				resp, err := http.PostForm("http://47.244.119.129:1000/user/userInfo",
-					url.Values{"channelId": {"DDHYLC"}, "userId": {"1020007"}})
+					url.Values{"channelId": {"DDHYLC"}, "userId": {loginMSG.Unique}})
 
 				if err != nil {
 					log.Warnf("三方平台，http 请求错误:%v", err.Error())
