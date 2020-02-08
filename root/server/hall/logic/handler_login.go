@@ -18,6 +18,7 @@ import (
 	"root/server/hall/account"
 	"root/server/hall/send_tools"
 	"root/server/hall/types"
+	"strconv"
 )
 
 // 客户端同步服务器时间
@@ -91,11 +92,11 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 				}else{
 					log.Infof("平台登录成功 data:%v",jsonstr["data"])
 					core.LocalCoreSend(0,common.EActorType_MAIN.Int32(), func() {
-						userID := jsonstr["userId"].(string)
+						userID := jsonstr["userId"].(float64)
 						name := jsonstr["nickName"].(string)
 						gold := jsonstr["gold"].(float64)
 						log.Debugf("登录:%v %v %v ",userID,name,gold)
-						loginFun(userID,name,4,int64(gold))
+						loginFun(strconv.Itoa(int(userID)),name,4,int64(gold))
 					})
 				}
 		}()
