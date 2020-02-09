@@ -2,7 +2,6 @@ package room
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -13,13 +12,13 @@ import (
 	"time"
 )
 
-func asyn_addMoney(unique string,num int64,roomID int32, back func(backunique string,backmoney int64),errback func())  {
+func asyn_addMoney(unique string,num int64,roomID int32, desc string,back func(backunique string,backmoney int64),errback func())  {
 	go func() {
 		send := url.Values{"channelId": {"DDHYLC"},
 			"gameId": {"fruitMary"},
 			"userId": {unique},
 			"num": {strconv.Itoa(int(num))},
-			"desc": {fmt.Sprintf("水果小玛利请求下注:%v",num)},
+			"desc": {desc},
 		}
 		resp, err := http.PostForm(config.ALTERUSERGOLD_URL,
 			send)

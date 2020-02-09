@@ -1,6 +1,7 @@
 package room
 
 import (
+	"fmt"
 	"math/rand"
 	"root/common"
 	"root/core/log"
@@ -42,10 +43,6 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		log.Warnf("doBet 玩家[%v]还有小玛丽剩余次数 %v次，不能下注", acc.GetAccountId(),acc.MaryCount)
 		return
 	}
-	if acc.Forbid {
-		log.Warnf("userID:%v,还未收到平台返回，禁止操作",acc.UnDevice)
-		return
-	}
 
 	freeCount := acc.FeeCount
 	isFree := false
@@ -74,7 +71,6 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		}
 	}
 	acc.LastBet = BetNum
-	acc.Forbid = true
 	gameFun := func() {
 		resluts := make([]*protomsg.FRUITMARY_Result, 0)
 		pArr := make([]int32, 0)
@@ -112,7 +108,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		acc.MaryCount = int32(maryCount)
 		val := reward+sumOdds*int64(BetNum/9)
 		acc.AddMoney(val, common.EOperateType_FRUIT_MARY_WIN)
-		asyn_addMoney(acc.UnDevice,val,int32(self.roomId), nil,nil) //中奖
+		asyn_addMoney(acc.UnDevice,val,int32(self.roomId), "小玛利游戏1 中奖",nil,nil) //中奖
 
 		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
 			acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
@@ -153,7 +149,6 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 
 		// 回存水池
 		send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(),&inner.ROOM_BONUS_SAVE{Value:uint64(self.bonus),RoomID:self.roomId})
-		acc.Forbid = false
 	}
 
 	//抽水的分加进水池
@@ -177,7 +172,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 			}
 			send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16(),resultMsg,session)
 		}
-		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),back,errback)
+		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("水果小玛利请求下注:%v",BetNum),back,errback)
 	}else{
 		gameFun()
 	}
@@ -266,6 +261,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY2_REQ(actor int32, msg []byte, sessi
 		result.Profit1 = profit1
 		result.Profit2 = int32(profit2)
 		acc.AddMoney(int64(uint64(profit1)+profit2),common.EOperateType_FRUIT_MARY2_WIN)
+		asyn_addMoney(acc.UnDevice,int64(uint64(profit1)+profit2),int32(self.roomId), "小玛利游戏2 中奖",nil,nil) //中奖
 		resultList.Result = append(resultList.Result,result)
 	}
 	acc.ResultList = resultList.Result
