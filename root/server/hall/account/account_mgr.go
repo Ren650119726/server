@@ -199,7 +199,7 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChanne
 
 	tNewAccount := NewAccount(&protomsg.AccountStorageData{})
 	switch nLoginType {
-	case types.LOGIN_TYPE_DEVICE.Value():
+	case types.LOGIN_TYPE_DEVICE.Value(),types.LOGIN_TYPE_OTHER.Value():
 		tNewAccount.UnDevice = uniqueID
 		tNewAccount.Phone = ""
 		tNewAccount.WeiXin = ""
