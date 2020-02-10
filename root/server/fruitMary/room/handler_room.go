@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"root/common"
+	"root/common/config"
 	"root/core/log"
 	"root/core/packet"
 	"root/core/utils"
@@ -79,7 +80,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		reward := int64(0)
 		var feepos []*protomsg.FRUITMARYPosition
 		maryCount := 0
-		sumKillP := self.killPersent + acc.GetKill()
+		sumKillP := int32( config.Get_mary_room_ConfigInt64(int(self.roomId),"KillPersent")) + acc.GetKill()
 		//log.Debugf("玩家的 杀数为: %d", sumKillP)
 		rNum := rand.Int31n(10000) + 1
 		isKill := false
