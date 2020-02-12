@@ -28,12 +28,12 @@ type (
 )
 
 func (self *Room) LoadConfig()  {
-	bets_conf := config.Get_mary_room_Config(int(self.roomId),"Bet")
+	bets_conf := config.Get_configString("mary_room",int(self.roomId),"Bet")
 	self.bets = utils.SplitConf2ArrUInt64(bets_conf)
 
-	self.basics = config.Get_mary_room_ConfigInt64(int(self.roomId),"JackpotBase")
-	self.jackpotRate = uint64(config.Get_mary_room_ConfigInt64(int(self.roomId),"JackpotRole"))
-	self.jackLimit = config.Get_mary_room_ConfigInt64(int(self.roomId),"JackpotBet")
+	self.basics = int64(config.Get_configInt("mary_room",int(self.roomId),"JackpotBase"))
+	self.jackpotRate = uint64(config.Get_configInt("mary_room",int(self.roomId),"JackpotRole"))
+	self.jackLimit = int64(config.Get_configInt("mary_room",int(self.roomId),"JackpotBet"))
 
 	self.FruitRatio = make(map[int32]*protomsg.ENTER_GAME_FRUITMARY_RES_FruitRatio)
 	self.weight_ratio = make([][]int32,0)
@@ -43,13 +43,13 @@ func (self *Room) LoadConfig()  {
 		}
 		r := &protomsg.ENTER_GAME_FRUITMARY_RES_FruitRatio{
 			ID:     protomsg.Fruit2ID(ID),
-			Single: config.Get_mary_bonuspattern_ConfigInt32(int(ID),"Odds1"),
-			Same_2: config.Get_mary_bonuspattern_ConfigInt32(int(ID),"Odds2"),
-			Same_3: config.Get_mary_bonuspattern_ConfigInt32(int(ID),"Odds3"),
-			Same_4: config.Get_mary_bonuspattern_ConfigInt32(int(ID),"Odds4"),
+			Single: int32(config.Get_configInt("mary_bonuspattern",int(ID),"Odds1")),
+			Same_2: int32(config.Get_configInt("mary_bonuspattern",int(ID),"Odds2")),
+			Same_3: int32(config.Get_configInt("mary_bonuspattern",int(ID),"Odds3")),
+			Same_4: int32(config.Get_configInt("mary_bonuspattern",int(ID),"Odds4")),
 		}
 		self.FruitRatio[ID] = r
-		self.weight_ratio = append(self.weight_ratio,[]int32{ID,config.Get_mary_bonuspattern_ConfigInt32(int(ID),"Weight")})
+		self.weight_ratio = append(self.weight_ratio,[]int32{ID,int32(config.Get_configInt("mary_bonuspattern",int(ID),"Weight"))})
 	}
 
 	self.mapPictureNodes = make(map[int]*pictureNode)
@@ -59,21 +59,22 @@ func (self *Room) LoadConfig()  {
 		}
 		self.mapPictureNodes[int(id)] = &pictureNode{
 			cfId:    int(id),
-			cfOdd_2: int(config.Get_mary_pattern_ConfigInt32(int(id),"Odds2")),
-			cfOdd_3: int(config.Get_mary_pattern_ConfigInt32(int(id),"Odds3")),
-			cfOdd_4: int(config.Get_mary_pattern_ConfigInt32(int(id),"Odds4")),
-			cfOdd_5: int(config.Get_mary_pattern_ConfigInt32(int(id),"Odds5")),
+			cfOdd_2: config.Get_configInt("mary_pattern",int(id),"Odds2"),
+			cfOdd_3: config.Get_configInt("mary_pattern",int(id),"Odds3"),
+			cfOdd_4: config.Get_configInt("mary_pattern",int(id),"Odds4"),
+			cfOdd_5: config.Get_configInt("mary_pattern",int(id),"Odds5"),
 		}
 	}
 
 	self.lineConf = make([][5]int,10,10)
-	for id,_ := range config.Global_mary_lines_config{
+	conf := config.Get_config("mary_lines")
+	for id,_ := range conf{
 		for i:=1;i <=5;i++{
-			val := config.Get_mary_lines_configInt(id,fmt.Sprintf("site%v",i))
+			val := config.Get_configInt("mary_lines",id,fmt.Sprintf("site%v",i))
 			self.lineConf[id][i-1] = val-1
 		}
 	}
-	self.mainWheel,self.freeWheel,self.maryWheel = initWheel(config.Get_mary_room_ConfigInt64(int(self.roomId),"Real"))
+	self.mainWheel,self.freeWheel,self.maryWheel = initWheel(int64(config.Get_configInt("mary_room",int(self.roomId),"Real")))
 
 	log.Infof("房间:%v 配置加载完成",self.roomId)
 }
@@ -82,18 +83,19 @@ func initWheel(group int64) (main,free,mary []*wheelNode ) {
 	main = make([]*wheelNode, 0)
 	free = make([]*wheelNode, 0)
 	mary =  make([]*wheelNode, 0)
-	for id,_ := range config.Global_mary_real_config {
-		if config.Get_mary_real_ConfigInt(id,"Group_id")  != int(group){
+	conf := config.Get_config("mary_real")
+	for id,_ := range conf {
+		if config.Get_configInt("mary_real",id,"Group_id")  != int(group){
 			continue
 		}
 		node := new(wheelNode)
-		node.cfPosition = config.Get_mary_real_ConfigInt(id,"Site")
+		node.cfPosition = config.Get_configInt("mary_real",id,"Site")
 		if node.cfPosition > 0 {
 			for i := 1; i <= 5; i++ {
-				value := config.Get_mary_real_ConfigInt(id,fmt.Sprintf("Real%v",i))
+				value := config.Get_configInt("mary_real",id,fmt.Sprintf("Real%v",i))
 				node.ids = append(node.ids, value)
 			}
-			if t := config.Get_mary_real_ConfigInt(id,"Type");t == 1{
+			if t := config.Get_configInt("mary_real",id,"Type");t == 1{
 				main = append(main, node)
 			}else if t == 2{
 				free = append(free, node)
@@ -225,7 +227,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 				ct = 0
 			}
 		}
-		freeCount = int(config.Get_mary_pattern_ConfigInt32(2,fmt.Sprintf("Free%v",spcifity_2_count)))
+		freeCount = config.Get_configInt("mary_pattern",2,fmt.Sprintf("Free%v",spcifity_2_count))
 		log.Infof("中免费 坐标:%v",pos)
 	}
 
@@ -275,13 +277,13 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 					ct = 0
 				}
 			}
-			maryCount +=int(config.Get_mary_pattern_ConfigInt32(1,fmt.Sprintf("Bouns%v",spicify_1)))
+			maryCount +=config.Get_configInt("mary_pattern",1,fmt.Sprintf("Bouns%v",spicify_1))
 			log.Infof("中小玛利 坐标:%v",pos)
 		}
 		// 中奖金了
 		if bingo == 3 && count >= 3{
 			reward = (self.basics * betNum) + (self.bonus)
-			val := config.Get_mary_pattern_ConfigInt32(3,fmt.Sprintf("Jackpot%v",count))
+			val := config.Get_configInt("mary_pattern",3,fmt.Sprintf("Jackpot%v",count))
 			reward = reward * int64(val) / 10000
 			if reward != 0{
 				log.Infof("中大奖了！！！！！中獎綫:%v bingo == 3 count:%v reward:%v val:%v self.basics:%v betNum:%v self.bonus:%v",lid,count,reward,val,self.basics,betNum,self.bonus)

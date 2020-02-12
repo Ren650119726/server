@@ -8,7 +8,7 @@ import (
 // 房间奖金池
 type RoomBonusModel struct {
 	RoomID    uint32 `gorm:"column:gd_RoomID; primary_key"`
-	Value     uint64 `gorm:"column:gd_Value; not null; default:0"`
+	Value     string `gorm:"column:gd_Value; type:varchar(200); not null; default:''"`
 }
 
 func (self *RoomBonusModel) Reset()         { self = &RoomBonusModel{} }

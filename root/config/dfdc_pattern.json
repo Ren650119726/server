@@ -1,0 +1,106 @@
+{
+	"1": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 0,
+		"Odds4": 0,
+		"Odds5": 0
+	},
+	"10": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 5,
+		"Odds4": 10,
+		"Odds5": 50
+	},
+	"11": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 5,
+		"Odds4": 10,
+		"Odds5": 50
+	},
+	"12": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 5,
+		"Odds4": 10,
+		"Odds5": 50
+	},
+	"13": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 5,
+		"Odds4": 10,
+		"Odds5": 50
+	},
+	"2": {
+		"Free3": 10,
+		"Free4": 10,
+		"Free5": 10,
+		"Odds3": 5,
+		"Odds4": 10,
+		"Odds5": 50
+	},
+	"3": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 100,
+		"Odds4": 200,
+		"Odds5": 1000
+	},
+	"4": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 50,
+		"Odds4": 100,
+		"Odds5": 500
+	},
+	"5": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 40,
+		"Odds4": 80,
+		"Odds5": 400
+	},
+	"6": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 25,
+		"Odds4": 50,
+		"Odds5": 250
+	},
+	"7": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 10,
+		"Odds4": 20,
+		"Odds5": 100
+	},
+	"8": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 5,
+		"Odds4": 10,
+		"Odds5": 50
+	},
+	"9": {
+		"Free3": 0,
+		"Free4": 0,
+		"Free5": 0,
+		"Odds3": 5,
+		"Odds4": 10,
+		"Odds5": 50
+	}
+}

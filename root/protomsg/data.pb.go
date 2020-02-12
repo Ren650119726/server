@@ -6,6 +6,7 @@ Package protomsg is a generated protocol buffer package.
 
 It is generated from these files:
 	protobuf/data.proto
+	protobuf/dfdc.proto
 	protobuf/fruitmary.proto
 	protobuf/hall.proto
 
@@ -15,6 +16,15 @@ It has these top-level messages:
 	Email
 	RoomInfo
 	GameInfo
+	ENTER_GAME_DFDC_REQ
+	ENTER_GAME_DFDC_RES
+	LEAVE_GAME_DFDC_REQ
+	LEAVE_GAME_DFDC_RES
+	START_DFDC_REQ
+	START_DFDC_RES
+	DFDCPosition
+	UPDATE_DFDC_BONUS
+	PLAYERS_DFDC_LIST_RES
 	ENTER_GAME_FRUITMARY_REQ
 	ENTER_GAME_FRUITMARY_RES
 	LEAVE_GAME_FRUITMARY_REQ

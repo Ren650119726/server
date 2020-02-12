@@ -12,9 +12,9 @@ import (
 	"root/core/packet"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/fruitMary/account"
-	"root/server/fruitMary/room"
-	"root/server/fruitMary/send_tools"
+	"root/server/game_fruitMary/account"
+	"root/server/game_fruitMary/room"
+	"root/server/game_fruitMary/send_tools"
 	"strconv"
 )
 

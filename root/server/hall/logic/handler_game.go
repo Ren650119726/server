@@ -56,13 +56,13 @@ func (self *Hall) SERVERMSG_GH_ROOM_BONUS_REQ(actor int32, msg []byte, session i
 	data := packet.PBUnmarshal(msg,&inner.ROOM_BONUS_REQ{}).(*inner.ROOM_BONUS_REQ)
 	v := GameMgr.bonus[data.GetRoomID()]
 	log.Infof("房间:%v 请求水池金额:%v ",data.RoomID,v)
-	send_tools.Send2Game(inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16(),&inner.ROOM_BONUS_RES{Value:uint64(v),RoomID:data.GetRoomID()},session)
+	send_tools.Send2Game(inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16(),&inner.ROOM_BONUS_RES{Value:v,RoomID:data.GetRoomID()},session)
 }
 
 // 游戏请求回存水池金额
 func (self *Hall) SERVERMSG_GH_ROOM_BONUS_SAVE(actor int32, msg []byte, session int64) {
 	data := packet.PBUnmarshal(msg,&inner.ROOM_BONUS_SAVE{}).(*inner.ROOM_BONUS_SAVE)
-	GameMgr.bonus[data.GetRoomID()] = int64(data.GetValue())
+	GameMgr.bonus[data.GetRoomID()] = data.GetValue()
 	GameMgr.savebounus = true
 }
 
@@ -79,7 +79,7 @@ func (self *Hall) SERVERMSG_DH_ALL_ROOM_BONUS(actor int32, msg []byte, session i
 		return
 	}
 	for _,b := range all_bonus.Bonus{
-		GameMgr.bonus[b.GetRoomID()] = int64(b.GetValue())
+		GameMgr.bonus[b.GetRoomID()] =b.GetValue()
 		log.Infof("初始化房间:%v 水池:%v",b.GetRoomID(),b.GetValue())
 	}
 }

@@ -1,0 +1,104 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+
+import "protobuf/data.proto";
+
+// 网络消息
+enum DFDCMSG {
+	UNKNOW_DFDC = 0;
+	CS_ENTER_GAME_DFDC_REQ = 30001; // 玩家请求进入房间
+	SC_ENTER_GAME_DFDC_RES = 30002;
+	CS_LEAVE_GAME_DFDC_REQ = 30003; // 玩家请求退出房间
+	SC_LEAVE_GAME_DFDC_RES = 30004;
+	
+	CS_START_DFDC_REQ           = 30008;// 请求开始游戏1
+	SC_START_DFDC_RES           = 30009;
+	
+	SC_UPDATE_DFDC_BONUS        = 30010;// 通知更新奖金池
+
+	CS_PLAYERS_DFDC_LIST_REQ    = 30015; // 请求在线玩家列表
+	SC_PLAYERS_DFDC_LIST_RES    = 30016;
+}
+
+// 游戏1 图案枚举
+enum DFDCID {
+	DFDCUnknow  = 0;
+	DFDC1       = 1; // 福字
+	DFDC2       = 2; // 铜锣
+	DFDC3       = 3; // 金鸟
+	DFDC4       = 4; // 帆船
+	DFDC5       = 5; // 金龟
+	DFDC6       = 6; // 元宝
+	DFDC7       = 7; // 通宝
+	DFDC8       = 8; // A
+	DFDC9       = 9; // K
+	DFDC10      = 10; // Q
+	DFDC11	    = 11; // J
+	DFDC12      = 12; // 10
+	DFDC13	    = 13; // 9
+
+}
+// 请求进入房间
+message ENTER_GAME_DFDC_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message ENTER_GAME_DFDC_RES {
+	message DfdcRatio {
+		DFDCID ID    = 1;
+		int32 Same_3 = 4; // 三连赔率
+		int32 Same_4 = 5; // 四连赔率
+		int32 Same_5 = 6; // 五连赔率
+	}
+	uint32 RoomID 	    		 	= 1; // 房间ID
+	int64 Basics        		 	= 2; // 基础金额
+	map<int32, int64> Bonus         = 3; // key 等级  val 奖池
+	int64 LastBet                   = 4; // 最后一次压住
+	repeated uint64 Bets 		 	= 5; // 可以选择的押注金额
+	map<int32, DfdcRatio> Ratio    = 6; //  图案连续赔率
+	int32 FeeCount                  = 8; // 免费次数
+}
+
+// 请求退出房间
+message LEAVE_GAME_DFDC_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message LEAVE_GAME_DFDC_RES {
+    uint32 Ret    = 1; // 0.可以退出  1.不能退出房间
+	uint32 RoomID = 2; // 房间ID
+}
+
+////////////////////////////////////////////// 游戏 /////////////////////////////////////////////
+// 请求开始游戏1
+message START_DFDC_REQ {
+	uint64 Bet = 1; 
+}
+
+message START_DFDC_RES {
+	uint64 Ret 						  = 1; // 0成功
+	repeated int32 PictureList        = 4; // 图形列表( [0-14] 即15个图形)
+	map<int32, int64> Bonus           = 5; // 水池盈利 (key级别 vale盈利)
+	int64 Money                       = 6; // 身上的钱
+	int64 FreeCount                   = 7; // 获得免费次数
+	repeated DFDC_position Shows      = 8; // 中奖需要展示的坐标
+}
+
+message DFDC_position{
+	int32 px = 1;
+	int32 py = 2;
+}
+
+// 通知更新奖金池
+message UPDATE_DFDC_BONUS{
+	map<int32, int64> Bonus  = 1; // key 等级  val 奖池
+}
+
+
+// 请求dfdc玩家列表
+message PLAYERS_DFDC_LIST_RES{
+   repeated AccountStorageData players = 1; // 房间捏所有的玩家
+}

@@ -1,9 +1,6 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"root/core"
 	"root/core/log"
 	"root/core/utils"
 	"strconv"
@@ -11,41 +8,13 @@ import (
 	"sync"
 )
 
-type global_type map[string]interface{}
+var lock sync.RWMutex
 
-//val 只有两种，int64 string
-var global_public_config global_type
+func GetPublicConfig_Int64(key int) int64 {
+	lock.RLock()
+	defer lock.RUnlock()
 
-var lock sync.Mutex
-
-func init() {
-	LoadPublic_Conf()
-}
-
-func LoadPublic_Conf() {
-	lock.Lock()
-	defer lock.Unlock()
-
-	global_public_config = global_type{}
-	data, e := ioutil.ReadFile(core.ConfigDir + "global.json")
-	if e != nil {
-		log.Errorf("global 错误:%v", e.Error())
-		return
-	}
-	err := json.Unmarshal(data, &global_public_config)
-	if err != nil {
-		log.Errorf(" error %v", err.Error())
-		return
-	}
-
-	log.Info("加载完成global.json")
-}
-
-func GetPublicConfig_Int64(key string) int64 {
-	lock.Lock()
-	defer lock.Unlock()
-
-	p, e := global_public_config[key]
+	p, e := Config_Data["global"][key]
 	if !e || p == "" {
 		log.Errorf("全局配置找不到:[%v]", key)
 		return 0
@@ -61,31 +30,11 @@ func GetPublicConfig_Int64(key string) int64 {
 	return int64(val)
 }
 
-func GetPublicConfig_Float32(key string) float32 {
-	lock.Lock()
-	defer lock.Unlock()
+func GetPublicConfig_String(key int) string {
+	lock.RLock()
+	defer lock.RUnlock()
 
-	p, e := global_public_config[key]
-	if !e || p == "" {
-		log.Errorf("全局配置找不到:[%v]", key)
-		return 0
-	}
-	pp := p.(map[string]interface{})
-
-	val, err := strconv.ParseFloat(pp["Value"].(string), 32)
-	if err != nil {
-		log.Errorf("字符串不是浮点型:%v", p)
-		return 0
-	}
-
-	return float32(val)
-}
-
-func GetPublicConfig_String(key string) string {
-	lock.Lock()
-	defer lock.Unlock()
-
-	p, e := global_public_config[key]
+	p, e := Config_Data["global"][key]
 	if !e || p == "" {
 		log.Panicf("全局配置找不到:[%v]", key)
 	}
@@ -93,11 +42,11 @@ func GetPublicConfig_String(key string) string {
 	return pp["Value"].(string)
 }
 
-func GetPublicConfig_Slice(key string) []int {
-	lock.Lock()
-	defer lock.Unlock()
+func GetPublicConfig_Slice(key int) []int {
+	lock.RLock()
+	defer lock.RUnlock()
 
-	p, e := global_public_config[key]
+	p, e := Config_Data["global"][key]
 	if !e || p == "" {
 		log.Panicf("全局配置找不到:[%v]", key)
 	}
@@ -117,11 +66,11 @@ func GetPublicConfig_Slice(key string) []int {
 	return ret
 }
 
-func GetPublicConfig_Mapi(key string) map[int]int {
-	lock.Lock()
-	defer lock.Unlock()
-	p, _ := global_public_config[key]
-	p, e := global_public_config[key]
+func GetPublicConfig_Mapi(key int) map[int]int {
+	lock.RLock()
+	defer lock.RUnlock()
+
+	p, e := Config_Data["global"][key]
 	if !e || p == "" {
 		log.Panicf("全局配置找不到:[%v]", key)
 	}
@@ -131,10 +80,10 @@ func GetPublicConfig_Mapi(key string) map[int]int {
 }
 
 // 解析"1#100,2#200,3#300"为[[1,100],[2,200],[3,300]]
-func GetPublicConfig_ArrInt64(key string) [][]int64 {
-	lock.Lock()
-	defer lock.Unlock()
-	p, e := global_public_config[key]
+func GetPublicConfig_ArrInt64(key int) [][]int64 {
+	lock.RLock()
+	defer lock.RUnlock()
+	p, e := Config_Data["global"][key]
 	if !e || p == "" {
 		log.Panicf("全局配置找不到:[%v]", key)
 	}
@@ -144,10 +93,10 @@ func GetPublicConfig_ArrInt64(key string) [][]int64 {
 }
 
 // 解析"1#100,2#200,3#300"为{1:100,2:200,3:300}}
-func GetPublicConfig_MapStrInt(key string) map[string]int {
-	lock.Lock()
-	defer lock.Unlock()
-	p, e := global_public_config[key]
+func GetPublicConfig_MapStrInt(key int) map[string]int {
+	lock.RLock()
+	defer lock.RUnlock()
+	p, e := Config_Data["global"][key]
 	if !e || p == "" {
 		log.Panicf("全局配置找不到:[%v]", key)
 	}
@@ -156,10 +105,10 @@ func GetPublicConfig_MapStrInt(key string) map[string]int {
 	return ret
 }
 
-func GetPublicConfig_MapStrStr(key string) map[string]string {
-	lock.Lock()
-	defer lock.Unlock()
-	p, e := global_public_config[key]
+func GetPublicConfig_MapStrStr(key int) map[string]string {
+	lock.RLock()
+	defer lock.RUnlock()
+	p, e := Config_Data["global"][key]
 	if !e || p == "" {
 		log.Panicf("全局配置找不到:[%v]", key)
 	}

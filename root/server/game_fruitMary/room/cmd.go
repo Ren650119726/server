@@ -8,7 +8,7 @@ import (
 	"root/core/log"
 	"root/core/packet"
 	"root/protomsg/inner"
-	"root/server/fruitMary/account"
+	"root/server/game_fruitMary/account"
 	"strconv"
 )
 
@@ -38,12 +38,7 @@ func todb(s []string) {
 }
 
 func reload(s []string) {
-	config.LoadPublic_Conf()
-	config.Load_mary_room_Conf()
-	config.Load_mary_bonuspattern_Conf()
-	config.Load_mary_lines_Conf()
-	config.Load_mary_pattern_Conf()
-	config.Load_mary_real_Conf()
+	config.Load_Conf()
 
 	msg := packet.NewPacket(nil)
 	msg.SetMsgID(inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16())

@@ -10,8 +10,8 @@ import (
 	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/fruitMary/account"
-	"root/server/fruitMary/send_tools"
+	"root/server/game_fruitMary/account"
+	"root/server/game_fruitMary/send_tools"
 )
 
 type (
@@ -22,7 +22,6 @@ type (
 		accounts  map[uint32]*account.Account // 进房间的所有人
 		Close     bool
 		bonus     int64 // 奖金池
-		killPersent int32
 
 		bets      []uint64
 		basics    int64 // 奖金池 中将的基础金额系数

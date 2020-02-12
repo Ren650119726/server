@@ -13,6 +13,8 @@ const (
 	EOperateType_FRUIT_MARY_BET               = 21 // 水果小玛利押注扣除金币
 	EOperateType_FRUIT_MARY_WIN               = 22 // 水果小玛利 游戏1 获得钱
 	EOperateType_FRUIT_MARY2_WIN              = 23 // 水果小玛利 游戏2 获得钱
+	EOperateType_DFDC_BET               	  = 24 // 多福多财 押注扣除金币
+	EOperateType_DFDC_WIN               	  = 25 // 多福多财 获得钱
 
 )
 
@@ -26,6 +28,8 @@ var typeStringify_operate = map[EOperateType]string{
 	EOperateType_FRUIT_MARY_WIN:  "FRUIT_MARY_WIN",  // 水果小玛利 游戏1 获得钱
 	EOperateType_FRUIT_MARY2_WIN: "FRUIT_MARY2_WIN", // 水果小玛利 游戏1 获得钱
 	EOperateType_FRUIT_MARY_BET:  "FRUIT_MARY_BET",  // 水果小玛利押注扣除金币
+	EOperateType_DFDC_BET:  	  "FRUIT_DFDC_BET",  // 多福多财
+	EOperateType_DFDC_WIN:  	  "FRUIT_DFDC_WIN",  // 多福多财
 }
 
 func (e EOperateType) String() string {

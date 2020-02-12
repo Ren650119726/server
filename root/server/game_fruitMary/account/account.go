@@ -8,7 +8,7 @@ import (
 	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/fruitMary/send_tools"
+	"root/server/game_fruitMary/send_tools"
 )
 type (
 	Account struct {
@@ -56,7 +56,7 @@ func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 			Time:        strTime,
 			RoomID:      self.GetRoomID(),
 		}
-		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange) // fruitMary
+		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange) // game_fruitMary
 		db.HSet(rediskey.PlayerId(uint32(self.AccountId)), "Money", self.Money)
 	}
 	self.Money = uint64(money)

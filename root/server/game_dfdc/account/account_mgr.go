@@ -2,7 +2,6 @@ package account
 
 import (
 	"root/core/log"
-	"root/protomsg"
 	"sync"
 )
 
@@ -69,41 +68,6 @@ func (self *accountMgr) GetAccountBySessionIDAssert(session int64) *Account {
 	return acc
 }
 
-
-// 创建账号
-func (self *accountMgr) RecvAccount(storage *protomsg.AccountStorageData, game *protomsg.AccountGameData) {
-
-	newAcc := NewAccount(storage)
-	newAcc.AccountGameData = game
-	//oldAcc := self.GetAccountByID(storage.AccountId)
-
-	self.Lock.Lock()
-	defer self.Lock.Unlock()
-	//if oldAcc != nil {
-	//	oldRMB := oldAcc.RMB
-	//	oldSafeRMB := oldAcc.SafeRMB
-	//	oldAcc.AccountStorageData = storage
-	//	oldAcc.AccountGameData = game
-	//	if oldAcc.RoomID > 0 {
-	//		// 玩家已经在游戏中, 不更新元宝和保险箱
-	//		oldAcc.RMB = oldRMB
-	//		oldAcc.SafeRMB = oldSafeRMB
-	//	}
-	//} else {
-	//	self.accountbyID[storage.AccountId] = newAcc
-	//}
-	//self.accountbyID[storage.AccountId].State = common.STATUS_ONLINE.UInt32()
-	//if newAcc.Robot == 0 {
-	//	// 通知大厅，可以让客户端连上游戏了
-	//	send := packet.NewPacket(nil)
-	//	send.SetMsgID(protomsg.Old_MSGID_RECV_ACCOUNT_INFO.UInt16())
-	//	send.WriteUInt32(storage.AccountId)
-	//	send.WriteUInt32(game.RoomID)
-	//	send_tools.Send2Hall(send.GetData())
-	//}
-
-}
-
 // 客户端连接
 func (self *accountMgr) EnterAccount(accountId uint32, roomId uint32, session int64) bool {
 	if session == 0 {
@@ -134,28 +98,4 @@ func (self *accountMgr) DisconnectAccount(acc *Account) bool {
 	self.Lock.Unlock()
 
 	return true
-}
-
-func CheckSession(accountId uint32, session int64) *Account {
-	sacc := AccountMgr.GetAccountByID(accountId)
-	var seAcc *Account
-	seAccId := uint32(0)
-	seAccName := ""
-	if session != 0 {
-		seAcc = AccountMgr.GetAccountBySessionID(session)
-		if seAcc != nil {
-			seAccId = seAcc.AccountId
-			seAccName = seAcc.Name
-		}
-	}
-
-	if sacc == nil {
-		log.Errorf("作弊, session:%v 验证的accountId:%v session对应的玩家 accid:%v,name:%v", session, accountId, seAccId, seAccName)
-		panic(nil)
-	} else if sacc.SessionId != session {
-		log.Errorf("作弊, session:%v accountID:%v 验证的session:%v accountId:%v Robot:%v", session, accountId, sacc.SessionId, sacc.AccountId, sacc.Robot)
-		panic(nil)
-	} else {
-		return sacc
-	}
 }

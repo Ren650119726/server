@@ -29,15 +29,7 @@ func CMD_Help(sParam []string) {
 }
 
 func (self *Hall) CMD_LoadConfig(sParam []string) {
-	strCMD := ""
-	if len(sParam) > 0 {
-		strCMD = sParam[0]
-	}
-	if strCMD == "" || strCMD == "all" {
-		config.LoadPublic_Conf()
-	} else if strCMD == "public" {
-		config.LoadPublic_Conf()
-	}
+	config.Load_Conf()
 
 	strServerIP := utils.GetLocalIP()
 	GameMgr.PrintSign(strServerIP)

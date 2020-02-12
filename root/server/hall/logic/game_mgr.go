@@ -31,7 +31,7 @@ type (
 	gameMgr struct {
 		nodes map[uint32]*nodeInfo // 游戏节点 key:sid
 		rooms map[uint32]*roomInfo // 所有房间 key:roomID
-		bonus map[uint32]int64 // 房间水池金额
+		bonus map[uint32]string // 房间水池金额
 		savebounus bool
 	}
 )
@@ -40,7 +40,7 @@ func newGameMgr() *gameMgr {
 	hall := &gameMgr{
 		nodes: make(map[uint32]*nodeInfo),
 		rooms: make(map[uint32]*roomInfo),
-		bonus: make(map[uint32]int64),
+		bonus: make(map[uint32]string),
 	}
 	event.Dispatcher.AddEventListener(event.EventType_UpdateCharge, hall)
 	return hall
@@ -130,14 +130,21 @@ func (self *gameMgr)GetBaseInfo(roomID uint32) (minMoney uint64,t uint32,order u
 	switch common.EGameType(game.gameType) {
 	case common.EGameTypeCATCHFISH:
 	case common.EGameTypeFRUITMARY:
-		minMoney = uint64(config.Get_mary_room_ConfigInt64(int(roomID),"GlodNeed"))
-		t = uint32(config.Get_mary_room_ConfigInt64(int(roomID),"Type"))
-		betstr := config.Get_mary_room_Config(int(roomID),"Bet")
+		minMoney = uint64(config.Get_configInt("mary_room",int(roomID),"GlodNeed"))
+		t = uint32(config.Get_configInt("mary_room",int(roomID),"Type"))
+		betstr := config.Get_configString("mary_room",int(roomID),"Bet")
 		bet = utils.SplitConf2ArrUInt64(betstr)
-		order = uint32(config.Get_mary_room_ConfigInt64(int(roomID),"Order"))
+		order = uint32(config.Get_configInt("mary_room",int(roomID),"Order"))
+		return
+	case common.EGameTypeDFDC:
+		minMoney = uint64(config.Get_configInt("dfdc_room",int(roomID),"GlodNeed"))
+		t = uint32(config.Get_configInt("dfdc_room",int(roomID),"Type"))
+		betstr := config.Get_configString("dfdc_room",int(roomID),"Bet")
+		bet = utils.SplitConf2ArrUInt64(betstr)
+		order = uint32(config.Get_configInt("dfdc_room",int(roomID),"Order"))
 		return
 	default:
-		log.Warn("GetBaseInfo 找不到的游戏类型:%v ",game.gameType)
+		log.Warnf("GetBaseInfo 找不到的游戏类型:%v ",game.gameType)
 		return 0,0,0,nil
 	}
 	return 0,0,0,nil
@@ -162,7 +169,7 @@ func (self *gameMgr) Save() {
 		for roomid,bounusValue:= range self.bonus{
 			send_tools.Send2DB(inner.SERVERMSG_HD_SAVE_ROOM_BONUS.UInt16(),&inner.ROOM_BONUS_SAVE{
 				RoomID: roomid,
-				Value:  uint64(bounusValue),
+				Value:  bounusValue,
 			})
 		}
 		self.savebounus = false

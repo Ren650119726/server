@@ -45,7 +45,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 
 	var loginFun func(Unique,Name string,LoginType uint8, Gold int64)
 	loginFun = func(Unique,Name string,LoginType uint8, Gold int64) {
-		openWhiteList := config.GetPublicConfig_Int64("1")
+		openWhiteList := config.GetPublicConfig_Int64(1)
 		acc := account.AccountMgr.GetAccountByType(Unique, LoginType)
 		if acc == nil {	// 注册新账号
 			if openWhiteList == 1 {
@@ -56,7 +56,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 			acc = account.AccountMgr.CreateAccount(Unique, uint8(loginMSG.GetLoginType()), 0, Name, "",uint8( loginMSG.GetOSType()), strClientIP, session, 0,uint64(Gold))
 		} else { // 登陆账号
 			if openWhiteList == 1 {
-				WHITE_LOGIN_LIST := config.GetPublicConfig_String("2")
+				WHITE_LOGIN_LIST := config.GetPublicConfig_String(2)
 				mWhiteList := utils.SplitConf2Mapii(WHITE_LOGIN_LIST)
 				if _, isExist := mWhiteList[int(acc.AccountId)]; isExist == false {
 					log.Infof("登录白名单已开, 禁止登录; Account:%v, LoginType:%v, ClientIP:%v", Unique, LoginType, strClientIP)

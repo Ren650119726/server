@@ -227,7 +227,7 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChanne
 	tNewAccount.OSType = uint32(nOSType)
 
 	self.AccountbyID[nNewAccountID] = tNewAccount
-	tNewAccount.AddMoney(config.GetPublicConfig_Int64("3"),common.EOperateType_INIT)
+	tNewAccount.AddMoney(config.GetPublicConfig_Int64(3),common.EOperateType_INIT)
 
 	if nRobot == 0 {
 		self.accountbySessionID[session] = tNewAccount

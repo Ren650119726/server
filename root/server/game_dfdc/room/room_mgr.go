@@ -5,7 +5,7 @@ import (
 	"root/core"
 	"root/core/log"
 	"root/protomsg/inner"
-	"root/server/fruitMary/send_tools"
+	"root/server/game_dfdc/send_tools"
 	"strconv"
 )
 
@@ -32,7 +32,8 @@ func NewRoomMgr() *roomMgr {
 
 func (self *roomMgr) InitRoomMgr() {
 		// 初始化房间
-		for id,_ := range config.Global_mary_room_config {
+		conf := config.Get_config("dfdc_room")
+		for id,_ := range conf {
 			self.CreateRoom(uint32(id))
 		}
 }
@@ -55,7 +56,8 @@ func (self *roomMgr) CreateRoom(id uint32)  {
 		log.Panicf("房间ID 不能小于1000 id:%v jsonParam:%v",id)
 	}
 	core.CoreRegisteActor(core.NewActor(int32(id), room, make(chan core.IMessage, 5000)))
-	jsonInfo := config.Global_mary_room_config[int(id)]
+	conf := config.Get_config("dfdc_room")
+	jsonInfo := conf[int(id)]
 	log.Infof("创建房间:%v jsoninfo:%v",id,jsonInfo)
 }
 

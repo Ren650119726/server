@@ -65,7 +65,7 @@ var FRUITMARYMSG_value = map[string]int32{
 func (x FRUITMARYMSG) String() string {
 	return proto.EnumName(FRUITMARYMSG_name, int32(x))
 }
-func (FRUITMARYMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (FRUITMARYMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
 // 游戏1 图案枚举
 type Fruit1ID int32
@@ -117,7 +117,7 @@ var Fruit1ID_value = map[string]int32{
 func (x Fruit1ID) String() string {
 	return proto.EnumName(Fruit1ID_name, int32(x))
 }
-func (Fruit1ID) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (Fruit1ID) EnumDescriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
 
 // 游戏2 图案枚举
 type Fruit2ID int32
@@ -160,7 +160,7 @@ var Fruit2ID_value = map[string]int32{
 func (x Fruit2ID) String() string {
 	return proto.EnumName(Fruit2ID_name, int32(x))
 }
-func (Fruit2ID) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+func (Fruit2ID) EnumDescriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
 
 // 请求进入房间
 type ENTER_GAME_FRUITMARY_REQ struct {
@@ -171,7 +171,7 @@ type ENTER_GAME_FRUITMARY_REQ struct {
 func (m *ENTER_GAME_FRUITMARY_REQ) Reset()                    { *m = ENTER_GAME_FRUITMARY_REQ{} }
 func (m *ENTER_GAME_FRUITMARY_REQ) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_FRUITMARY_REQ) ProtoMessage()               {}
-func (*ENTER_GAME_FRUITMARY_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (*ENTER_GAME_FRUITMARY_REQ) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
 func (m *ENTER_GAME_FRUITMARY_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -201,7 +201,7 @@ type ENTER_GAME_FRUITMARY_RES struct {
 func (m *ENTER_GAME_FRUITMARY_RES) Reset()                    { *m = ENTER_GAME_FRUITMARY_RES{} }
 func (m *ENTER_GAME_FRUITMARY_RES) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_FRUITMARY_RES) ProtoMessage()               {}
-func (*ENTER_GAME_FRUITMARY_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (*ENTER_GAME_FRUITMARY_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
 
 func (m *ENTER_GAME_FRUITMARY_RES) GetRoomID() uint32 {
 	if m != nil {
@@ -271,7 +271,7 @@ func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) Reset()         { *m = ENTER_GAME_
 func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) String() string { return proto.CompactTextString(m) }
 func (*ENTER_GAME_FRUITMARY_RES_FruitRatio) ProtoMessage()    {}
 func (*ENTER_GAME_FRUITMARY_RES_FruitRatio) Descriptor() ([]byte, []int) {
-	return fileDescriptor1, []int{1, 0}
+	return fileDescriptor2, []int{1, 0}
 }
 
 func (m *ENTER_GAME_FRUITMARY_RES_FruitRatio) GetID() Fruit2ID {
@@ -318,7 +318,7 @@ type LEAVE_GAME_FRUITMARY_REQ struct {
 func (m *LEAVE_GAME_FRUITMARY_REQ) Reset()                    { *m = LEAVE_GAME_FRUITMARY_REQ{} }
 func (m *LEAVE_GAME_FRUITMARY_REQ) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_FRUITMARY_REQ) ProtoMessage()               {}
-func (*LEAVE_GAME_FRUITMARY_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+func (*LEAVE_GAME_FRUITMARY_REQ) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
 
 func (m *LEAVE_GAME_FRUITMARY_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -342,7 +342,7 @@ type LEAVE_GAME_FRUITMARY_RES struct {
 func (m *LEAVE_GAME_FRUITMARY_RES) Reset()                    { *m = LEAVE_GAME_FRUITMARY_RES{} }
 func (m *LEAVE_GAME_FRUITMARY_RES) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_FRUITMARY_RES) ProtoMessage()               {}
-func (*LEAVE_GAME_FRUITMARY_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
+func (*LEAVE_GAME_FRUITMARY_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{3} }
 
 func (m *LEAVE_GAME_FRUITMARY_RES) GetRet() uint32 {
 	if m != nil {
@@ -367,7 +367,7 @@ type START_MARY_REQ struct {
 func (m *START_MARY_REQ) Reset()                    { *m = START_MARY_REQ{} }
 func (m *START_MARY_REQ) String() string            { return proto.CompactTextString(m) }
 func (*START_MARY_REQ) ProtoMessage()               {}
-func (*START_MARY_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+func (*START_MARY_REQ) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{4} }
 
 func (m *START_MARY_REQ) GetBet() uint64 {
 	if m != nil {
@@ -391,7 +391,7 @@ type START_MARY_RES struct {
 func (m *START_MARY_RES) Reset()                    { *m = START_MARY_RES{} }
 func (m *START_MARY_RES) String() string            { return proto.CompactTextString(m) }
 func (*START_MARY_RES) ProtoMessage()               {}
-func (*START_MARY_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
+func (*START_MARY_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{5} }
 
 func (m *START_MARY_RES) GetRet() uint64 {
 	if m != nil {
@@ -464,7 +464,7 @@ type FRUITMARYPosition struct {
 func (m *FRUITMARYPosition) Reset()                    { *m = FRUITMARYPosition{} }
 func (m *FRUITMARYPosition) String() string            { return proto.CompactTextString(m) }
 func (*FRUITMARYPosition) ProtoMessage()               {}
-func (*FRUITMARYPosition) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
+func (*FRUITMARYPosition) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{6} }
 
 func (m *FRUITMARYPosition) GetPx() int32 {
 	if m != nil {
@@ -490,7 +490,7 @@ type FRUITMARY_Result struct {
 func (m *FRUITMARY_Result) Reset()                    { *m = FRUITMARY_Result{} }
 func (m *FRUITMARY_Result) String() string            { return proto.CompactTextString(m) }
 func (*FRUITMARY_Result) ProtoMessage()               {}
-func (*FRUITMARY_Result) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
+func (*FRUITMARY_Result) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{7} }
 
 func (m *FRUITMARY_Result) GetLineId() int32 {
 	if m != nil {
@@ -528,7 +528,7 @@ type UPDATE_MARY_BONUS struct {
 func (m *UPDATE_MARY_BONUS) Reset()                    { *m = UPDATE_MARY_BONUS{} }
 func (m *UPDATE_MARY_BONUS) String() string            { return proto.CompactTextString(m) }
 func (*UPDATE_MARY_BONUS) ProtoMessage()               {}
-func (*UPDATE_MARY_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
+func (*UPDATE_MARY_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{8} }
 
 func (m *UPDATE_MARY_BONUS) GetBonus() int64 {
 	if m != nil {
@@ -545,7 +545,7 @@ type START_MARY2_REQ struct {
 func (m *START_MARY2_REQ) Reset()                    { *m = START_MARY2_REQ{} }
 func (m *START_MARY2_REQ) String() string            { return proto.CompactTextString(m) }
 func (*START_MARY2_REQ) ProtoMessage()               {}
-func (*START_MARY2_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
+func (*START_MARY2_REQ) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{9} }
 
 type START_MARY2_RES struct {
 	Result         []*Mary2_Result `protobuf:"bytes,1,rep,name=Result" json:"Result,omitempty"`
@@ -555,7 +555,7 @@ type START_MARY2_RES struct {
 func (m *START_MARY2_RES) Reset()                    { *m = START_MARY2_RES{} }
 func (m *START_MARY2_RES) String() string            { return proto.CompactTextString(m) }
 func (*START_MARY2_RES) ProtoMessage()               {}
-func (*START_MARY2_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
+func (*START_MARY2_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{10} }
 
 func (m *START_MARY2_RES) GetResult() []*Mary2_Result {
 	if m != nil {
@@ -581,7 +581,7 @@ type Mary2_Result struct {
 func (m *Mary2_Result) Reset()                    { *m = Mary2_Result{} }
 func (m *Mary2_Result) String() string            { return proto.CompactTextString(m) }
 func (*Mary2_Result) ProtoMessage()               {}
-func (*Mary2_Result) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
+func (*Mary2_Result) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{11} }
 
 func (m *Mary2_Result) GetIndexId() int32 {
 	if m != nil {
@@ -617,7 +617,7 @@ type NEXT_MARY_RESULT struct {
 func (m *NEXT_MARY_RESULT) Reset()                    { *m = NEXT_MARY_RESULT{} }
 func (m *NEXT_MARY_RESULT) String() string            { return proto.CompactTextString(m) }
 func (*NEXT_MARY_RESULT) ProtoMessage()               {}
-func (*NEXT_MARY_RESULT) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{12} }
+func (*NEXT_MARY_RESULT) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{12} }
 
 // 请求小玛利玩家列表
 type PLAYERS_LIST_RES struct {
@@ -627,7 +627,7 @@ type PLAYERS_LIST_RES struct {
 func (m *PLAYERS_LIST_RES) Reset()                    { *m = PLAYERS_LIST_RES{} }
 func (m *PLAYERS_LIST_RES) String() string            { return proto.CompactTextString(m) }
 func (*PLAYERS_LIST_RES) ProtoMessage()               {}
-func (*PLAYERS_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{13} }
+func (*PLAYERS_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{13} }
 
 func (m *PLAYERS_LIST_RES) GetPlayers() []*AccountStorageData {
 	if m != nil {
@@ -657,9 +657,9 @@ func init() {
 	proto.RegisterEnum("protomsg.Fruit2ID", Fruit2ID_name, Fruit2ID_value)
 }
 
-func init() { proto.RegisterFile("protobuf/fruitmary.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("protobuf/fruitmary.proto", fileDescriptor2) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor2 = []byte{
 	// 1117 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0xcd, 0x8e, 0x1b, 0x45,
 	0x10, 0xce, 0xd8, 0x1e, 0xdb, 0x5b, 0xde, 0x9f, 0xde, 0xce, 0x12, 0x26, 0x26, 0x07, 0x33, 0x07,

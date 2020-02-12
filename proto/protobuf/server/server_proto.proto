@@ -83,7 +83,7 @@ message SAVE_WATER_LINE {
 // 水池
 message SAVE_ROOM_BONUS {
 	 uint32 RoomID = 1;
-	 uint64 Value  = 2;
+	 string Value  = 2;
 }
 
 // 游戏连接大厅 170
@@ -161,12 +161,12 @@ message ROOM_BONUS_REQ {
 
 message ROOM_BONUS_RES {
     uint32 RoomID    = 1;
-	uint64 Value     = 2;// 房间水池金额
+	string Value     = 2;// 房间水池金额
 }
 
 // 回存房间水池金额
 message ROOM_BONUS_SAVE {
     uint32 RoomID    = 1;
-	uint64 Value     = 2;// 房间水池金额
+	string Value     = 2;// 房间水池金额
 }
 

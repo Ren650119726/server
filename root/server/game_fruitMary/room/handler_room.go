@@ -10,8 +10,9 @@ import (
 	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/fruitMary/account"
-	"root/server/fruitMary/send_tools"
+	"root/server/game_fruitMary/account"
+	"root/server/game_fruitMary/send_tools"
+	"strconv"
 	"time"
 )
 
@@ -80,7 +81,8 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		reward := int64(0)
 		var feepos []*protomsg.FRUITMARYPosition
 		maryCount := 0
-		sumKillP := int32( config.Get_mary_room_ConfigInt64(int(self.roomId),"KillPersent")) + acc.GetKill()
+
+		sumKillP := int32( config.Get_configInt("mary_room",int(self.roomId),"KillPersent")) + acc.GetKill()
 		//log.Debugf("玩家的 杀数为: %d", sumKillP)
 		rNum := rand.Int31n(10000) + 1
 		isKill := false
@@ -149,7 +151,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		}
 
 		// 回存水池
-		send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(),&inner.ROOM_BONUS_SAVE{Value:uint64(self.bonus),RoomID:self.roomId})
+		send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(),&inner.ROOM_BONUS_SAVE{Value:strconv.Itoa(int(self.bonus)),RoomID:self.roomId})
 	}
 
 	//抽水的分加进水池
@@ -285,7 +287,16 @@ func (self *Room) FRUITMARYMSG_CS_PLAYERS_LIST_REQ(actor int32, msg []byte, sess
 func (self *Room) SERVERMSG_HG_ROOM_BONUS_RES(actor int32, msg []byte, session int64) {
 	data := packet.PBUnmarshal(msg,&inner.ROOM_BONUS_RES{}).(*inner.ROOM_BONUS_RES)
 	log.Infof("大厅返回房间:[%v] 水池金额:[%v]",self.roomId,data.GetValue())
-	self.bonus = int64(data.GetValue())
+	if data.GetValue() == ""{
+		self.bonus = 0
+	}else{
+		v,e := strconv.Atoi(data.GetValue())
+		if e != nil {
+			log.Errorf("解析错误%v",e.Error())
+		}
+		self.bonus = int64(v)
+	}
+
 }
 
 // 大厅请求修改玩家数据
