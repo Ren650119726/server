@@ -30,7 +30,7 @@ func (self *Game) Init(actor *core.Actor) bool {
 	self.owner = actor
 	
 	//game_GLobal = NewWebsocketClient("47.108.87.29:41201","/connect")
-	game_GLobal = NewWebsocketClient("192.168.2.100:41201","/connect")
+	game_GLobal = NewWebsocketClient("192.168.2.100:41301","/connect")
 	game_GLobal.connect()
 	fmt.Println("connected success :", game_GLobal.ws.RemoteAddr())
 	go func() {
@@ -53,7 +53,7 @@ func (self *Game) Init(actor *core.Actor) bool {
 		}
 	}()
 
-	Send2Game(protomsg.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ.UInt16(),&protomsg.ENTER_GAME_FRUITMARY_REQ{
+	Send2Game(protomsg.DFDCMSG_CS_ENTER_GAME_DFDC_REQ.UInt16(),&protomsg.ENTER_GAME_DFDC_REQ{
 		AccountID:AccountID,
 		RoomID:self.roomID,
 	})
@@ -103,27 +103,24 @@ func (self *Game) Stop() {
 func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
-	case protomsg.FRUITMARYMSG_SC_ENTER_GAME_FRUITMARY_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.ENTER_GAME_FRUITMARY_RES{}).(*protomsg.ENTER_GAME_FRUITMARY_RES)
+	case protomsg.DFDCMSG_SC_ENTER_GAME_DFDC_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.ENTER_GAME_DFDC_RES{}).(*protomsg.ENTER_GAME_DFDC_RES)
 		log.Infof(colorized.Blue("进入游戏成功：%+v"),pb)
 
-	case protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_MARY_RES{}).(*protomsg.START_MARY_RES)
+	case protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_DFDC_RES{}).(*protomsg.START_DFDC_RES)
 		log.Infof(colorized.Blue("开始游戏：%+v"),pb)
 
-		for i:= pb.GetMaryCount();i > 0;i--{
-			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY2_REQ.UInt16(),&protomsg.START_MARY2_REQ{})
-		}
 		fee = int(pb.GetFreeCount())
 		if fee > 0{
 			fee--
-			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(100)})
+			Send2Game(protomsg.DFDCMSG_CS_START_DFDC_REQ.UInt16(),&protomsg.START_DFDC_REQ{Bet:uint64(100)})
 			break
 		}
 
 		count--
 		if count > 0 {
-			Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(100)})
+			Send2Game(protomsg.DFDCMSG_CS_START_DFDC_REQ.UInt16(),&protomsg.START_DFDC_REQ{Bet:uint64(100)})
 		}else{
 			log.Infof("身上的钱--:%v", pb.GetMoney())
 		}
@@ -133,10 +130,6 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 			time2.Sleep(1*time2.Second)
 			log.Infof("sleep end")
 		}
-
-	case protomsg.FRUITMARYMSG_SC_START_MARY2_RES.UInt16():
-		//pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_MARY2_RES{}).(*protomsg.START_MARY2_RES)
-		//log.Infof(colorized.Blue("开始游戏2：%+v"),pb)
 	}
 
 	return true

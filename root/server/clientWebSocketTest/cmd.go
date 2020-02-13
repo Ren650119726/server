@@ -77,7 +77,7 @@ func start1(s []string) {
 	}
 	count = c
 	log.Infof("请求开始:%v",count)
-	Send2Game(protomsg.FRUITMARYMSG_CS_START_MARY_REQ.UInt16(),&protomsg.START_MARY_REQ{Bet:uint64(bet)})
+	Send2Game(protomsg.DFDCMSG_CS_START_DFDC_REQ.UInt16(),&protomsg.START_DFDC_REQ{Bet:uint64(bet)})
 }
 func show(s []string) {
 	log.Infof("count:%v fee:%v", count,fee)

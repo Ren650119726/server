@@ -2,7 +2,6 @@ package room
 
 import (
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"root/common"
 	"root/common/config"
@@ -104,7 +103,7 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 
 		val := reward+sumOdds*int64(BetNum)
 		acc.AddMoney(val, common.EOperateType_DFDC_WIN)
-		asyn_addMoney(acc.UnDevice,val,int32(self.roomId), "多福多财 中奖",nil,nil) //中奖
+		//asyn_addMoney(acc.UnDevice,val,int32(self.roomId), "多福多财 中奖",nil,nil) //中奖
 
 		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 一维数组:%v 获得免费次数:%v 总赔率:%v 盈利:%v 获得奖金：%v",
 			acc.GetAccountId(),acc.GetMoney(), pArr, gainFreeCount,sumOdds, val,reward)
@@ -155,15 +154,16 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 			})
 			gameFun()
 		}
+		back("",0)
 		// 错误返回
-		errback := func() {
+		/*errback := func() {
 			log.Warnf("http请求报错")
 			resultMsg := &protomsg.START_DFDC_RES{
 				Ret:1,
 			}
 			send_tools.Send2Account(protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16(),resultMsg,session)
 		}
-		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("多福多财请求下注:%v",BetNum),back,errback)
+		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("多福多财请求下注:%v",BetNum),back,errback)*/
 	}else{
 		gameFun()
 	}
