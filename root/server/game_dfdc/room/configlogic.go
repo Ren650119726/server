@@ -148,7 +148,6 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32,fr
 	f := func() [3]int {
 		var a [3]int
 		randIndex := rand.Int31n(int32(len(nodes)))
-		log.Infof("随机数:%v",randIndex)
 		if int32(len(nodes)-1) == randIndex {
 			a[0] = int(randIndex - 1) //70
 			a[1] = int(randIndex)     //71
@@ -174,6 +173,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32,fr
 		coordinate[2][i] = int(self.mapPictureNodes[int32(nodes[c[2]].ids[i])].ID)
 	}
 
+	coordinate = [3][5]int{{13, 12, 12, 4, 12},{3, 13, 13, 5, 13},{4, 3, 3, 6, 3}}
 	resultMap := make(map[int][]int)
 	tempPos := make(map[int][]*protomsg.DFDCPosition,0)
 	for i := 0; i < 3; i++{
@@ -219,11 +219,18 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32,fr
 		odds,free := self.getOddsByPictureId(int32(val), continous)
 		sumOdds = int64(odds)*int64(totalline)
 		freeCount += int(free)
-			//log.Infof("图案:%v 最大连数:%v 赔率:%v totalline:%v fee:%v arr:%v pos:%+v",val,continous,odds,totalline,free,arr,tempPos[val])
+		if odds > 0 {
+			log.Infof("?????????????")
+			log.Infof("图案:%v 最大连数:%v 赔率:%v totalline:%v fee:%v arr:%v pos:%+v",val,continous,odds,totalline,free,arr,tempPos[val])
+		}
 	}
-	//for i:=0;i < 3;i++{
-	//	log.Infof("%v", coordinate[i])
-	//}
+	if sumOdds > 0 {
+		for i:=0;i < 3;i++{
+			log.Infof("%v", coordinate[i])
+		}
+		log.Infof("map:%v",resultMap)
+	}
+
 
 	picA = make([]int32, 0)
 	for i := 0; i < 5; i++ {
