@@ -219,6 +219,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32,fr
 		odds,free := self.getOddsByPictureId(int32(val), continous)
 		sumOdds = int64(odds)*int64(totalline)
 		freeCount += int(free)
+		log.Infof("---- %v ----",val)
 		if odds > 0 {
 			log.Infof("?????????????")
 			log.Infof("图案:%v 最大连数:%v 赔率:%v totalline:%v fee:%v arr:%v pos:%+v",val,continous,odds,totalline,free,arr,tempPos[val])

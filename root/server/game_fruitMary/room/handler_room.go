@@ -180,7 +180,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 			}
 			asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("水果小玛利请求下注:%v",BetNum),back,errback)
 		}else{
-			back("",0)
+			back("",int64(acc.GetMoney() - BetNum))
 		}
 
 	}else{
