@@ -111,7 +111,9 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		acc.MaryCount = int32(maryCount)
 		val := reward+sumOdds*int64(BetNum/9)
 		acc.AddMoney(val, common.EOperateType_FRUIT_MARY_WIN)
-		asyn_addMoney(acc.UnDevice,val,int32(self.roomId), "小玛利游戏1 中奖",nil,nil) //中奖
+		if acc.GetOSType() == 4{
+			asyn_addMoney(acc.UnDevice,val,int32(self.roomId), "小玛利游戏1 中奖",nil,nil) //中奖
+		}
 
 		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",
 			acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount, maryCount,sumOdds, reward)
@@ -167,15 +169,20 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 			}
 			gameFun()
 		}
-		// 错误返回
-		errback := func() {
-			log.Warnf("http请求报错")
-			resultMsg := &protomsg.START_MARY_RES{
-				Ret:1,
+		if acc.GetOSType() == 4{
+			// 错误返回
+			errback := func() {
+				log.Warnf("http请求报错")
+				resultMsg := &protomsg.START_MARY_RES{
+					Ret:1,
+				}
+				send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16(),resultMsg,session)
 			}
-			send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16(),resultMsg,session)
+			asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("水果小玛利请求下注:%v",BetNum),back,errback)
+		}else{
+			back("",0)
 		}
-		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("水果小玛利请求下注:%v",BetNum),back,errback)
+
 	}else{
 		gameFun()
 	}

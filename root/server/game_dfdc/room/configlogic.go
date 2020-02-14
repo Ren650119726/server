@@ -87,10 +87,10 @@ func initWheel(group int64) (main,free []*wheelNode) {
 			}
 		}
 	}
-	sort.SliceIsSorted(main, func(i, j int) bool {
+	sort.SliceStable(main, func(i, j int) bool {
 		return main[i].cfPosition < main[j].cfPosition
 	})
-	sort.SliceIsSorted(free, func(i, j int) bool {
+	sort.SliceStable(free, func(i, j int) bool {
 		return free[i].cfPosition < free[j].cfPosition
 	})
 	return main,free
@@ -148,6 +148,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32,fr
 	f := func() [3]int {
 		var a [3]int
 		randIndex := rand.Int31n(int32(len(nodes)))
+		log.Infof("随机数:%v",randIndex)
 		if int32(len(nodes)-1) == randIndex {
 			a[0] = int(randIndex - 1) //70
 			a[1] = int(randIndex)     //71
@@ -171,10 +172,6 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32,fr
 		coordinate[0][i] = int(self.mapPictureNodes[int32(nodes[c[0]].ids[i])].ID)
 		coordinate[1][i] = int(self.mapPictureNodes[int32(nodes[c[1]].ids[i])].ID)
 		coordinate[2][i] = int(self.mapPictureNodes[int32(nodes[c[2]].ids[i])].ID)
-	}
-	log.Info(" ")
-	for i:=0;i < 3;i++{
-		log.Infof("%v", coordinate[i])
 	}
 
 	resultMap := make(map[int][]int)
@@ -222,9 +219,11 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32,fr
 		odds,free := self.getOddsByPictureId(int32(val), continous)
 		sumOdds = int64(odds)*int64(totalline)
 		freeCount += int(free)
-		log.Infof("图案:%v 最大连数:%v 赔率:%v totalline:%v fee:%v arr:%v pos:%+v",val,continous,odds,totalline,free,arr,tempPos[val])
+			//log.Infof("图案:%v 最大连数:%v 赔率:%v totalline:%v fee:%v arr:%v pos:%+v",val,continous,odds,totalline,free,arr,tempPos[val])
 	}
-
+	//for i:=0;i < 3;i++{
+	//	log.Infof("%v", coordinate[i])
+	//}
 
 	picA = make([]int32, 0)
 	for i := 0; i < 5; i++ {

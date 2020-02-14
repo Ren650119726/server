@@ -5,10 +5,7 @@ import (
 	"root/common/model/rediskey"
 	"root/core/db"
 	"root/core/log"
-	"root/core/utils"
 	"root/protomsg"
-	"root/protomsg/inner"
-	"root/server/game_dfdc/send_tools"
 )
 type (
 	Account struct {
@@ -45,16 +42,16 @@ func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 		return
 	}
 	if self.Robot == 0 {
-		strTime := utils.DateString()
-		moneyChange := &inner.MONEYCHANGE{
-			AccountID:   self.GetAccountId(),
-			ChangeValue: iValue,
-			Value:       money,
-			Operate:     uint32(operate),
-			Time:        strTime,
-			RoomID:      self.GetRoomID(),
-		}
-		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange)
+		//strTime := utils.DateString()
+		//moneyChange := &inner.MONEYCHANGE{
+		//	AccountID:   self.GetAccountId(),
+		//	ChangeValue: iValue,
+		//	Value:       money,
+		//	Operate:     uint32(operate),
+		//	Time:        strTime,
+		//	RoomID:      self.GetRoomID(),
+		//}
+		//send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange)
 		db.HSet(rediskey.PlayerId(uint32(self.AccountId)), "Money", self.Money)
 	}
 	self.Money = uint64(money)

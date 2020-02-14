@@ -104,13 +104,13 @@ func initWheel(group int64) (main,free,mary []*wheelNode ) {
 			}
 		}
 	}
-	sort.SliceIsSorted(main, func(i, j int) bool {
+	sort.SliceStable(main, func(i, j int) bool {
 		return main[i].cfPosition < main[j].cfPosition
 	})
-	sort.SliceIsSorted(free, func(i, j int) bool {
+	sort.SliceStable(free, func(i, j int) bool {
 		return free[i].cfPosition < free[j].cfPosition
 	})
-	sort.SliceIsSorted(mary, func(i, j int) bool {
+	sort.SliceStable(mary, func(i, j int) bool {
 		return mary[i].cfPosition < mary[j].cfPosition
 	})
 	return main,free,mary
@@ -167,6 +167,7 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 	f := func() [3]int {
 		var a [3]int
 		randIndex := rand.Int31n(int32(len(nodes)))
+		log.Infof("随机数:%v",randIndex)
 		if int32(len(nodes)-1) == randIndex {
 			a[0] = int(randIndex - 1) //70
 			a[1] = int(randIndex)     //71

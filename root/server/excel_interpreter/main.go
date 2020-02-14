@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/astaxie/beego"
+	"golang.org/x/net/websocket"
 	"io/ioutil"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -36,8 +38,19 @@ func main() {
 				outjson := output + "/" + jsonname
 				transform2json(name, outjson)
 				fmt.Printf("解析文件:%-70v %-30v\n",name,jsonname)
+			} else {
+				return
 			}
 		}
+	}
+
+	u := url.URL{Scheme: "ws", Host: this.Host, Path: this.Path}
+
+	ws, err := websocket.Dial(u.String(), "", "http://"+this.Host+"/")
+	this.ws = ws
+	if err != nil {
+		beego.Error(err)
+		return err
 	}
 }
 

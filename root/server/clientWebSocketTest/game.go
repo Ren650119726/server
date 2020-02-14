@@ -22,6 +22,7 @@ type (
 
 var count = 0
 var fee = 0
+var total = 0
 func NewGame() *Game {
 	return &Game{}
 }
@@ -109,18 +110,18 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 
 	case protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_DFDC_RES{}).(*protomsg.START_DFDC_RES)
-		log.Infof(colorized.Blue("开始游戏：%+v"),pb)
+		//log.Infof(colorized.Blue("开始游戏：%+v"),pb)
 
 		fee = int(pb.GetFreeCount())
 		if fee > 0{
 			fee--
-			Send2Game(protomsg.DFDCMSG_CS_START_DFDC_REQ.UInt16(),&protomsg.START_DFDC_REQ{Bet:uint64(100)})
+			Send2Game(protomsg.DFDCMSG_CS_START_DFDC_REQ.UInt16(),&protomsg.START_DFDC_REQ{Bet:uint64(1000)})
 			break
 		}
 
 		count--
 		if count > 0 {
-			Send2Game(protomsg.DFDCMSG_CS_START_DFDC_REQ.UInt16(),&protomsg.START_DFDC_REQ{Bet:uint64(100)})
+			Send2Game(protomsg.DFDCMSG_CS_START_DFDC_REQ.UInt16(),&protomsg.START_DFDC_REQ{Bet:uint64(1000)})
 		}else{
 			log.Infof("身上的钱--:%v", pb.GetMoney())
 		}
