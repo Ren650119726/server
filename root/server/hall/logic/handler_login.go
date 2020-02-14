@@ -69,6 +69,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 				// 账号被冻结
 				return
 			}
+			acc.OSType = loginMSG.OSType
 			if LoginType == 4 {
 				acc.Money = uint64(Gold)
 				if acc.RoomID != 0{

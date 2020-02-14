@@ -169,7 +169,6 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 			}
 			gameFun()
 		}
-		log.Infof("accOSType %v", acc.GetOSType())
 		if acc.GetOSType() == 4{
 			// 错误返回
 			errback := func() {
