@@ -110,7 +110,6 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 
 	case protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_DFDC_RES{}).(*protomsg.START_DFDC_RES)
-		//log.Infof(colorized.Blue("开始游戏：%+v"),pb)
 
 		fee = int(pb.GetFreeCount())
 		if fee > 0{

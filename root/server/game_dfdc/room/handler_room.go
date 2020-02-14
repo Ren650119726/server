@@ -106,11 +106,13 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 
 		if sumOdds != 0{
 			totalrewa++
-			fmt.Printf("中奖:%v次\r\n",totalrewa)
+			fmt.Printf("中奖:%v 次,当前odd:%v \r\n",totalrewa,sumOdds)
 		}
 		val := reward+(sumOdds*int64(BetNum)/100)
 		acc.AddMoney(val, common.EOperateType_DFDC_WIN)
-		//asyn_addMoney(acc.UnDevice,val,int32(self.roomId), "多福多财 中奖",nil,nil) //中奖
+		if acc.OSType == 4{
+			asyn_addMoney(acc.UnDevice,val,int32(self.roomId), "多福多财 中奖",nil,nil) //中奖
+		}
 
 		//log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 一维数组:%v 获得免费次数:%v 总赔率:%v 盈利:%v 获得奖金：%v",
 		//	acc.GetAccountId(),acc.GetMoney(), pArr, gainFreeCount,sumOdds, val,reward)
@@ -132,6 +134,7 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 			Money:int64(acc.GetMoney()),
 			FreeCount:int64(acc.FeeCount),
 			Shows:showpos,
+			TotalOdds:sumOdds,
 		}
 		send_tools.Send2Account(protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16(),resultMsg,session)
 
@@ -151,7 +154,12 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 	if !isFree {
 		back := func(backunique string, backmoney int64) { // 押注
 		//log.Infof("玩家:%v 下注成功 扣除:%v ", acc.GetUnDevice(), BetNum)
-			acc.AddMoney(int64(-(BetNum)), common.EOperateType_DFDC_BET)
+			if acc.GetMoney() - BetNum != uint64(backmoney){
+				log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v",acc.GetUnDevice(),acc.GetMoney(),BetNum,backmoney)
+				acc.AddMoney(backmoney - int64(acc.GetMoney()),common.EOperateType_INIT)
+			}else{
+				acc.AddMoney(int64(-(BetNum)), common.EOperateType_DFDC_BET)
+			}
 			for lv,_ := range self.bonus{
 				add := int64(BetNum)*self.bounsRoller[lv] / 10000
 				self.bonus[lv] += add
@@ -162,16 +170,21 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 			})
 			gameFun()
 		}
-		back("",0)
-		// 错误返回
-		/*errback := func() {
-			log.Warnf("http请求报错")
-			resultMsg := &protomsg.START_DFDC_RES{
-				Ret:1,
+		if acc.OSType == 4{
+			// 错误返回
+			errback := func() {
+				log.Warnf("http请求报错")
+				resultMsg := &protomsg.START_DFDC_RES{
+					Ret:1,
+				}
+				send_tools.Send2Account(protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16(),resultMsg,session)
 			}
-			send_tools.Send2Account(protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16(),resultMsg,session)
+			asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("多福多财请求下注:%v",BetNum),back,errback)
+		}else{
+			back("",int64(acc.GetMoney()-BetNum))
 		}
-		asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("多福多财请求下注:%v",BetNum),back,errback)*/
+
+
 	}else{
 		gameFun()
 	}

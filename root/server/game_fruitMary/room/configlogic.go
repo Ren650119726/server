@@ -167,7 +167,6 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 	f := func() [3]int {
 		var a [3]int
 		randIndex := rand.Int31n(int32(len(nodes)))
-		log.Infof("随机数:%v",randIndex)
 		if int32(len(nodes)-1) == randIndex {
 			a[0] = int(randIndex - 1) //70
 			a[1] = int(randIndex)     //71

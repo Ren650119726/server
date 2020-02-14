@@ -80,11 +80,12 @@ message START_DFDC_REQ {
 
 message START_DFDC_RES {
 	uint64 Ret 						  = 1; // 0成功
-	repeated int32 PictureList        = 4; // 图形列表( [0-14] 即15个图形)
-	map<int32, int64> Bonus           = 5; // 水池盈利 (key级别 vale盈利)
-	int64 Money                       = 6; // 身上的钱
-	int64 FreeCount                   = 7; // 获得免费次数
-	repeated DFDC_position Shows      = 8; // 中奖需要展示的坐标
+	repeated int32 PictureList        = 2; // 图形列表( [0-14] 即15个图形)
+	map<int32, int64> Bonus           = 3; // 水池盈利 (key级别 vale盈利)
+	int64 Money                       = 4; // 身上的钱
+	int64 TotalOdds                   = 5; // 总赔率
+	int64 FreeCount                   = 6; // 获得免费次数
+	repeated DFDC_position Shows      = 7; // 中奖需要展示的坐标
 }
 
 message DFDC_position{
