@@ -33,7 +33,6 @@ func (self *Room) DFDCMSG_CS_LEAVE_GAME_DFDC_REQ(actor int32, msg []byte, sessio
 	},session)
 }
 
-var totalrewa int
 // 玩家请求开始游戏
 func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int64) {
 	start := packet.PBUnmarshal(msg,&protomsg.START_DFDC_REQ{}).(*protomsg.START_DFDC_REQ)
@@ -104,10 +103,6 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 			}
 		}
 
-		if sumOdds != 0{
-			totalrewa++
-			fmt.Printf("中奖:%v 次,当前odd:%v \r\n",totalrewa,sumOdds)
-		}
 		val := reward+(sumOdds*int64(BetNum)/100)
 		acc.AddMoney(val, common.EOperateType_DFDC_WIN)
 		if acc.OSType == 4{

@@ -111,6 +111,7 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 	case protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16():
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_DFDC_RES{}).(*protomsg.START_DFDC_RES)
 
+		//time2.Sleep(time2.Duration(rand.Int63n(10000))*time2.Microsecond)
 		fee = int(pb.GetFreeCount())
 		if fee > 0{
 			fee--
@@ -125,9 +126,9 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 			log.Infof("身上的钱--:%v", pb.GetMoney())
 		}
 
-		if count % 50000 == 0{
+		if count % 100000 == 0{
 			log.Infof("sleep start")
-			time2.Sleep(1*time2.Second)
+			time2.Sleep(1346*time2.Millisecond)
 			log.Infof("sleep end")
 		}
 	}

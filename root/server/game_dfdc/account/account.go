@@ -37,7 +37,7 @@ func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 	}
 
 	money := int64(self.Money) + iValue
-	if money < 0 || money > 99999999999 {
+	if money < 0 || money > 9999999999999 {
 		log.Errorf("钱越界了 :[%] accid:%v ", money, self.AccountId)
 		return
 	}
