@@ -33,6 +33,9 @@ func (self *Hall) CMD_LoadConfig(sParam []string) {
 
 	strServerIP := utils.GetLocalIP()
 	GameMgr.PrintSign(strServerIP)
+	for _,v := range GameMgr.nodes{
+		send_tools.Send2Game(inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16(),nil,v.session)
+	}
 	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 

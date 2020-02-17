@@ -54,7 +54,7 @@ func (self *Logic) Init(actor *core.Actor) bool {
 	self.owner.AddTimer(30000,-1, func(dt int64) {
 		Send2Hall(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(),nil)
 	})
-	login([]string{"aabbcc"})
+	//login([]string{"aabbcc"})
 	return true
 }
 

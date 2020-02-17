@@ -17,6 +17,7 @@ type (
 		owner          *core.Actor
 		init           bool // 重新建立连接是否需要拉取所有数据
 		roomID         uint32
+		feec		int
 	}
 )
 
@@ -112,11 +113,10 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_DFDC_RES{}).(*protomsg.START_DFDC_RES)
 
 		//time2.Sleep(time2.Duration(rand.Int63n(10000))*time2.Microsecond)
-		fee = int(pb.GetFreeCount())
-		if fee > 0{
-			fee--
+		self.feec = int(pb.GetFreeCount())
+		if self.feec > 0{
 			Send2Game(protomsg.DFDCMSG_CS_START_DFDC_REQ.UInt16(),&protomsg.START_DFDC_REQ{Bet:uint64(1000)})
-			break
+			return true
 		}
 
 		count--

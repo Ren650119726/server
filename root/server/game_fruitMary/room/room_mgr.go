@@ -4,6 +4,7 @@ import (
 	"root/common/config"
 	"root/core"
 	"root/core/log"
+	"root/core/packet"
 	"root/protomsg/inner"
 	"root/server/game_fruitMary/send_tools"
 	"strconv"
@@ -36,6 +37,14 @@ func (self *roomMgr) InitRoomMgr() {
 		for id,_ := range conf {
 			self.CreateRoom(uint32(id))
 		}
+}
+func (self *roomMgr) BraodcastReload() {
+	msg := packet.NewPacket(nil)
+	msg.SetMsgID(inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16())
+	for roomID,_ := range self.rooms{
+		core.CoreSend(0,int32(roomID),msg.GetData(),0)
+	}
+
 }
 
 func (self *roomMgr) SendRoomInfo2Hall() {

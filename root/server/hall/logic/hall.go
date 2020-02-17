@@ -103,11 +103,11 @@ func (self *Hall) Stop() {
 
 func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
-	if name,e := protomsg.MSG_name[int32(pack.GetMsgID())];e{
-		log.Infof("收到消息:%v %v ", pack.GetMsgID(),name)
-	}else{
-		log.Infof("收到消息:%v %v ", pack.GetMsgID(),inner.SERVERMSG_name[int32(pack.GetMsgID())])
-	}
+	//if name,e := protomsg.MSG_name[int32(pack.GetMsgID())];e{
+	//	log.Infof("收到消息:%v %v ", pack.GetMsgID(),name)
+	//}else{
+	//	log.Infof("收到消息:%v %v ", pack.GetMsgID(),inner.SERVERMSG_name[int32(pack.GetMsgID())])
+	//}
 	switch pack.GetMsgID() {
 	case utils.ID_DISCONNECT: // 客户端或游戏进程断开连接
 		self.MSGID_CLOSE_CONNECT(actor, msg, session)

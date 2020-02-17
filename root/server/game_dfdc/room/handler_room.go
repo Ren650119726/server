@@ -119,6 +119,8 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 		}
 
 		if gainFreeCount > 0 {
+			acc.StaticFee += int64(gainFreeCount)
+			fmt.Printf("accid:%v 免费次数累计:%v \r\n",acc.AccountId,acc.StaticFee)
 			acc.FeeCount += int32(gainFreeCount)
 		}
 

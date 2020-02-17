@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"root/common"
+	"root/common/config"
 	"root/common/tools"
 	"root/core"
 	"root/core/log"
@@ -97,6 +98,9 @@ func (self *FruitMary) HandleMessage(actor int32, msg []byte, session int64) boo
 	case inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(): // 大厅通知修改玩家数据
 		data := packet.PBUnmarshal(pack.ReadBytes(),&inner.NOTIFY_ALTER_DATE{}).(*inner.NOTIFY_ALTER_DATE)
 		core.CoreSend(self.owner.Id, int32(data.GetRoomID()), msg, session)
+	case inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16():
+		config.Load_Conf()
+		room.RoomMgr.BraodcastReload()
 	case inner.SERVERMSG_SS_CLOSE_SERVER.UInt16():
 		self.close = true
 		self.owner.AddTimer(1000,-1, func(dt int64) {

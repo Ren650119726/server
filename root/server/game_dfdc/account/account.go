@@ -15,6 +15,7 @@ type (
 		FeeCount  int32
 		LastBet   uint64
 		Forbid bool
+		StaticFee int64
 	}
 )
 
