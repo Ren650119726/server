@@ -90,7 +90,7 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 	switch pack.GetMsgID() {
 	case inner.SERVERMSG_SS_CLOSE_SERVER.UInt16(): //关服通知
 		self.close()
-	case inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16(): // 更新配置
+	case inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16(): // 重新读取配置文件
 		self.LoadConfig()
 	case inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(): // 大厅通知修改玩家数据
 		self.SERVERMSG_HG_NOTIFY_ALTER_DATE(actor,pack.ReadBytes(),session)

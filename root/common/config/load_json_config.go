@@ -7,12 +7,13 @@ import (
 	"regexp"
 	"root/core"
 	"root/core/log"
+	"root/core/utils"
 	"strconv"
 )
 
 type (
 	Config_map  map[int]interface{}
-	json_config map[string]Config_map
+	json_config map[string]Config_map // 不带日期
 )
 
 var Config_Data json_config
@@ -30,6 +31,7 @@ func Load_Conf() {
 		fmt.Println("read dir error")
 		return
 	}
+	DataStrLen := len(utils.STD_NUMBER_FORMAT) +1 // 日期的长度，多了一个下划线_ 所以需要+1
 	for _,file := range dir_list{
 		b,_ := regexp.Match("/*.json",[]byte(file.Name()))
 		if b{
@@ -41,7 +43,7 @@ func Load_Conf() {
 					return
 				}
 
-				jsonname := file.Name()[:ret[0]-1]
+				jsonname := file.Name()[:ret[0]-1-DataStrLen]
 				cmap := make(Config_map)
 				error := json.Unmarshal(data,&cmap)
 				if error != nil {

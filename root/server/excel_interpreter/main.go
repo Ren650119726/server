@@ -1,17 +1,19 @@
 package main
 
 import (
+	"archive/zip"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/astaxie/beego"
-	"golang.org/x/net/websocket"
 	"io/ioutil"
-	"net/url"
+	"os"
 	"regexp"
+	"root/core/utils"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const sheet = "s1"
@@ -20,9 +22,20 @@ type jsonMap map[string]interface{}
 func main() {
 	beego.LoadAppConfig("ini", "./app.conf")
 	inputstr := beego.AppConfig.DefaultString("CONF::Input_path", "./")
-	output := beego.AppConfig.DefaultString("CONF::Output_path", "nill/")
-	fmt.Println("输出目录:", output)
+	outputstr := beego.AppConfig.DefaultString("CONF::Output_path", "C:/Users/wwj/Desktop/server/root/config/")
+	fmt.Println("输出目录:", outputstr)
 	inputs := strings.Split(inputstr, " ")
+	for _,v := range inputs{
+		fmt.Println("输入目录:", v)
+	}
+	time := time.Now().Format(utils.STD_NUMBER_FORMAT)
+
+	// 打包并删除旧文件
+	if !compressZIP(outputstr,time){
+		return
+	}
+
+	// 生成新文件
 	for _,input := range inputs{
 		dir_list, e := ioutil.ReadDir(input)
 		if e != nil {
@@ -34,23 +47,15 @@ func main() {
 			ret := regexp.MustCompile(`xlsx`).FindStringIndex(filename.Name())
 			if ret != nil {
 				name := input + "/" + filename.Name()
-				jsonname := filename.Name()[:ret[0]] + "json"
-				outjson := output + "/" + jsonname
+				jsonname := filename.Name()[:ret[0]-1] +"_"+ time + ".json"
+				outjson := outputstr + "/" + jsonname
 				transform2json(name, outjson)
 				fmt.Printf("解析文件:%-70v %-30v\n",name,jsonname)
 			} else {
-				return
+				//fmt.Println("igrone:",filename.Name())
+				continue
 			}
 		}
-	}
-
-	u := url.URL{Scheme: "ws", Host: this.Host, Path: this.Path}
-
-	ws, err := websocket.Dial(u.String(), "", "http://"+this.Host+"/")
-	this.ws = ws
-	if err != nil {
-		beego.Error(err)
-		return err
 	}
 }
 
@@ -127,4 +132,58 @@ func transform2json(dirFile string, out string){
 	b, _ := json.MarshalIndent(jsonmap, "", "\t")
 	ioutil.WriteFile(out, b, 0666)
 	return
+}
+
+func compressZIP(outputPath,time string) bool {
+	// 先将旧文件打包保存，在生成新文件
+	dir_list, e := ioutil.ReadDir(outputPath)
+	if e != nil {
+		fmt.Println("read dir error")
+		return false
+	}
+	for i := len(dir_list)-1;i >=0;i--{
+		if !strings.Contains(dir_list[i].Name(), "json") {
+			dir_list = append(dir_list[:i],dir_list[i+1:]...)
+		}
+	}
+	if len(dir_list) == 0{
+		return true
+	}
+	// 打包旧文件
+	file_zip := outputPath +fmt.Sprintf("config_%v.zip",time)
+	fzip, e := os.Create(file_zip)
+	if e != nil {
+		fmt.Println("文件打开失败:",file_zip)
+		return false
+	}
+	w := zip.NewWriter(fzip)
+
+	defer func() {
+		w.Close()
+		fzip.Close()
+
+	}()
+
+	for _,file := range dir_list{
+		if strings.Contains(file.Name(), "json") {
+			fw, err := w.Create(file.Name())
+			if err != nil {
+				fmt.Println(err)
+				return false
+			}
+			filecontent, err := ioutil.ReadFile(outputPath + file.Name())
+			if err != nil {
+				fmt.Println(err)
+				return false
+			}
+			_, err = fw.Write(filecontent)
+			if err != nil {
+				fmt.Println(err)
+				return false
+			}
+			fmt.Println("打包并移除文件 ", file.Name())
+			os.Remove(outputPath + file.Name())
+		}
+	}
+	return true
 }
