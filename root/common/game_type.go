@@ -8,6 +8,7 @@ const (
 	EGameTypeCATCHFISH           EGameType = 1   // 捕鱼
 	EGameTypeFRUITMARY           EGameType = 2   // 水果小玛丽
 	EGameTypeDFDC           	 EGameType = 3   // 多福多财
+	EGameTypeJPM            	 EGameType = 4   // 金瓶梅
 
 )
 
@@ -16,6 +17,7 @@ var GameTypeByID = map[EGameType]string{
 	EGameTypeCATCHFISH:          "捕鱼",
 	EGameTypeFRUITMARY:          "水果小玛丽",
 	EGameTypeDFDC:          	 "多福多财",
+	EGameTypeJPM:          	 	 "金瓶梅",
 }
 
 var GameTypeByString = map[string]EGameType{
@@ -23,6 +25,7 @@ var GameTypeByString = map[string]EGameType{
 	"捕鱼":    		EGameTypeCATCHFISH,
 	"水果小玛丽":    EGameTypeFRUITMARY,
 	"多福多财":    	EGameTypeDFDC,
+	"金瓶梅":    	EGameTypeJPM,
 }
 
 func (e EGameType) String() string {

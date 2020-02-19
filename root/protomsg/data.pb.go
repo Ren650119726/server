@@ -9,6 +9,7 @@ It is generated from these files:
 	protobuf/dfdc.proto
 	protobuf/fruitmary.proto
 	protobuf/hall.proto
+	protobuf/jpm.proto
 
 It has these top-level messages:
 	AccountStorageData
@@ -61,6 +62,16 @@ It has these top-level messages:
 	EMAIL_NEW
 	BROADCAST_MSG
 	UPDATE_ROOMLIST
+	ENTER_GAME_JPM_REQ
+	ENTER_GAME_JPM_RES
+	LEAVE_GAME_JPM_REQ
+	LEAVE_GAME_JPM_RES
+	START_JPM_REQ
+	START_JPM_RES
+	JPMPosition
+	JPM_Result
+	UPDATE_JPM_BONUS
+	PLAYERS_JPM_LIST_RES
 */
 package protomsg
 

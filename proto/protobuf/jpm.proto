@@ -1,0 +1,107 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+
+import "protobuf/data.proto";
+
+// 网络消息
+enum JPMMSG {
+	UNKNOW_JPM = 0;
+	CS_ENTER_GAME_JPM_REQ = 20001; // 玩家请求进入房间
+	SC_ENTER_GAME_JPM_RES = 20002;
+	CS_LEAVE_GAME_JPM_REQ = 20003; // 玩家请求退出房间
+	SC_LEAVE_GAME_JPM_RES = 20004;
+	
+	CS_START_JPM_REQ      = 20008;// 请求开始游戏1
+	SC_START_JPM_RES      = 20009;
+	
+	SC_UPDATE_JPM_BONUS   = 20010;// 通知更新奖金池
+	
+	CS_NEXT_JPM_RESULT    = 20013; // 客户通知服务器播放下一个结果
+
+	CS_PLAYERS_JPM_LIST_REQ          = 20015; // 请求在线玩家列表
+	SC_PLAYERS_JPM_LIST_RES          = 20016;
+}
+
+// 游戏1 图案枚举
+enum JPMID {
+	JPMUnknow    = 0;
+	JPM1         = 1; // 肚兜Wild
+	JPM2         = 2; // 庞春梅Scatter
+	JPM3         = 3; // 潘金莲Jackpot
+	JPM4         = 4; // 李瓶儿
+	JPM5         = 5; // 西门庆
+	JPM6         = 6; // 武大郎
+	JPM7         = 7; // 玉势
+	JPM8         = 8; // 缅玲
+	JPM9         = 9; // 木马
+	JPM10        = 10;// 春宫瓷器
+	JPM11	     = 11;// 银托子
+	
+}
+// 请求进入房间
+message ENTER_GAME_JPM_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message ENTER_GAME_JPM_RES {
+	uint32 RoomID 	    		 	= 1; // 房间ID
+	int64 Basics        		 	= 2; // 基础金额
+	int64 Bonus         		 	= 3; // 奖金池
+	int64 LastBet                   = 4; // 最后一次压住
+	repeated uint64 Bets 		 	= 5; // 可以选择的押注金额
+	int32 FeeCount                  = 8; // 免费次数
+}
+
+
+// 请求退出房间
+message LEAVE_GAME_JPM_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message LEAVE_GAME_JPM_RES {
+    uint32 Ret    = 1; // 0.可以退出  1.不能退出房间
+	uint32 RoomID = 2; // 房间ID
+}
+
+////////////////////////////////////////////// 游戏1 /////////////////////////////////////////////
+// 请求开始游戏1
+message START_JPM_REQ {
+	uint64 Bet = 1; 
+}
+
+message START_JPM_RES {
+	uint64 Ret 						  = 1; // 0成功 
+	int64  SumOdds 					  = 2; // 9条线总赔率
+	repeated JPM_Result Results       = 3; // 中奖线列表
+	repeated int32 PictureList        = 4; // 图形列表( [0-14] 即15个图形)
+	int64 Bonus                       = 5; // 赢得水池里的金币
+	int64 Money                       = 6; // 身上的钱
+	int64 FreeCount                   = 7; // 获得免费次数
+	repeated JPM_position FeePositions = 9; //中免费的坐标
+}
+
+message JPM_position{
+	int32 px = 1;
+	int32 py = 2;
+}
+
+message JPM_Result{
+	int32 LineId = 1; // 表示第几条线
+	int32 Count  = 2; // 图形项连的个数
+	int32 Odds   = 3; // 该条线的赔率
+	repeated JPM_position Positions = 4;
+}
+
+// 通知更新奖金池
+message UPDATE_JPM_BONUS{
+	int64 Bonus = 1;
+}
+
+
+// 请求jpm玩家列表
+message PLAYERS_JPM_LIST_RES{
+   repeated AccountStorageData players = 1; // 房间内所有的玩家
+}
