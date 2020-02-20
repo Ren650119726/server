@@ -150,6 +150,13 @@ func (self *gameMgr)GetBaseInfo(roomID uint32) (minMoney uint64,t uint32,order u
 		bet = utils.SplitConf2ArrUInt64(betstr)
 		order = uint32(config.Get_configInt("jpm_room",int(roomID),"Order"))
 		return
+	case common.EGameTypeLUCKFRUIT:
+		minMoney = uint64(config.Get_configInt("luckfruit_room",int(roomID),"GlodNeed"))
+		t = uint32(config.Get_configInt("luckfruit_room",int(roomID),"Type"))
+		betstr := config.Get_configString("luckfruit_room",int(roomID),"Bet")
+		bet = utils.SplitConf2ArrUInt64(betstr)
+		order = uint32(config.Get_configInt("luckfruit_room",int(roomID),"Order"))
+		return
 	default:
 		log.Warnf("GetBaseInfo 找不到的游戏类型:%v ",game.gameType)
 		return 0,0,0,nil
