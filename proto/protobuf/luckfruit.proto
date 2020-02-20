@@ -1,0 +1,105 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+
+import "protobuf/data.proto";
+
+// 网络消息
+enum LUCKFRUITMSG {
+	UNKNOW_LUCKFRUIT = 0;
+	CS_ENTER_GAME_LUCKFRUIT_REQ = 50001; // 玩家请求进入房间
+	SC_ENTER_GAME_LUCKFRUIT_RES = 50002;
+	CS_LEAVE_GAME_LUCKFRUIT_REQ = 50003; // 玩家请求退出房间
+	SC_LEAVE_GAME_LUCKFRUIT_RES = 50004;
+	
+	CS_START_LUCKFRUIT_REQ      = 50008;// 请求开始游戏1
+	SC_START_LUCKFRUIT_RES      = 50009;
+	
+	SC_UPDATE_LUCKFRUIT_BONUS   = 50010;// 通知更新奖金池
+
+	CS_PLAYERS_LUCKFRUIT_LIST_REQ = 50015; // 请求在线玩家列表
+	SC_PLAYERS_LUCKFRUIT_LIST_RES = 50016;
+}
+
+// 游戏1 图案枚举
+enum LUCKFRUITID {
+	LUCKFRUITUnknow    = 0;
+	LUCKFRUIT1         = 1; // 铃铛
+	LUCKFRUIT2         = 2; // 777
+	LUCKFRUIT3         = 3; // 幸运草
+	LUCKFRUIT4         = 4; // Bar
+	LUCKFRUIT5         = 5; // 樱桃
+	LUCKFRUIT6         = 6; // 西瓜
+	LUCKFRUIT7         = 7; // 草莓
+	LUCKFRUIT8         = 8; // 葡萄
+	LUCKFRUIT9         = 9; // 芒果
+	LUCKFRUIT10        = 10;// 橘子
+	LUCKFRUIT11	       = 11;// 苹果
+	
+}
+// 请求进入房间
+message ENTER_GAME_LUCKFRUIT_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message ENTER_GAME_LUCKFRUIT_RES {
+	uint32 RoomID 	    		 	= 1; // 房间ID
+	int64 Basics        		 	= 2; // 基础金额
+	int64 Bonus         		 	= 3; // 奖金池
+	int64 LastBet                   = 4; // 最后一次压住
+	repeated uint64 Bets 		 	= 5; // 可以选择的押注金额
+	int32 FeeCount                  = 8; // 免费次数
+}
+
+
+// 请求退出房间
+message LEAVE_GAME_LUCKFRUIT_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message LEAVE_GAME_LUCKFRUIT_RES {
+    uint32 Ret    = 1; // 0.可以退出  1.不能退出房间
+	uint32 RoomID = 2; // 房间ID
+}
+
+////////////////////////////////////////////// 游戏 /////////////////////////////////////////////
+// 请求开始游戏
+message START_LUCKFRUIT_REQ {
+	uint64 Bet = 1; 
+}
+
+message START_LUCKFRUIT_RES {
+	uint64 Ret 						  = 1; // 0成功 
+	int64  SumOdds 					  = 2; // 9条线总赔率
+	repeated LUCKFRUIT_Result Results = 3; // 中奖线列表
+	repeated int32 PictureList        = 4; // 图形列表( [0-14] 即15个图形)
+	int64 Bonus                       = 5; // 赢得水池里的金币
+	int64 Money                       = 6; // 身上的钱
+	int64 FreeCount                   = 7; // 获得免费次数
+	repeated LUCKFRUIT_position FeePositions = 8; //中免费的坐标
+}
+
+message LUCKFRUIT_position{
+	int32 px = 1;
+	int32 py = 2;
+}
+
+message LUCKFRUIT_Result{
+	int32 LineId = 1; // 表示第几条线
+	int32 Count  = 2; // 图形项连的个数
+	int32 Odds   = 3; // 该条线的赔率
+	repeated LUCKFRUIT_position Positions = 4;
+}
+
+// 通知更新奖金池
+message UPDATE_LUCKFRUIT_BONUS{
+	int64 Bonus = 1;
+}
+
+
+// 请求LUCKFRUIT玩家列表
+message PLAYERS_LUCKFRUIT_LIST_RES{
+   repeated AccountStorageData players = 1; // 房间内所有的玩家
+}

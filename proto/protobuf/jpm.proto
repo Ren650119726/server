@@ -7,23 +7,21 @@ import "protobuf/data.proto";
 // 网络消息
 enum JPMMSG {
 	UNKNOW_JPM = 0;
-	CS_ENTER_GAME_JPM_REQ = 20001; // 玩家请求进入房间
-	SC_ENTER_GAME_JPM_RES = 20002;
-	CS_LEAVE_GAME_JPM_REQ = 20003; // 玩家请求退出房间
-	SC_LEAVE_GAME_JPM_RES = 20004;
+	CS_ENTER_GAME_JPM_REQ = 40001; // 玩家请求进入房间
+	SC_ENTER_GAME_JPM_RES = 40002;
+	CS_LEAVE_GAME_JPM_REQ = 40003; // 玩家请求退出房间
+	SC_LEAVE_GAME_JPM_RES = 40004;
 	
-	CS_START_JPM_REQ      = 20008;// 请求开始游戏1
-	SC_START_JPM_RES      = 20009;
+	CS_START_JPM_REQ      = 40008;// 请求开始游戏1
+	SC_START_JPM_RES      = 40009;
 	
-	SC_UPDATE_JPM_BONUS   = 20010;// 通知更新奖金池
-	
-	CS_NEXT_JPM_RESULT    = 20013; // 客户通知服务器播放下一个结果
+	SC_UPDATE_JPM_BONUS   = 40010;// 通知更新奖金池
 
-	CS_PLAYERS_JPM_LIST_REQ          = 20015; // 请求在线玩家列表
-	SC_PLAYERS_JPM_LIST_RES          = 20016;
+	CS_PLAYERS_JPM_LIST_REQ          = 40015; // 请求在线玩家列表
+	SC_PLAYERS_JPM_LIST_RES          = 40016;
 }
 
-// 游戏1 图案枚举
+// 游戏 图案枚举
 enum JPMID {
 	JPMUnknow    = 0;
 	JPM1         = 1; // 肚兜Wild
@@ -67,7 +65,7 @@ message LEAVE_GAME_JPM_RES {
 }
 
 ////////////////////////////////////////////// 游戏1 /////////////////////////////////////////////
-// 请求开始游戏1
+// 请求开始游戏
 message START_JPM_REQ {
 	uint64 Bet = 1; 
 }

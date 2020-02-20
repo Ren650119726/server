@@ -32,7 +32,7 @@ func (self *Game) Init(actor *core.Actor) bool {
 	self.owner = actor
 	
 	//game_GLobal = NewWebsocketClient("47.108.87.29:41201","/connect")
-	game_GLobal = NewWebsocketClient("192.168.2.100:41401","/connect")
+	game_GLobal = NewWebsocketClient("192.168.2.100:41501","/connect")
 	game_GLobal.connect()
 	fmt.Println("connected success :", game_GLobal.ws.RemoteAddr())
 	go func() {
@@ -55,7 +55,7 @@ func (self *Game) Init(actor *core.Actor) bool {
 		}
 	}()
 
-	Send2Game(protomsg.JPMMSG_CS_ENTER_GAME_JPM_REQ.UInt16(),&protomsg.ENTER_GAME_JPM_REQ{
+	Send2Game(protomsg.LUCKFRUITMSG_CS_ENTER_GAME_LUCKFRUIT_REQ.UInt16(),&protomsg.ENTER_GAME_LUCKFRUIT_REQ{
 		AccountID:AccountID,
 		RoomID:self.roomID,
 	})
@@ -105,23 +105,23 @@ func (self *Game) Stop() {
 func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
-	case protomsg.JPMMSG_SC_ENTER_GAME_JPM_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.ENTER_GAME_JPM_RES{}).(*protomsg.ENTER_GAME_JPM_RES)
+	case protomsg.LUCKFRUITMSG_SC_ENTER_GAME_LUCKFRUIT_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.ENTER_GAME_LUCKFRUIT_RES{}).(*protomsg.ENTER_GAME_LUCKFRUIT_RES)
 		log.Infof(colorized.Blue("进入游戏成功：%+v"),pb)
 
-	case protomsg.JPMMSG_SC_START_JPM_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_JPM_RES{}).(*protomsg.START_JPM_RES)
+	case protomsg.LUCKFRUITMSG_SC_START_LUCKFRUIT_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_LUCKFRUIT_RES{}).(*protomsg.START_LUCKFRUIT_RES)
 		log.Infof(colorized.Blue("开始游戏：%+v"),pb)
 		//time2.Sleep(time2.Duration(rand.Int63n(10000))*time2.Microsecond)
 		self.feec = int(pb.GetFreeCount())
 		if self.feec > 0{
-			Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(),&protomsg.START_JPM_REQ{Bet:uint64(1000)})
+			Send2Game(protomsg.LUCKFRUITMSG_CS_START_LUCKFRUIT_REQ.UInt16(),&protomsg.START_LUCKFRUIT_REQ{Bet:uint64(1000)})
 			return true
 		}
 
 		count--
 		if count > 0 {
-			Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(),&protomsg.START_JPM_REQ{Bet:uint64(1000)})
+			Send2Game(protomsg.LUCKFRUITMSG_CS_START_LUCKFRUIT_REQ.UInt16(),&protomsg.START_LUCKFRUIT_REQ{Bet:uint64(1000)})
 		}else{
 			log.Infof("身上的钱--:%v", pb.GetMoney())
 		}

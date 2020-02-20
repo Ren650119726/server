@@ -10,6 +10,7 @@ It is generated from these files:
 	protobuf/fruitmary.proto
 	protobuf/hall.proto
 	protobuf/jpm.proto
+	protobuf/luckfruit.proto
 
 It has these top-level messages:
 	AccountStorageData
@@ -72,6 +73,16 @@ It has these top-level messages:
 	JPM_Result
 	UPDATE_JPM_BONUS
 	PLAYERS_JPM_LIST_RES
+	ENTER_GAME_LUCKFRUIT_REQ
+	ENTER_GAME_LUCKFRUIT_RES
+	LEAVE_GAME_LUCKFRUIT_REQ
+	LEAVE_GAME_LUCKFRUIT_RES
+	START_LUCKFRUIT_REQ
+	START_LUCKFRUIT_RES
+	LUCKFRUITPosition
+	LUCKFRUIT_Result
+	UPDATE_LUCKFRUIT_BONUS
+	PLAYERS_LUCKFRUIT_LIST_RES
 */
 package protomsg
 

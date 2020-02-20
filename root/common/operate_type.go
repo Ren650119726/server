@@ -17,6 +17,8 @@ const (
 	EOperateType_DFDC_WIN               	  = 25 // 多福多财 获得钱
 	EOperateType_JPM_BET               	  	  = 26 // 金瓶梅 押注扣除金币
 	EOperateType_JPM_WIN               	  	  = 27 // 金瓶梅 获得钱
+	EOperateType_LUCKFRUIT_WIN                = 28 // 幸运水果机 获得钱
+	EOperateType_LUCKFRUIT_BET                = 29 // 幸运水果机 押注扣除金币
 
 )
 
@@ -30,10 +32,12 @@ var typeStringify_operate = map[EOperateType]string{
 	EOperateType_FRUIT_MARY_WIN:  "FRUIT_MARY_WIN",  // 水果小玛利 游戏1 获得钱
 	EOperateType_FRUIT_MARY2_WIN: "FRUIT_MARY2_WIN", // 水果小玛利 游戏1 获得钱
 	EOperateType_FRUIT_MARY_BET:  "FRUIT_MARY_BET",  // 水果小玛利押注扣除金币
-	EOperateType_DFDC_BET:  	  "DFDC_BET",  // 多福多财
-	EOperateType_DFDC_WIN:  	  "DFDC_WIN",  // 多福多财
-	EOperateType_JPM_BET:  	  	  "JPM_WIN",  // 金瓶梅
-	EOperateType_JPM_WIN:  	      "JPM_WIN",  // 金瓶梅
+	EOperateType_DFDC_BET:  	  "DFDC_BET",  		 // 多福多财
+	EOperateType_DFDC_WIN:  	  "DFDC_WIN",  		 // 多福多财
+	EOperateType_JPM_BET:  	  	  "JPM_WIN",   		 // 金瓶梅
+	EOperateType_JPM_WIN:  	      "JPM_WIN",   		 // 金瓶梅
+	EOperateType_LUCKFRUIT_WIN:   "LUCKFRUIT_WIN",   // 幸运水果机
+	EOperateType_LUCKFRUIT_BET:   "LUCKFRUIT_BET",   // 幸运水果机
 }
 
 func (e EOperateType) String() string {
