@@ -230,12 +230,12 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64, isKill,test bool
 		m := self.getOddsByPictureId(bingo, count)
 		sumOdds += m
 		if m > 0 {
-			if !test{
-				for i:=0;i < 3;i++{
-					log.Infof("%v", b[i])
-				}
-				log.Infof("检测图片组:%v 中獎綫:%v bingo == %v count:%v 单线赔率:%v 总赔率:%v ",tempArr,lid,bingo,count,m ,sumOdds)
-			}
+			//if !test{
+			//	for i:=0;i < 3;i++{
+			//		log.Infof("%v", b[i])
+			//	}
+			//	log.Infof("检测图片组:%v 中獎綫:%v bingo == %v count:%v 单线赔率:%v 总赔率:%v ",tempArr,lid,bingo,count,m ,sumOdds)
+			//}
 			bingocount++
 			tmp = append(tmp, &protomsg.JPM_Result{LineId: int32(lid), Count: int32(count), Odds: int32(m), Positions: positions})
 		}

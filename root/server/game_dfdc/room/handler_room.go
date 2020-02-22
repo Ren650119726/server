@@ -110,7 +110,7 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 		}
 
 		//log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 一维数组:%v 获得免费次数:%v 总赔率:%v 盈利:%v 获得奖金：%v",
-		//	acc.GetAccountId(),acc.GetMoney(), pArr, gainFreeCount,sumOdds, val,reward)
+		//acc.GetAccountId(),acc.GetMoney(), pArr, gainFreeCount,sumOdds, val,reward)
 		//log.Debugf("中奖坐标:%v", showpos)
 
 		// 统计玩家本局获得金币
