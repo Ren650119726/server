@@ -19,6 +19,8 @@ const (
 	EOperateType_JPM_WIN               	  	  = 27 // 金瓶梅 获得钱
 	EOperateType_LUCKFRUIT_WIN                = 28 // 幸运水果机 获得钱
 	EOperateType_LUCKFRUIT_BET                = 29 // 幸运水果机 押注扣除金币
+	EOperateType_RED2BLACK_BET                = 31 // 红黑大战 押注扣除金币
+	EOperateType_RED2BLACK_WIN                = 32 // 红黑大战 赢的钱
 
 )
 
@@ -38,6 +40,8 @@ var typeStringify_operate = map[EOperateType]string{
 	EOperateType_JPM_WIN:  	      "JPM_WIN",   		 // 金瓶梅
 	EOperateType_LUCKFRUIT_WIN:   "LUCKFRUIT_WIN",   // 幸运水果机
 	EOperateType_LUCKFRUIT_BET:   "LUCKFRUIT_BET",   // 幸运水果机
+	EOperateType_RED2BLACK_BET:   "RED2BLACK_BET",   // 红黑大战 押注扣除金币
+	EOperateType_RED2BLACK_WIN:   "RED2BLACK_WIN",   // 红黑大战 赢的钱
 }
 
 func (e EOperateType) String() string {

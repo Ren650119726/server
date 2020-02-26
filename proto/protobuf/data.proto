@@ -53,3 +53,20 @@ message GameInfo
 	uint32 GameType = 1;
 	repeated RoomInfo rooms = 2;
 }
+
+
+// 牌信息
+message Card {
+    // 花色
+    enum CARDCOLOR {
+        CARDCOLOR_Unknow= 0;  // 无用的
+
+        CARDCOLOR_1     = 1; // 方块
+        CARDCOLOR_2     = 2; // 梅花
+        CARDCOLOR_3     = 3; // 红桃
+        CARDCOLOR_4     = 4; // 黑桃
+        CARDCOLOR_5     = 5; // 王
+    }
+	int32 Number 	 = 1; 	// 点数  1-13
+	CARDCOLOR Color  = 2; 	// 花色
+}

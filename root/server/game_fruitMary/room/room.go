@@ -63,6 +63,7 @@ func (self *Room) Init(actor *core.Actor) bool {
 	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_REQ.UInt16(),&inner.ROOM_BONUS_REQ{
 		RoomID:    self.roomId,
 	})
+
 	return true
 }
 

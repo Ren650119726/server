@@ -1,0 +1,148 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+
+import "protobuf/data.proto";
+
+////////////////////////////////////////////////////// 网络消息 /////////////////////////////////////////////////////////////
+enum RED2BLACKMSG {
+	UNKNOW_RED2BLACK = 0;
+	CS_ENTER_GAME_RED2BLACK_REQ = 60001; // 玩家请求进入房间
+	SC_ENTER_GAME_RED2BLACK_RES = 60002;
+	CS_LEAVE_GAME_RED2BLACK_REQ = 60003; // 玩家请求退出房间
+	SC_LEAVE_GAME_RED2BLACK_RES = 60004;
+	
+	CS_BET_RED2BLACK_REQ      	= 60008; // 请求下注
+	SC_BET_RED2BLACK_RES      	= 60009;
+	
+
+
+	CS_PLAYERS_RED2BLACK_LIST_REQ = 60015;// 请求在线玩家列表
+	SC_PLAYERS_RED2BLACK_LIST_RES = 60016;
+	
+	SC_SWITCH_GAME_STATUS_BROADCAST = 60020; // 服务器主动广播，切换状态消息
+}
+
+////////////////////////////////////////////////////// 游戏枚举 /////////////////////////////////////////////////////////////
+// 下注区域
+enum RED2BLACKAREA {
+	RED2BLACK_AREA_Unknow   = 0;  // 无用的
+	
+	RED2BLACK_AREA_RED      = 1; // 红区域
+	RED2BLACK_AREA_BLACK    = 2; // 黑区域
+	RED2BLACK_AREA_LUCK     = 3; // 幸运一击区域
+}
+
+// 牌型
+enum RED2BLACKCARDTYPE {
+	RED2BLACK_CARDTYPE_Unknow= 0;  // 无用的
+	
+	RED2BLACK_CARDTYPE_1     = 1; // 单张
+	RED2BLACK_CARDTYPE_2     = 2; // 对子
+	RED2BLACK_CARDTYPE_3     = 3; // 顺子
+	RED2BLACK_CARDTYPE_4     = 4; // 金花
+	RED2BLACK_CARDTYPE_5     = 5; // 顺金
+	RED2BLACK_CARDTYPE_6     = 6; // 豹子 
+	RED2BLACK_CARDTYPE_7     = 7; // 235特殊牌
+}
+
+// 游戏状态
+enum RED2BLACKGAMESTATUS {
+	RED2BLACK_GAMESTATUS_Unknow   = 0;  // 无用的
+	
+	RED2BLACK_GAMESTATUS_WAIT     = 1; // 等待开始
+	RED2BLACK_GAMESTATUS_BET      = 2; // 开始下注
+	RED2BLACK_GAMESTATUS_STOP     = 3; // 停止下注
+	RED2BLACK_GAMESTATUS_SETTLE   = 4; // 结算
+}
+
+////////////////////////////////////////////////////// 消息数据结构 /////////////////////////////////////////////////////////////
+// 请求进入房间
+message ENTER_GAME_RED2BLACK_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+// 进入房间，服务器返回房间、游戏状态相关数据
+message ENTER_GAME_RED2BLACK_RES {
+	message Winner{
+		RED2BLACKAREA WinArea 		  = 1; // 获胜区域 (只可能是红 或 黑 不会出现0 和 3)
+		RED2BLACKCARDTYPE WinCardType = 2; // 获胜牌型
+	}
+	
+	uint32 RoomID 	    		   = 1; // 房间ID
+	repeated Winner HistoryWinners = 2; // 最近70局的获胜区域
+	repeated int64 bets            = 3; // 当前房间可押注筹码值
+	StatusMsg Status 		       = 4;//  当前状态
+}
+
+// 请求退出房间
+message LEAVE_GAME_RED2BLACK_REQ {
+	uint32 AccountID = 1;
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message LEAVE_GAME_RED2BLACK_RES {
+    uint32 Ret    = 1; // 0.可以退出  1.不能退出房间
+	uint32 RoomID = 2; // 房间ID
+}
+
+////////////////////////////////////////////// 游戏 /////////////////////////////////////////////
+// 服务器广播切换状态
+message SWITCH_GAME_STATUS_BROADCAST{
+	StatusMsg NextStatus = 1;// 切换下一个状态
+}
+
+// 状态结构
+message StatusMsg{
+	RED2BLACKGAMESTATUS Status 			= 1; // (1.等待、2.押注、3.停止下注、4.结算)
+	uint64 Status_StartTime    			= 2; // 状态开始时间						注:(服务器发的所有时间都是 utc 时间戳 毫秒)
+	uint64 Status_EndTime      			= 3; // 状态到期时间
+	repeated Card RedCards     			= 4; // 红方 要亮的牌
+	repeated Card BlackCards   			= 5; // 黑方 要亮的牌
+	map<int32,int64> AreaBetVal = 6; // 3个区域的押注值
+	bytes  Status_Data         			= 7; // 根据房间状态解析 1.Status_Wait 2.Status_Bet 3.Status_Stop 4.Status_Settle
+}
+
+// 1.等待
+message Status_Wait{
+	// todo .............
+}
+
+// 2.押注
+message Status_Bet{
+	// todo .............
+}
+
+// 3.停止下注
+message Status_Stop{
+	// todo .............
+}
+
+// 4.结算
+message Status_Settle{
+	// todo .............
+}
+	
+// 请求下注
+message BET_RED2BLACK_REQ {
+	uint32 AccountID 	 = 1;   // 客户端可发可不发,机器人下注用
+	RED2BLACKAREA Area 	 = 2; 	// 下注区域
+	uint64 Bet       	 = 3; 	// 下注的筹码
+}
+
+// 间隔 500 毫秒一次 广播玩家下注
+message BET_RED2BLACK_RES {
+	message BetPlayer {
+		uint32 AccountID   = 1;
+		RED2BLACKAREA Area = 2;// 下注区域
+		uint64 Bet 		   = 3; // 下注的筹码
+	}
+	repeated BetPlayer Players 			 = 1; // 间隔时间内，所有玩家的下注
+	map<int32,int64> AreaBetVal  = 2; // 3个区域的押注值
+}
+
+// 请求RED2BLACK玩家列表
+message PLAYERS_RED2BLACK_LIST_RES{
+   repeated AccountStorageData players = 1; // 房间内所有的玩家
+}

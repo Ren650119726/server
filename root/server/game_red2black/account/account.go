@@ -8,16 +8,26 @@ import (
 	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_luckfruit/send_tools"
+	"root/server/red2black/send_tools"
 )
+
+const (
+	BET_KIND = 3
+)
+
 type (
 	Account struct {
 		*protomsg.AccountStorageData
 		*protomsg.AccountGameData
-		SessionId int64
-		FeeCount  int32
-		LastBet   uint64
-		Forbid bool
+		Games          int32 // 游戏连续耍了多少局
+		SessionId      int64
+		BetVal         [BET_KIND + 1]uint32 // 下注金额 1红、2黑、3特
+		IsAllowBetting bool                 // 当前局能否下注
+	}
+
+	Master struct {
+		*Account
+		Share int64 // 认购份额
 	}
 )
 
@@ -54,7 +64,7 @@ func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 			Time:        strTime,
 			RoomID:      self.GetRoomID(),
 		}
-		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange) // game_luckfruit
+		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange) // game_jpm
 		db.HSet(rediskey.PlayerId(uint32(self.AccountId)), "Money", self.Money)
 	}
 	self.Money = uint64(money)

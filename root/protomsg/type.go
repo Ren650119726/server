@@ -20,3 +20,7 @@ func (self JPMMSG)UInt16() uint16 {
 func (self LUCKFRUITMSG)UInt16() uint16 {
 	return uint16(self)
 }
+
+func (self RED2BLACKMSG)UInt16() uint16 {
+	return uint16(self)
+}

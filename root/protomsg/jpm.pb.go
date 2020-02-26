@@ -58,7 +58,7 @@ func (x JPMMSG) String() string {
 }
 func (JPMMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
 
-// 游戏1 图案枚举
+// 游戏 图案枚举
 type JPMID int32
 
 const (
@@ -241,7 +241,7 @@ func (m *LEAVE_GAME_JPM_RES) GetRoomID() uint32 {
 }
 
 // //////////////////////////////////////////// 游戏1 /////////////////////////////////////////////
-// 请求开始游戏1
+// 请求开始游戏
 type START_JPM_REQ struct {
 	Bet uint64 `protobuf:"varint,1,opt,name=Bet" json:"Bet,omitempty"`
 }

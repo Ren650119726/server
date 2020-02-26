@@ -65,24 +65,3 @@ func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 func (self *Account) GetMoney() uint64 {
 	return self.Money
 }
-func (self *Account) UpdateEnter(roomId uint32, count uint16, watch uint8) {
-	//send := packet.NewPacket(nil)
-	//send.SetMsgID(protomsg.Old_MSGID_UPDATE_ENTER.UInt16())
-	//
-	//send.WriteUInt32(self.AccountId)
-	//send.WriteUInt32(roomId)
-	//send.WriteUInt16(count)
-	//send.WriteUInt8(watch)
-	//send_tools.Send2Hall(send.GetData())
-}
-
-func (self *Account) UpdateLeave(roomId uint32, count uint16, watch uint8) {
-	//send := packet.NewPacket(nil)
-	//send.SetMsgID(protomsg.Old_MSGID_UPDATE_LEAVE.UInt16())
-	//
-	//send.WriteUInt32(self.AccountId)
-	//send.WriteUInt32(roomId)
-	//send.WriteUInt16(count)
-	//send.WriteUInt8(watch)
-	//send_tools.Send2Hall(send.GetData())
-}
