@@ -93,6 +93,9 @@ func (self *settlement) Enter(now int64) {
 		WinArea:     win,
 		WinCardType: t,
 	})
+	if len(self.history) > 70 {
+		self.history = self.history[1:]
+	}
 
 	// 组装消息
 	settle, err := proto.Marshal(&protomsg.Status_Settle{
