@@ -89,6 +89,10 @@ func (self *settlement) Enter(now int64) {
 		}
 		allprofit[int32(accid)] = winArea_profit + specialArea_profit - loss_val
 	}
+	self.history = append(self.history, &protomsg.ENTER_GAME_RED2BLACK_RES_Winner{
+		WinArea:     win,
+		WinCardType: t,
+	})
 
 	// 组装消息
 	settle, err := proto.Marshal(&protomsg.Status_Settle{
@@ -114,7 +118,7 @@ func (self *settlement) Enter(now int64) {
 		Status_Data:      settle,
 	}
 	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{NextStatus: self.enterMsg})
-	log.Infof("water line:[%v]", RoomMgr.Water_line)
+	log.Infof("房间盈利:%v", self.profit)
 }
 
 func (self *settlement) Tick(now int64) {

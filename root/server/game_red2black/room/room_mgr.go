@@ -19,7 +19,6 @@ var RoomMgr = NewRoomMgr()
 type (
 	roomMgr struct {
 		rooms         map[uint32]uint32 // key roomId value actorID
-		Water_line    int64
 		IsMaintenance bool
 	}
 )
