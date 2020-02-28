@@ -121,7 +121,7 @@ func (self *settlement) Enter(now int64) {
 		Status_Data:      settle,
 	}
 	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{NextStatus: self.enterMsg})
-	log.Infof("房间盈利:%v", self.profit)
+	log.Infof("win:%v 红方牌:%v  黑方牌:%v 房间盈利:%v", win, tred, tblack, self.profit)
 }
 
 func (self *settlement) Tick(now int64) {
