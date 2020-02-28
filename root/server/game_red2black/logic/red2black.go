@@ -1,37 +1,38 @@
 package logic
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
 	"root/common"
+	"root/common/config"
 	"root/common/tools"
 	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/network"
 	"root/core/packet"
-	"root/core/utils"
-	"fmt"
 	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/game_red2black/account"
 	"root/server/game_red2black/room"
 	"root/server/game_red2black/send_tools"
 	"strconv"
+	"time"
 )
 
 type (
-	Red2Black struct {
-		owner     *core.Actor
-		init bool // 是否是第一次启动程序
+	red2black struct {
+		owner *core.Actor
+		init  bool // 是否是第一次启动程序
 		close bool // 关服
 	}
 )
 
-func NewRed2Black() *Red2Black {
-	return &Red2Black{}
+func NewRed2Black() *red2black {
+	return &red2black{}
 }
 
-func (self *Red2Black) Init(actor *core.Actor) bool {
+func (self *red2black) Init(actor *core.Actor) bool {
 	// 先处理脚本
 	if core.ScriptDir != "" {
 		core.InitScript(core.ScriptDir)
@@ -51,7 +52,7 @@ func (self *Red2Black) Init(actor *core.Actor) bool {
 }
 
 // 向hall注册
-func (self *Red2Black) registerHall() {
+func (self *red2black) registerHall() {
 	// 发送注册消息登记自身信息
 	sid, _ := strconv.Atoi(core.Appname)
 	count := uint32(room.RoomMgr.RoomCount())
@@ -61,13 +62,14 @@ func (self *Red2Black) registerHall() {
 	strSign = tools.MD5(strSign)
 
 	// 组装消息
-	send_tools.Send2Hall(inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(),&inner.GAME_CONNECT_HALL{
+	send_tools.Send2Hall(inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(), &inner.GAME_CONNECT_HALL{
 		ServerID: uint32(sid),
-		GameType: uint32(beego.AppConfig.DefaultInt(fmt.Sprintf("%v::gametype",sid),0)),
+		GameType: uint32(beego.AppConfig.DefaultInt(fmt.Sprintf("%v::gametype", sid), 0)),
 	})
 	log.Infof("连接大厅成功  sid:%v", sid)
-	if !self.init{
+	if !self.init {
 		room.RoomMgr.InitRoomMgr()
+		time.Sleep(500 * time.Millisecond) // 这里偷个懒，延迟0.5秒，等房间初始化完成，在通知大厅
 		self.StartService()
 	}
 	room.RoomMgr.SendRoomInfo2Hall()
@@ -75,7 +77,7 @@ func (self *Red2Black) registerHall() {
 	self.init = true
 }
 
-func (self *Red2Black) StartService() {
+func (self *red2black) StartService() {
 	// 监听端口，客户端连接用
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
@@ -85,84 +87,58 @@ func (self *Red2Black) StartService() {
 	core.CoreRegisteActor(room.ServerActor)
 }
 
-func (self *Red2Black) Stop() {
+func (self *red2black) Stop() {
 
 }
 
-func (self *Red2Black) Old_MSGID_BACKSTAGE_SET_WATER_LINE(actor int32, msg []byte, session int64) {
-	pack := packet.NewPacket(msg)
-	nBet := pack.ReadUInt32()
-	iWaterLine := pack.ReadInt32()
-
-	if session != 0 {
-		log.Warnf("Error, 异常session:%v 处理消息编号:%v", session, pack.GetMsgID())
-		return
+func (self *red2black) HandleMessage(actor int32, msg []byte, session int64) bool {
+	if self.close {
+		return true
 	}
-
-	iOldWaterLine := room.RoomMgr.Water_line
-	room.RoomMgr.Water_line = int64(iWaterLine)
-
-	log.Infof("后台设置水位线, ServerID:%v, OldWaterLine:%v, NewWaterLine:%v", core.Appname, iOldWaterLine, room.RoomMgr.Water_line)
-
-	strLog := fmt.Sprintf("INSERT INTO log_water_line (log_ServerID, log_OldValue, log_NewValue, log_Bet, log_Time) VALUES (%v, %v, %v, %v, '%v');", core.Appname, iOldWaterLine, iWaterLine, nBet, utils.DateString())
-	tSendToHall := packet.NewPacket(nil)
-	tSendToHall.SetMsgID(protomsg.MSGID_SAVE_LOG.UInt16())
-	tSendToHall.WriteString(strLog)
-	tSendToHall.WriteUInt16(1) // 日志类型, 大厅可将多条日志组装成一个消息回存
-	send_tools.Send2Hall(tSendToHall.GetData())
-}
-
-func (self *Red2Black) HandlerInitWaterLine(actor int32, msg []byte, session int64) {
-	pack := packet.NewPacket(msg)
-	strWaterLine := pack.ReadString()
-	iWaterLine, e := strconv.ParseInt(strWaterLine, 10, 64)
-	if e == nil {
-		room.RoomMgr.Water_line = iWaterLine
-	} else {
-		room.RoomMgr.Water_line = 0
-	}
-	log.Infof("================= OnCompleteLoadWaterLine:%v", room.RoomMgr.Water_line)
-}
-
-func (self *Red2Black) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
-	case protomsg.Old_MSGID_MAINTENANCE_NOTICE.UInt16(): // 关服通知
-		self.Old_MSGID_MAINTENANCE_NOTICE(actor, msg, session)
-	case protomsg.Old_MSGID_CREATE_ROOM.UInt16(): // 大厅请求创建房间
-		self.Old_MSGID_CREATE_ROOM(actor, msg, session)
-	case protomsg.Old_MSGID_RECV_ACCOUNT_INFO.UInt16(): // 同步账号数据
-		self.Old_MSGID_RECV_ACCOUNT_INFO(actor, msg, session)
-	case protomsg.Old_MSGID_ENTER_GAME.UInt16(), protomsg.Old_MSGID_R2B_GAME_ENTER_GAME.UInt16(): // 客户端链接进入游戏
-		self.Old_MSGID_R2B_ENTER_GAME(actor, msg, session)
-	case protomsg.MSGID_GET_ONE_WATERLINE.UInt16(): // 初始化水位线
-		self.HandlerInitWaterLine(actor, msg, session)
-	case protomsg.Old_MSGID_BACKSTAGE_SET_WATER_LINE.UInt16(): // 后台设置水位线
-		self.Old_MSGID_BACKSTAGE_SET_WATER_LINE(actor, msg, session)
-	case protomsg.Old_MSGID_CHANGE_PLAYER_INFO.UInt16(): // 修改玩家信息
-		self.Old_MSGID_CHANGE_PLAYER_INFO(actor, msg, session)
-	case protomsg.Old_MSGID_CLIENT_KEEPALIVE.UInt16():
-		send_tools.Send2Account(msg, session)
-	case protomsg.Old_MSGID_SS_TEST_NETWORK.UInt16():
-		log.Infof("收到测试网络消息 SessionID:%v", session)
-	case protomsg.Old_MSGID_HG_TEST_NETWORK.UInt16():
+	case inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(): // 大厅通知修改玩家数据
+		data := packet.PBUnmarshal(pack.ReadBytes(), &inner.NOTIFY_ALTER_DATE{}).(*inner.NOTIFY_ALTER_DATE)
+		core.CoreSend(self.owner.Id, int32(data.GetRoomID()), msg, session)
+	case inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16():
+		config.Load_Conf()
+		room.RoomMgr.BraodcastReload()
+	case inner.SERVERMSG_SS_CLOSE_SERVER.UInt16():
+		self.close = true
+		self.owner.AddTimer(1000, -1, func(dt int64) {
+			if room.RoomMgr.RoomCount() == 0 {
+				log.Infof("所有房间关闭完成，可以关闭服务器!")
+				self.owner.Suspend()
+			}
+		})
+	case inner.SERVERMSG_HG_ROOM_WATER_PROFIT.UInt16():
+		PB := packet.PBUnmarshal(pack.ReadBytes(), &inner.SAVE_WATER_LINE{}).(*inner.SAVE_WATER_LINE)
+		core.CoreSend(self.owner.Id, int32(PB.GetRoomID()), msg, session)
+	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16(): // 心跳
+		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
+	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
+		self.SERVERMSG_HG_PLAYER_DATA_REQ(actor, pack.ReadBytes(), session)
+		core.CoreSend(self.owner.Id, actor, msg, session)
+	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():
+		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
+
+	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到来自大厅的测试网络消息 SessionID:%v", session)
-		req := packet.NewPacket(nil)
-		req.SetMsgID(protomsg.Old_MSGID_HG_TEST_NETWORK.UInt16())
-		send_tools.Send2Hall(req.GetData())
 	default: // 客户端游戏消息，统一发送给房间处理
 		acc := account.AccountMgr.GetAccountBySessionID(session)
 		if acc == nil {
 			log.Warnf("找不到session 关联的玩家 session:%v msgId：%v", session, pack.GetMsgID())
 			return false
 		}
-		core.CoreSend(self.owner.Id, int32(acc.RoomID), msg, session)
+		if room.RoomMgr.Exist(acc.RoomID) {
+			core.CoreSend(self.owner.Id, int32(acc.RoomID), msg, session)
+		}
 		break
 	}
 	return true
 }
 
-func (self *Red2Black) Old_MSGID_MAINTENANCE_NOTICE(actor int32, msg []byte, session int64) {
+func (self *red2black) Old_MSGID_MAINTENANCE_NOTICE(actor int32, msg []byte, session int64) {
 	pack := packet.NewPacket(msg)
 	if session != 0 {
 		log.Warnf("Error, 异常session:%v 处理消息编号:%v", session, pack.GetMsgID())

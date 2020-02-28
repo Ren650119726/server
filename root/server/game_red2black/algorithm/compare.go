@@ -22,6 +22,7 @@ func init() {
 	compare_map[protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_4] = compare_jinhua
 	compare_map[protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_5] = compare_shunjin
 	compare_map[protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_6] = compare_baozi
+	compare_map[protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_7] = compare_sanpai //
 }
 func Compare(a []*protomsg.Card, b []*protomsg.Card) (awin bool, ta protomsg.RED2BLACKCARDTYPE, tb protomsg.RED2BLACKCARDTYPE) {
 	ta = JudgeCardType(a)
@@ -29,6 +30,11 @@ func Compare(a []*protomsg.Card, b []*protomsg.Card) (awin bool, ta protomsg.RED
 	if ta == tb {
 		return compare_map[ta](a, b), ta, tb
 	} else {
+		if ta < protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_6 && tb == protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_7 {
+			return true, ta, tb
+		} else if tb < protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_6 && ta == protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_7 {
+			return false, ta, tb
+		}
 		return ta > tb, ta, tb
 	}
 

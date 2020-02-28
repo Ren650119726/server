@@ -17,7 +17,7 @@ import (
 )
 
 type mysql_server struct {
-	owner     *core.Actor
+	owner *core.Actor
 }
 
 func NewMysqlHandler() *mysql_server {
@@ -42,7 +42,7 @@ func (self *mysql_server) HandleMessage(actor int32, msg []byte, session int64) 
 	pack := packet.NewPacket(msg)
 
 	switch pack.GetMsgID() {
-	case inner.SERVERMSG_HD_SQL_SYNTAX.UInt16():		// 执行sql syntax
+	case inner.SERVERMSG_HD_SQL_SYNTAX.UInt16(): // 执行sql syntax
 		self.SERVERMSG_HD_SQL_SYNTAX(pack.ReadBytes(), session)
 	case inner.SERVERMSG_HD_ALL_DATA.UInt16(): // 大厅请求所有数据
 		self.SERVERMSG_HD_ALL_DATA(pack.ReadBytes(), session)
@@ -82,7 +82,7 @@ func (self *mysql_server) HandleMessage(actor int32, msg []byte, session int64) 
 
 // 执行sql syntax
 func (self *mysql_server) SERVERMSG_HD_SQL_SYNTAX(pbmsg []byte, session int64) {
-	data :=packet.PBUnmarshal(pbmsg, &inner.SQL_SYNTAX{}).(*inner.SQL_SYNTAX)
+	data := packet.PBUnmarshal(pbmsg, &inner.SQL_SYNTAX{}).(*inner.SQL_SYNTAX)
 	sql_sytnax := data.GetSQLSyntax()
 	db_type := data.GetDataBaseType()
 
@@ -156,7 +156,6 @@ func (self *mysql_server) SERVERMSG_HD_ALL_DATA(pbmsg []byte, session int64) {
 	}
 	send_tools.Send2Hall(inner.SERVERMSG_DH_ALL_EMAIL_RESP.UInt16(), sendEmail)
 
-
 	// 所有水位线-----------------------------------------------------------------
 	all_water_line := inst.GetAllWaterLine()
 	count = maxsend
@@ -178,13 +177,13 @@ func (self *mysql_server) SERVERMSG_HD_ALL_DATA(pbmsg []byte, session int64) {
 	all_room_bonus := inst.GetAllRoomBonus()
 	count = maxsend
 	sendRoomBonus := &inner.ALL_ROOM_BONUS{}
-	for _, room_bouns:= range all_room_bonus {
-		pb:= &inner.SAVE_ROOM_BONUS{}
+	for _, room_bouns := range all_room_bonus {
+		pb := &inner.SAVE_ROOM_BONUS{}
 		tools.CopyProtoData(room_bouns, pb)
-		sendRoomBonus.Bonus =  append(sendRoomBonus.Bonus, pb)
+		sendRoomBonus.Bonus = append(sendRoomBonus.Bonus, pb)
 		count--
 		if count <= 0 {
-			send_tools.Send2Hall(inner.SERVERMSG_DH_ALL_WATER_LINE.UInt16(), sendRoomBonus)
+			send_tools.Send2Hall(inner.SERVERMSG_DH_ALL_ROOM_BONUS.UInt16(), sendRoomBonus)
 			sendWaterLine = &inner.ALL_WATER_LINE{}
 			count = maxsend
 		}
@@ -196,8 +195,8 @@ func (self *mysql_server) SERVERMSG_HD_ALL_DATA(pbmsg []byte, session int64) {
 }
 
 // 回存玩家数据
-func (self *mysql_server) SERVERMSG_HD_SAVE_ACCOUNT(pbmsg []byte, session int64) bool{
-	pbData := packet.PBUnmarshal(pbmsg,&inner.SAVE_ACCOUNT{}).(*inner.SAVE_ACCOUNT)
+func (self *mysql_server) SERVERMSG_HD_SAVE_ACCOUNT(pbmsg []byte, session int64) bool {
+	pbData := packet.PBUnmarshal(pbmsg, &inner.SAVE_ACCOUNT{}).(*inner.SAVE_ACCOUNT)
 	accModel := &inst.AccountModel{}
 	tools.CopyProtoData(pbData.GetAccData(), accModel)
 
@@ -242,6 +241,7 @@ func (self *mysql_server) SERVERMSG_HD_SAVE_EMAIL_PERSON(pack packet.IPacket, se
 		core.CoreSend(self.owner.Id, self.owner.Id, pack.GetData(), session)
 	}
 }
+
 // 回存水位线
 func (self *mysql_server) SERVERMSG_HD_SAVE_WATER_LINE(pack packet.IPacket, session int64) {
 	pbData := pack.ReadBytes()

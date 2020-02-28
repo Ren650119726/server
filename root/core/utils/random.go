@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"root/core/log"
 	"math/rand"
 	"reflect"
+	"root/core/log"
 )
 
 // [[],[],[],[],[],[]] i是权重下标，随机一个[]
@@ -95,5 +95,11 @@ func RandomSliceAndRemoveReturn(slice []uint32) ([]uint32, uint32) {
 // 简单的概率ratio 1-100
 func Probability(ratio int) bool {
 	v := Randx_y(0, 100)
+	return v < ratio
+}
+
+// 简单的概率ratio 1-10000
+func Probability10000(ratio int) bool {
+	v := Randx_y(0, 10000)
 	return v < ratio
 }

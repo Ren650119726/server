@@ -7,9 +7,8 @@ import (
 	"root/protomsg"
 )
 
-
 // 随机获得不重复的n张牌
-func GetRandom_Card(cards []*protomsg.Card, count int)[]*protomsg.Card {
+func GetRandom_Card(cards []*protomsg.Card, count int) []*protomsg.Card {
 	rand.Seed(utils.SecondTimeSince1970())
 	ret := make([]*protomsg.Card, 0, count)
 	for i := 0; i < count; i++ {
@@ -64,6 +63,24 @@ func JudgeCardType(cards []*protomsg.Card) protomsg.RED2BLACKCARDTYPE {
 		return protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_2
 	}
 
+	if cards[0].Color != cards[1].Color && cards[1].Color != cards[2].Color && cards[0].Color != cards[2].Color {
+		tep := map[int32]bool{
+			2: true,
+			3: true,
+			5: true,
+		}
+		special235 := true
+		for _, card := range cards {
+			if tep[card.Number] {
+				tep[card.Number] = false
+			} else {
+				special235 = false
+			}
+		}
+		if special235 {
+			return protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_7
+		}
+	}
 	// 散牌
 	return protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_1
 }

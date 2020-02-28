@@ -26,7 +26,8 @@ enum SERVERMSG {
 	
 	GH_GAME_CONNECT_HALL = 170; // 游戏连接大厅
 	GH_ROOM_INFO         = 171; // 游戏上报房间信息给大厅
-	
+	HG_ROOM_WATER_PROFIT = 172; // 大厅给游戏发盈利
+
 	GH_SERVERFEE_LOG     = 175;// 回存服务费
 	HG_NOTIFY_ALTER_DATE = 176;// 大厅通知游戏，修改玩家数据
 	GH_MONEYCHANGE       = 177;// 游戏改变金币，通知大厅
@@ -76,9 +77,8 @@ message SAVE_EMAIL_PERSON {
 }
 // 回存水位线
 message SAVE_WATER_LINE {
-	 uint32 ServerID = 1;
-	 uint32  GameType = 2;
-	 string WaterLine = 3;
+	 uint32 RoomID    = 1;
+	 string WaterLine = 2;
 }
 // 水池
 message SAVE_ROOM_BONUS {

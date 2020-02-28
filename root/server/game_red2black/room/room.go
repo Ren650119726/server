@@ -3,6 +3,7 @@ package room
 import (
 	"github.com/golang/protobuf/proto"
 	"root/common"
+	"root/common/config"
 	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
@@ -23,11 +24,14 @@ type (
 		Close     bool
 		RoomCards []*protomsg.Card
 
+		history         []*protomsg.ENTER_GAME_RED2BLACK_RES_Winner // 历史结果
 		status_duration map[ERoomStatus]int64                       // 每个状态的持续时间 (毫秒)
 		betPlayers      map[uint32]map[protomsg.RED2BLACKAREA]int64 // 玩家每个区域的押注
 		bets_conf       []int64                                     // 房间可押注筹码值
 		odds_conf       map[protomsg.RED2BLACKAREA]int64            // 区域赔率
 		pump_conf       map[protomsg.RED2BLACKAREA]int64            // 区域抽水比例
+		interval_conf   int64                                       // 两次下注间隔时间
+		profit          int64                                       // 房间盈利
 		showNum         int                                         // 开局显示的牌数
 		GameCards       []*protomsg.Card                            // 本局随机牌组 0-2 红方   3-5 黑方
 	}
@@ -40,6 +44,8 @@ func NewRoom(id uint32) *Room {
 		Close:           false,
 		status_duration: make(map[ERoomStatus]int64),
 		odds_conf:       make(map[protomsg.RED2BLACKAREA]int64),
+		pump_conf:       make(map[protomsg.RED2BLACKAREA]int64),
+		history:         make([]*protomsg.ENTER_GAME_RED2BLACK_RES_Winner, 0, 70),
 	}
 }
 
@@ -54,8 +60,12 @@ func (self *Room) Init(actor *core.Actor) bool {
 	self.status.Add(ERoomStatus_SETTLEMENT.Int32(), &settlement{Room: self, s: ERoomStatus_SETTLEMENT})
 
 	self.switchStatus(0, ERoomStatus_WAITING_TO_START)
+
 	// 200ms 更新一次
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*0.2, -1, self.update)
+	self.profit = int64(config.Get_configInt("red2black_room", int(self.roomId), "Lose_Gold"))
+
+	// 初始化，获取房间盈利
 	return true
 }
 
@@ -83,10 +93,12 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.SERVERMSG_HG_NOTIFY_ALTER_DATE(actor, pack.ReadBytes(), session)
 	case utils.ID_DISCONNECT: // 有连接断开
 		self.Disconnect(session)
+	case inner.SERVERMSG_HG_ROOM_WATER_PROFIT.UInt16(): // 房间盈利
+		self.SERVERMSG_HG_ROOM_WATER_PROFIT(actor, pack.ReadBytes(), session)
 	case protomsg.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ.UInt16(): // 请求进入房间
 		self.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ(actor, pack.ReadBytes(), session)
-	case protomsg.JPMMSG_CS_LEAVE_GAME_JPM_REQ.UInt16(): // 请求离开房间
-		self.JPMMSG_CS_START_JPM_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.RED2BLACKMSG_CS_LEAVE_GAME_RED2BLACK_REQ.UInt16(): // 请求离开房间
+		self.RED2BLACKMSG_CS_LEAVE_GAME_RED2BLACK_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.RED2BLACKMSG_CS_PLAYERS_RED2BLACK_LIST_REQ.UInt16(): // 请求玩家列表
 		self.RED2BLACKMSG_CS_PLAYERS_RED2BLACK_LIST_REQ(actor, pack.ReadBytes(), session)
 	default:
@@ -97,22 +109,13 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 
 // 逻辑更新
 func (self *Room) update(dt int64) {
-	now := utils.SecondTimeSince1970()
+	now := utils.MilliSecondTimeSince1970()
 	self.status.Update(now)
 }
 
 // 切换状态
 func (self *Room) switchStatus(now int64, next ERoomStatus) {
 	self.status.Swtich(now, int32(next))
-}
-
-// 进入房间条件校验
-func (self *Room) canEnterRoom(accountId uint32) int {
-	if _, exit := self.accounts[accountId]; !exit {
-		return 0
-	}
-
-	return 20
 }
 
 // 进入房间
@@ -141,8 +144,9 @@ func (self *Room) enterRoom(accountId uint32) {
 	}
 	enterRoom := &protomsg.ENTER_GAME_RED2BLACK_RES{
 		RoomID:         self.roomId,
-		HistoryWinners: nil, // todo ...........
+		HistoryWinners: self.history,
 		Bets:           self.bets_conf,
+		ShowNum:        uint32(self.showNum),
 		Status:         statusEnter.enterData(accountId),
 	}
 	// 通知玩家进入游戏
@@ -208,13 +212,18 @@ func (self *Room) count() int {
 }
 
 // 分别获得3个区域的总押注 robot 是否计算机器人
-func (self *Room) areaBetVal(robot bool) map[int32]int64 {
+func (self *Room) areaBetVal(robot bool, accID uint32) (map[int32]int64, map[int32]int64) {
 	ret := make(map[int32]int64)
+	ret2 := make(map[int32]int64)
 	if robot {
-		for _, bet := range self.betPlayers {
+		for accid, bet := range self.betPlayers {
 			for area, val := range bet {
 				ret[int32(area)] += val
+				if accid == accID {
+					ret2[int32(area)] += val
+				}
 			}
+
 		}
 	} else {
 		for accid, bet := range self.betPlayers {
@@ -222,12 +231,15 @@ func (self *Room) areaBetVal(robot bool) map[int32]int64 {
 			if acc.Robot == 0 {
 				for area, val := range bet {
 					ret[int32(area)] += val
+					if accid == accID {
+						ret2[int32(area)] += val
+					}
 				}
 			}
 		}
 	}
 
-	return ret
+	return ret, ret2
 }
 
 func (self *Room) SendBroadcast(msgID uint16, pb proto.Message) {

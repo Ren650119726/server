@@ -73,7 +73,8 @@ message ENTER_GAME_RED2BLACK_RES {
 	uint32 RoomID 	    		   = 1; // 房间ID
 	repeated Winner HistoryWinners = 2; // 最近70局的获胜区域
 	repeated int64 bets            = 3; // 当前房间可押注筹码值
-	StatusMsg Status 		       = 4;//  当前状态
+	uint32 ShowNum                 = 4; // 当前房间开局前亮牌的数量
+	StatusMsg Status 		       = 5; //  当前状态
 }
 
 // 请求退出房间
@@ -96,12 +97,13 @@ message SWITCH_GAME_STATUS_BROADCAST{
 // 状态结构
 message StatusMsg{
 	RED2BLACKGAMESTATUS Status 			= 1; // (1.等待、2.押注、3.停止下注、4.结算)
-	uint64 Status_StartTime    			= 2; // 状态开始时间						注:(服务器发的所有时间都是 utc 时间戳 毫秒)
+	uint64 Status_StartTime    			= 2; // 状态开始时间						注:(服务器发的所有时间都是 utc+8 时间戳 毫秒)
 	uint64 Status_EndTime      			= 3; // 状态到期时间
 	repeated Card RedCards     			= 4; // 红方 要亮的牌
 	repeated Card BlackCards   			= 5; // 黑方 要亮的牌
-	map<int32,int64> AreaBetVal = 6; // 3个区域的押注值
-	bytes  Status_Data         			= 7; // 根据房间状态解析 1.Status_Wait 2.Status_Bet 3.Status_Stop 4.Status_Settle
+	map<int32,int64> AreaBetVal 		= 6; // 3个区域所有人的总押注值
+	map<int32,int64> AreaBetVal_Own 	= 7; // 3个区域自己的总押注值
+	bytes  Status_Data         			= 8; // 根据房间状态解析 1.Status_Wait 2.Status_Bet 3.Status_Stop 4.Status_Settle
 }
 
 // 1.等待
@@ -121,6 +123,11 @@ message Status_Stop{
 
 // 4.结算
 message Status_Settle{
+	RED2BLACKAREA WinArea 		  = 1; // 获胜区域 (只可能是红 或 黑 不会出现0 和 3)
+	RED2BLACKCARDTYPE WinCardType = 2; // 获胜区域牌型
+	RED2BLACKCARDTYPE LossCardType = 3; // 失败区域牌型
+	uint64 winOdds                = 4; // 获胜方的牌型赔率
+	map<int32,int64> Players      = 5; // 所有盈利的玩家 key:AccountID val:获利 (不包含本金)
 	// todo .............
 }
 	

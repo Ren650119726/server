@@ -74,7 +74,8 @@ func (self *Room) LoadConfig() {
 	self.pump_conf[protomsg.RED2BLACKAREA_RED2BLACK_AREA_LUCK] = int64(config.Get_configInt("red2black_room", int(self.roomId), "Luck_Pump"))
 
 	self.showNum = config.Get_configInt("red2black_room", int(self.roomId), "Show_Num")
-	self.bets_conf = utils.SplitConf2ArrInt64(config.Get_configString("red2black_room", int(self.roomId), "Bet_List"))
+	self.bets_conf = utils.SplitConf2ArrInt64(config.Get_configString("red2black_room", int(self.roomId), "Bet"))
+	self.interval_conf = int64(config.Get_configInt("red2black_room", int(self.roomId), "Bet_Cd"))
 	self.status_duration = make(map[ERoomStatus]int64)
 	self.status_duration[ERoomStatus_WAITING_TO_START] += int64(config.Get_configInt("red2black_room", int(self.roomId), "Start_Time"))
 	self.status_duration[ERoomStatus_START_BETTING] += int64(config.Get_configInt("red2black_room", int(self.roomId), "Bet_Time"))

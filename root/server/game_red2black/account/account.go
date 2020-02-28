@@ -8,7 +8,7 @@ import (
 	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/red2black/send_tools"
+	"root/server/game_red2black/send_tools"
 )
 
 const (
@@ -41,7 +41,7 @@ func NewAccount(storageData *protomsg.AccountStorageData) *Account {
 }
 
 func (self *Account) IsOnline() bool {
-	return self.LoginTime - self.LogoutTime > 0
+	return self.LoginTime-self.LogoutTime > 0
 }
 
 func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
@@ -64,7 +64,7 @@ func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 			Time:        strTime,
 			RoomID:      self.GetRoomID(),
 		}
-		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(),moneyChange) // game_jpm
+		send_tools.Send2Hall(inner.SERVERMSG_GH_MONEYCHANGE.UInt16(), moneyChange) // game_jpm
 		db.HSet(rediskey.PlayerId(uint32(self.AccountId)), "Money", self.Money)
 	}
 	self.Money = uint64(money)

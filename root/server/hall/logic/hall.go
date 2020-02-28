@@ -16,9 +16,9 @@ import (
 
 type (
 	Hall struct {
-		owner          *core.Actor
-		init           bool // 重新建立连接是否需要拉取所有数据
-		ListenActor     *core.Actor
+		owner       *core.Actor
+		init        bool // 重新建立连接是否需要拉取所有数据
+		ListenActor *core.Actor
 	}
 )
 
@@ -86,7 +86,7 @@ func (self *Hall) SERVERMSG_DH_FINISH_DATA(session int64) {
 	// 大厅完成所有数据初始化, 开启监听，让客户端可连接
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
-	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""),beego.AppConfig.DefaultString(core.Appname+"::listenHttp", ""))
+	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""), beego.AppConfig.DefaultString(core.Appname+"::listenHttp", ""))
 	self.ListenActor = core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(self.ListenActor)
 	strServerIP := utils.GetLocalIP()
@@ -111,8 +111,8 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 	switch pack.GetMsgID() {
 	case utils.ID_DISCONNECT: // 客户端或游戏进程断开连接
 		self.MSGID_CLOSE_CONNECT(actor, msg, session)
-	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():	// 心跳
-		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(),nil, session)
+	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16(): // 心跳
+		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 	case inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(): // game向hall请求连接
 		self.SERVERMSG_GH_GAME_CONNECT_HALL(actor, pack.ReadBytes(), session)
 	case inner.SERVERMSG_GH_ROOM_INFO.UInt16(): // game向hall 发送房间信息
@@ -121,22 +121,22 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 	//---------------------------- 数据库加载和回存 ---------------------------------------------
 	case inner.SERVERMSG_DH_ALL_ACCOUNT_RESP.UInt16(): // 加载所有账号
 		self.SERVERMSG_DH_ALL_ACCOUNT_RESP(actor, pack.ReadBytes(), session)
-	case inner.SERVERMSG_DH_ALL_EMAIL_RESP.UInt16():   // 加载账号邮件
+	case inner.SERVERMSG_DH_ALL_EMAIL_RESP.UInt16(): // 加载账号邮件
 		self.SERVERMSG_DH_ALL_EMAIL_RESP(actor, pack.ReadBytes(), session)
-	case inner.SERVERMSG_DH_ALL_WATER_LINE.UInt16():   // 水位线
-		//self.SERVERMSG_DH_ALL_WATER_LINE(actor, pack.ReadBytes(), session)
-	case inner.SERVERMSG_DH_ALL_ROOM_BONUS.UInt16():   // 水池
+	case inner.SERVERMSG_DH_ALL_WATER_LINE.UInt16(): // 水位线
+		self.SERVERMSG_DH_ALL_WATER_LINE(actor, pack.ReadBytes(), session)
+	case inner.SERVERMSG_DH_ALL_ROOM_BONUS.UInt16(): // 水池
 		self.SERVERMSG_DH_ALL_ROOM_BONUS(actor, pack.ReadBytes(), session)
-	case inner.SERVERMSG_DH_FINISH_DATA.UInt16(): 	   // 所有数据初始化完成
+	case inner.SERVERMSG_DH_FINISH_DATA.UInt16(): // 所有数据初始化完成
 		self.SERVERMSG_DH_FINISH_DATA(session)
-	case inner.SERVERMSG_HD_SAVE_ALL.UInt16(): 		   // 所有数据完成回存
+	case inner.SERVERMSG_HD_SAVE_ALL.UInt16(): // 所有数据完成回存
 		self.SERVERMSG_HD_SAVE_ALL()
 
 	//---------------------------- 大厅相关 -----------------------------------------------------
 	case protomsg.MSG_CS_LOGIN_HALL_REQ.UInt16(): // 登录请求
-		self.MSG_LOGIN_HALL(actor,  pack.ReadBytes(), session)
+		self.MSG_LOGIN_HALL(actor, pack.ReadBytes(), session)
 	case protomsg.MSG_CS_SYNC_SERVER_TIME.UInt16(): // 客户端同步服务器时间
-		self.MSG_CS_SYNC_SERVER_TIME(actor,  pack.ReadBytes(), session)
+		self.MSG_CS_SYNC_SERVER_TIME(actor, pack.ReadBytes(), session)
 	case protomsg.MSG_CS_BIND_PHONE_REQ.UInt16(): // 客户端绑定帐号
 		self.MSG_CS_BIND_PHONE_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.MSG_CS_SAFEMONEY_OPERATE_REQ.UInt16(): // 客户端操作保险箱
@@ -160,7 +160,6 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 	case protomsg.MSG_CS_EMAIL_DEL_REQ.UInt16(): // Client请求删除邮件
 		self.MSG_CS_EMAIL_DEL_REQ(actor, pack.ReadBytes(), session)
 
-
 	//---------------------------- 游戏相关 ---------------------------------------------
 	case inner.SERVERMSG_GH_SERVERFEE_LOG.UInt16(): // 服务费日志
 		self.SERVERMSG_GH_SERVERFEE_LOG(actor, pack.ReadBytes(), session)
@@ -173,7 +172,7 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到测试网络消息 SessionID:%v", session)
-		send_tools.Send2Game(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(),nil, session)
+		send_tools.Send2Game(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(), nil, session)
 	default:
 		tAccount := account.AccountMgr.GetAccountBySessionIDAssert(session)
 		if tAccount != nil {

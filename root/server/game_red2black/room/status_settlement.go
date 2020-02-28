@@ -1,303 +1,124 @@
 package room
 
 import (
+	"github.com/golang/protobuf/proto"
 	"root/common"
 	"root/common/config"
-	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
-	"root/server/red2black/account"
-	"root/server/red2black/algorithm"
-	"root/server/red2black/event"
-	"root/server/red2black/send_tools"
+	"root/server/game_red2black/algorithm"
+	"sort"
 )
 
 type (
 	settlement struct {
 		*Room
-		s         ERoomStatus
-		timestamp int64
-		result    int8
-
-		sendData   packet.IPacket
-		masterData packet.IPacket
-		changeVal  map[uint32]int64
-		conf_fee   int64
+		s               ERoomStatus
+		start_timestamp int64
+		end_timestamp   int64
+		enterMsg        *protomsg.StatusMsg
 	}
 )
 
 func (self *settlement) Enter(now int64) {
-	self.changeVal = make(map[uint32]int64)
-	self.masterData = packet.NewPacket(nil)
-	self.conf_fee = config.GetPublicConfig_Int64("R2B_SERVER_FEE")
-	duration := self.status_duration[int(self.s)] // 持续时间 秒
-	self.timestamp = now + int64(duration)
+	duration := self.status_duration[self.s]
+	self.start_timestamp = utils.MilliSecondTimeSince1970()
+	self.end_timestamp = self.start_timestamp + duration
 	log.Debugf(colorized.Gray("settlement enter duration:%v"), duration)
-	log.Debugf(colorized.White("tred:【%v】 tblack:【%v】"), self.red_cards, self.black_cards)
-	reddWin, tred, tblack := algorithm.Compare(self.red_cards, self.black_cards)
-	var winner_type common.EJinHuaType
-	var winner_cards []algorithm.Card_info
-	if reddWin {
-		winner_type = tred
-		winner_cards = self.red_cards
+
+	var (
+		win   protomsg.RED2BLACKAREA
+		t     protomsg.RED2BLACKCARDTYPE
+		losst protomsg.RED2BLACKCARDTYPE
+	)
+	redcard := append([]*protomsg.Card{}, self.GameCards[:3]...)
+	blackcard := append([]*protomsg.Card{}, self.GameCards[3:6]...)
+	result, tred, tblack := algorithm.Compare(redcard, blackcard)
+	var wincard []*protomsg.Card
+	if result {
+		win = protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED
+		t = tred
+		wincard = redcard
+		losst = tblack
 	} else {
-		winner_type = tblack
-		winner_cards = self.black_cards
+		win = protomsg.RED2BLACKAREA_RED2BLACK_AREA_BLACK
+		t = tblack
+		wincard = blackcard
+		losst = tred
 	}
-
-	if winner_type == common.ECardType_DUIZI {
-		if winner_cards[1][1] < 9 && winner_cards[1][1] > 1 {
-			winner_type = common.ECardType_SANPAI
+	specialArea_odd := int64(config.Get_configInt("red2black_card", int(t), "Card_Odds"))
+	if t == protomsg.RED2BLACKCARDTYPE_RED2BLACK_CARDTYPE_2 {
+		sort.Slice(wincard, func(i, j int) bool {
+			return wincard[i].Number > wincard[j].Number
+		})
+		log.Infof("特殊对子判断:%v ", wincard)
+		// 特殊对子，没有赔率
+		if 2 <= wincard[1].Number && wincard[1].Number <= 8 {
+			specialArea_odd = 0
 		}
 	}
-	log.Debugf(colorized.White("reddWin:%v tred:%v【%v】 tblack:%v【%v】 winner_type:%v"), reddWin, tred, self.red_cards, tblack, self.black_cards, winner_type.String())
 
-	send := packet.NewPacket(nil)
-	send.SetMsgID(protomsg.Old_MSGID_R2B_NEXT_STATE.UInt16())
-	send.WriteUInt8(uint8(ERoomStatus_SETTLEMENT))
-	send.WriteUInt32(uint32(duration * 1000))
+	allprofit := map[int32]int64{}
+	for accid, bets := range self.betPlayers {
+		loss_val := int64(0) // 输的钱
+		loss_val += bets[3-win]
 
-	pack := packet.NewPacket(nil)
-
-	if reddWin {
-		pack.WriteUInt8(1)
-		self.addStatList(1, int8(winner_type))
-	} else {
-		pack.WriteUInt8(2)
-		self.addStatList(2, int8(winner_type))
-	}
-	pack.WriteUInt8(winner_type.UInt8())
-
-	pack.WriteUInt16(uint16(self.count_seat()))
-
-	specific_rate := algorithm.Rate_type(winner_type)
-
-	servicepack := packet.NewPacket(nil)
-	servicepack2 := packet.NewPacket(nil)
-	playerCount := uint16(0)
-	playerCount2 := uint16(0)
-	tax_scale := config.GetPublicConfig_Int64("TAX")
-
-	total_share_val := self.total_master_val()
-	total_win_val := int64(0)
-	total_lose_val := int64(0)
-	for _, acc := range self.accounts {
-
-		bets := acc.BetVal
-		win := int64(0)
-		lose := int64(0)
-		come_back := int64(0)
-
-		// 1红、2黑、3特
-		if reddWin {
-			win += int64(bets[1])
-			lose += int64(bets[2])
-			come_back += int64(bets[1])
-
+		principal_val := int64(0) // 本金
+		principal_val += bets[win]
+		if bets[3] != 0 && specialArea_odd != 0 {
+			principal_val += bets[3]
 		} else {
-			win += int64(bets[2])
-			lose += int64(bets[1])
-			come_back += int64(bets[2])
+			loss_val += bets[3]
 		}
 
-		// 特殊牌型处理
-		if specific_rate > 0 {
-			win += int64(specific_rate) * int64(bets[3])
-			come_back += int64(bets[3])
-		} else {
-			lose += int64(bets[3])
-		}
+		// 计算利润
+		winArea_profit := bets[win] * self.odds_conf[win] * (10000 - self.pump_conf[win]) / 10000
+		specialArea_profit := bets[3] * specialArea_odd * (10000 - self.pump_conf[3]) / 10000
 
-		// 玩家服务费
-		acc_service_fee := win * self.conf_fee / 1000
-
-		// 系统服务费
-		master_service_fee := lose * self.conf_fee / 1000
-
-		total_win_val += win   // 所有玩家赢得钱
-		total_lose_val += lose // 所有玩家输得钱
-
-		win = win * config.GetPublicConfig_Int64("R2B_SYSTEM_FEE") / 100
-		if win+come_back > 0 {
-			acc.AddMoney(win+come_back, 0, common.EOperateType_SETTLEMENT)
-		}
-
-		if acc.Robot == 0 {
-			// 计算水位线
-			RoomMgr.Water_line -= win + acc_service_fee
-			RoomMgr.Water_line += lose - master_service_fee
-		}
-
-		// 当前这把总输赢
-		change := int64(win - lose)
-		self.changeVal[acc.AccountId] = change
-
-		if total_fee := acc_service_fee + master_service_fee; total_fee > 0 {
-			playerCount++
-			servicepack.WriteUInt32(uint32(acc.AccountId))
-			servicepack.WriteUInt32(uint32(total_fee * tax_scale / 100))
-		}
-
-		if change != 0 {
-			playerCount2++
-			servicepack2.WriteUInt32(acc.AccountId)
-			servicepack2.WriteInt64(int64(acc.GetMoney()))
-			servicepack2.WriteInt64(int64(change))
-			servicepack2.WriteString("")
-
-			event.Dispatcher.Dispatch(&event.WinOrLoss{
-				RoomID:      self.roomId,
-				Acc:         acc,
-				Change:      change,
-				Seats:       self.seats,
-				MasterSeats: self.master_seats,
-			}, event.EventType_WinOrLoss)
-		}
-
-		if acc.Robot == 0 {
-			log.Debugf("reddWin:%v 玩家：%v acc_service_fee:%v master_service_fee:%v change:%v game_count:%v", reddWin, acc.AccountId, acc_service_fee, master_service_fee, change, self.game_count)
-		}
-
-		// 组装消息
-		index := self.seatIndex(acc.AccountId)
-		if index != -1 {
-			pack.WriteUInt8(uint8(index + 1))
-			pack.WriteInt64(int64(change))
-			pack.WriteInt64(int64(acc.GetMoney()))
-
-			temc := 0
-			for _, betV := range acc.BetVal {
-				if betV > 0 {
-					temc++
-				}
-			}
-			pack.WriteUInt16(uint16(temc))
-			for k, betV := range acc.BetVal {
-				if betV > 0 {
-					pack.WriteUInt8(uint8(k))
-					pack.WriteUInt32(uint32(betV))
-				}
-			}
-		}
-	}
-
-	// 计算庄家得输赢 /////////////////////////////////////////////////////////////////////////////////////////////////////
-	total_master_server_fee := ((total_win_val + total_lose_val) * self.conf_fee / 1000)
-	total_master_profit := total_lose_val * config.GetPublicConfig_Int64("R2B_SYSTEM_FEE") / 100
-	total_master_profit -= total_win_val
-	log.Infof("total_win_val:%v total_lose_val:%v self.conf_fee:%v tax_scale:%v total_master_server_fee:%v total_master_profit:%v",
-		total_win_val, total_lose_val, self.conf_fee, tax_scale, total_master_server_fee, total_master_profit)
-
-	count := uint16(0)
-	tempMaster := packet.NewPacket(nil)
-	conf_val := config.GetPublicConfig_Int64("R2B_DOMINATE_MONEY")
-	for index, master := range self.master_seats {
-		if master == nil {
+		acc := self.accounts[accid]
+		if acc == nil {
 			continue
 		}
-		count++
-		master_fee := (total_master_server_fee * master.Share) / total_share_val
-		if master_fee > 0 {
-			playerCount++
-			servicepack.WriteUInt32(uint32(master.AccountId))
-			servicepack.WriteUInt32(uint32(master_fee * tax_scale / 100))
+		val := winArea_profit + specialArea_profit + principal_val
+		acc.AddMoney(val, common.EOperateType_RED2BLACK_WIN)
+		if acc.Robot == 0 && acc.OSType == 4 {
+			asyn_addMoney(acc.UnDevice, val, int32(self.roomId), "红黑大战盈利", nil, nil) //中奖
 		}
-
-		master_profit := (total_master_profit * master.Share) / total_share_val
-
-		if master.Robot == 0 {
-			// 计算水位线
-			RoomMgr.Water_line -= master_profit + master_fee
-		}
-
-		if master_profit != 0 {
-			log.Infof("庄家:%v 身上钱:%v 份额:%v 盈利:%v ", master.AccountId, master.GetMoney(), master.Share, master_profit)
-			self.changeVal[master.AccountId] = master_profit
-			master.AddMoney(master_profit, 0, common.EOperateType_SETTLEMENT)
-			playerCount2++
-			servicepack2.WriteUInt32(master.AccountId)
-			servicepack2.WriteInt64(int64(master.GetMoney()))
-			servicepack2.WriteInt64(int64(master_profit))
-			servicepack2.WriteString("")
-
-			if mon := int64(master.GetMoney()); mon < master.Share*conf_val {
-				cur_share := mon / conf_val
-				log.Infof(colorized.Yellow("份额下降 玩家:%v 钱:%v < 份额:%v  cur_share:%v "), master.AccountId, mon, master.Share*conf_val, cur_share)
-
-				if cur_share == 0 || (self.dominated_times != -1 && cur_share < config.GetPublicConfig_Int64("R2B_DOMINATE_QUIT")) {
-					pack := packet.NewPacket(nil)
-					pack.SetMsgID(protomsg.Old_MSGID_R2B_UP_MASTER.UInt16())
-					pack.WriteUInt32(master.AccountId)
-					pack.WriteUInt8(0)
-					pack.WriteUInt64(0)
-					core.CoreSend(0, self.owner.Id, pack.GetData(), 0)
-
-					log.Infof("玩家:%v 钱:%v cur_share:%v 份额不够，踢出庄家", master.AccountId, master.GetMoney(), cur_share)
-				} else {
-					master.Share = cur_share
-				}
-
-			}
-
-			event.Dispatcher.Dispatch(&event.WinOrLoss{
-				RoomID:      self.roomId,
-				Acc:         master.Account,
-				Change:      master_profit,
-				Seats:       self.seats,
-				MasterSeats: self.master_seats,
-			}, event.EventType_WinOrLoss)
-		}
-
-		if master.Robot == 0 {
-			log.Debugf("master reddWin:%v 玩家：%v  master_service_fee:%v master_profit:%v game_count:%v", reddWin, master.AccountId, master_fee, master_profit, self.game_count)
-		}
-		tempMaster.WriteUInt8(uint8(index) + 1)
-		tempMaster.WriteInt64(int64(master_profit))
-		tempMaster.WriteInt64(int64(master.GetMoney()))
-
-	}
-	self.masterData.WriteUInt16(count)
-	self.masterData.CatBody(tempMaster)
-
-	if playerCount > 0 {
-		updateAccount := packet.NewPacket(nil)
-		updateAccount.SetMsgID(protomsg.Old_MSGID_UPDATE_ACCOUNT.UInt16())
-		updateAccount.WriteUInt32(self.roomId)
-		updateAccount.WriteUInt8(0)
-		updateAccount.WriteUInt16(playerCount)
-		updateAccount.CatBody(servicepack2)
-		send_tools.Send2Hall(updateAccount.GetData())
+		allprofit[int32(accid)] = winArea_profit + specialArea_profit - loss_val
 	}
 
-	if playerCount2 > 0 {
-		ser_fee := packet.NewPacket(nil)
-		ser_fee.SetMsgID(protomsg.Old_MSGID_UPDATE_SERVICE_FEE.UInt16())
-		ser_fee.WriteUInt8(uint8(self.gameType))
-		ser_fee.WriteUInt32(uint32(self.roomId))
-		ser_fee.WriteUInt16(playerCount2)
-		ser_fee.CatBody(servicepack)
-		send_tools.Send2Hall(ser_fee.GetData())
+	// 组装消息
+	settle, err := proto.Marshal(&protomsg.Status_Settle{
+		WinArea:      win,
+		WinCardType:  t,
+		LossCardType: losst,
+		WinOdds:      uint64(specialArea_odd),
+		Players:      allprofit,
+	})
+	if err != nil {
+		log.Panicf("错误:%v ", err.Error())
 	}
 
-	self.sendData = pack
-
-	for _, acc := range self.accounts {
-		newSend := packet.PacketMakeup(send, self.sendData)
-		newSend.WriteInt64(self.changeVal[acc.AccountId])
-		newSend.WriteInt64(int64(acc.GetMoney()))
-
-		newSend.CatBody(self.masterData)
-		send_tools.Send2Account(newSend.GetData(), acc.SessionId)
+	betval, betval_own := self.areaBetVal(true, 0)
+	self.enterMsg = &protomsg.StatusMsg{
+		Status:           protomsg.RED2BLACKGAMESTATUS(self.s),
+		Status_StartTime: uint64(self.start_timestamp),
+		Status_EndTime:   uint64(self.end_timestamp),
+		RedCards:         self.GameCards[0:self.showNum],
+		BlackCards:       self.GameCards[3 : 3+self.showNum],
+		AreaBetVal:       betval,
+		AreaBetVal_Own:   betval_own,
+		Status_Data:      settle,
 	}
-
+	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{NextStatus: self.enterMsg})
 	log.Infof("water line:[%v]", RoomMgr.Water_line)
 }
 
 func (self *settlement) Tick(now int64) {
-	if now >= self.timestamp {
+	if now >= self.end_timestamp {
 		self.switchStatus(now, ERoomStatus_WAITING_TO_START)
 		return
 	}
@@ -312,6 +133,7 @@ func (self *settlement) enterData(accountId uint32) *protomsg.StatusMsg {
 
 func (self *settlement) Leave(now int64) {
 	log.Debugf(colorized.Gray("settlement leave\n"))
+	log.Debugf(colorized.Blue(""))
 }
 
 func (self *settlement) Handle(actor int32, msg []byte, session int64) bool {
