@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"root/common"
-	"root/common/config"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
