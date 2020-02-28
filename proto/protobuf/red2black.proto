@@ -74,7 +74,8 @@ message ENTER_GAME_RED2BLACK_RES {
 	repeated Winner HistoryWinners = 2; // 最近70局的获胜区域
 	repeated int64 bets            = 3; // 当前房间可押注筹码值
 	uint32 ShowNum                 = 4; // 当前房间开局前亮牌的数量
-	StatusMsg Status 		       = 5; //  当前状态
+	uint64 BetLimit                = 5; // 当前房间下注身上最少要带的钱
+	StatusMsg Status 		       = 6; //  当前状态
 }
 
 // 请求退出房间

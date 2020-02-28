@@ -33,6 +33,7 @@ type (
 		interval_conf   int64                                       // 两次下注间隔时间
 		profit          int64                                       // 房间盈利
 		showNum         int                                         // 开局显示的牌数
+		betlimit        int64                                       //
 		GameCards       []*protomsg.Card                            // 本局随机牌组 0-2 红方   3-5 黑方
 	}
 )
@@ -147,6 +148,7 @@ func (self *Room) enterRoom(accountId uint32) {
 		HistoryWinners: self.history,
 		Bets:           self.bets_conf,
 		ShowNum:        uint32(self.showNum),
+		BetLimit:       uint64(self.betlimit),
 		Status:         statusEnter.enterData(accountId),
 	}
 	// 通知玩家进入游戏

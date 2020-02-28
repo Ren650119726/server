@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"root/common"
+	"root/common/config"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
@@ -23,8 +24,9 @@ type (
 		enterMsg                 *protomsg.StatusMsg
 		interval_broadcast_timer int64 // 间隔广播下注缓存
 
-		bets_cache []*protomsg.BET_RED2BLACK_RES_BetPlayer // 下注缓存
-		cd         map[uint32]int64                        // 玩家最后一次下注时间戳
+		bets_cache      []*protomsg.BET_RED2BLACK_RES_BetPlayer // 下注缓存
+		cd              map[uint32]int64                        // 玩家最后一次下注时间戳
+		forbidBetplayer map[uint32]bool                         // 禁止下注的玩家
 	}
 )
 
@@ -35,6 +37,7 @@ func (self *betting) Enter(now int64) {
 	log.Debugf(colorized.Yellow("betting enter duration:%v"), duration)
 
 	self.cd = make(map[uint32]int64)
+	self.forbidBetplayer = make(map[uint32]bool)
 	// 随机获得6张牌
 	self.GameCards = algorithm.GetRandom_Card(self.RoomCards, 6)
 	log.Infof("开始下注显示:%v 张 本局牌:%+v ", self.showNum, self.GameCards)
@@ -49,6 +52,9 @@ func (self *betting) Enter(now int64) {
 	}
 
 	for accid, acc := range self.accounts {
+		if acc.GetMoney() < uint64(self.betlimit) {
+			self.forbidBetplayer[acc.AccountId] = true
+		}
 		if acc.SessionId == 0 {
 			continue
 		}
@@ -132,6 +138,10 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 
 	if acc.GetMoney() < betdata.GetBet() {
 		log.Warnf("acc:%v room:%v 钱不够下注 身上钱:%v 请求下注:%v ", acc.AccountId, self.roomId, acc.GetMoney(), betdata.GetBet())
+		return
+	}
+	if self.forbidBetplayer[acc.AccountId] {
+		log.Warnf("acc:%v room:%v 钱不够下注 身上钱:%v 低于bet_limit 请求下注失败:%v ", acc.AccountId, self.roomId, acc.GetMoney(), betdata.GetBet())
 		return
 	}
 	if last := self.cd[acc.GetAccountId()]; now-last < self.interval_conf {
