@@ -33,16 +33,16 @@ func (self *red2black) SERVERMSG_HG_PLAYER_DATA_REQ(actor int32, msg []byte, ses
 
 }
 
-// 玩家请求进入小玛利房间
-func (self *red2black) JPMMSG_CS_ENTER_GAME_JPM_REQ(actor int32, data []byte, session int64) int32 {
-	enterPB := packet.PBUnmarshal(data, &protomsg.ENTER_GAME_JPM_REQ{}).(*protomsg.ENTER_GAME_JPM_REQ)
+// 玩家请求进入房间
+func (self *red2black) RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ(actor int32, data []byte, session int64) int32 {
+	enterPB := packet.PBUnmarshal(data, &protomsg.ENTER_GAME_RED2BLACK_REQ{}).(*protomsg.ENTER_GAME_RED2BLACK_REQ)
 	acc := account.AccountMgr.GetAccountByIDAssert(enterPB.GetAccountID())
 	acc.SessionId = session
 	account.AccountMgr.SetAccountBySession(acc, session)
 
 	actorId := int32(enterPB.GetRoomID())
 	if actorId == 0 {
-		log.Warnf("玩家连上金瓶梅 但是找不到房间所在actor roomId:%v", enterPB.GetRoomID())
+		log.Warnf("玩家连上 但是找不到房间所在actor roomId:%v", enterPB.GetRoomID())
 		return 0
 	}
 

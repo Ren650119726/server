@@ -119,6 +119,9 @@ func (self *red2black) HandleMessage(actor int32, msg []byte, session int64) boo
 	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
 		self.SERVERMSG_HG_PLAYER_DATA_REQ(actor, pack.ReadBytes(), session)
 		core.CoreSend(self.owner.Id, actor, msg, session)
+	case protomsg.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ.UInt16(): // 请求进入小玛利房间
+		actor := self.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ(actor, pack.ReadBytes(), session)
+		core.CoreSend(self.owner.Id, actor, msg, session)
 	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():
 		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 
