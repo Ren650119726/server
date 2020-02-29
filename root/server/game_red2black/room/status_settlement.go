@@ -135,7 +135,7 @@ func (self *settlement) leave(accid uint32) bool {
 }
 
 func (self *settlement) enterData(accountId uint32) *protomsg.StatusMsg {
-	return nil
+	return self.enterMsg
 }
 
 func (self *settlement) Leave(now int64) {
