@@ -174,7 +174,7 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 		log.Infof("收到测试网络消息 SessionID:%v", session)
 		send_tools.Send2Game(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(), nil, session)
 	default:
-		tAccount := account.AccountMgr.GetAccountBySessionIDAssert(session)
+		tAccount := account.AccountMgr.GetAccountBySessionID(session)
 		if tAccount != nil {
 			log.Infof("Error: HandleMessage don`t find handler, msgid:%v AccountID:%v Name:%v actor:%v session:%v", pack.GetMsgID(), tAccount.AccountId, tAccount.Name, actor, session)
 		} else {
