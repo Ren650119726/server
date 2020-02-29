@@ -8,11 +8,12 @@ import (
 	"root/core/log"
 	"root/core/packet"
 	"root/protomsg/inner"
-	"root/server/game_jpm/account"
+	"root/server/game_red2black/account"
 	"strconv"
 )
 
 var ServerActor *core.Actor
+
 func init() {
 	core.Cmd.Regist("tohall", tohall, true)
 	core.Cmd.Regist("todb", todb, true)
@@ -41,8 +42,8 @@ func reload(s []string) {
 
 	msg := packet.NewPacket(nil)
 	msg.SetMsgID(inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16())
-	for roomID,_ := range RoomMgr.rooms{
-		core.CoreSend(0,int32(roomID),msg.GetData(),0)
+	for roomID, _ := range RoomMgr.rooms {
+		core.CoreSend(0, int32(roomID), msg.GetData(), 0)
 	}
 }
 
@@ -55,8 +56,8 @@ func Close(s []string) {
 
 	send := packet.NewPacket(nil)
 	send.SetMsgID(inner.SERVERMSG_SS_CLOSE_SERVER.UInt16())
-	core.CoreSend(0,  common.EActorType_MAIN.Int32(), send.GetData(), 0)
-	for _,room := range RoomMgr.rooms{
+	core.CoreSend(0, common.EActorType_MAIN.Int32(), send.GetData(), 0)
+	for _, room := range RoomMgr.rooms {
 		core.CoreSend(0, int32(room), send.GetData(), 0)
 	}
 }
@@ -80,5 +81,5 @@ func FeeCount(sParam []string) {
 	}
 	acc := account.AccountMgr.GetAccountByIDAssert(uint32(accID))
 	acc.FeeCount = int32(changeValue)
-	log.Infof("免费次数修改:%v",changeValue)
+	log.Infof("免费次数修改:%v", changeValue)
 }

@@ -14,25 +14,28 @@ import (
 
 type (
 	Game struct {
-		owner          *core.Actor
-		init           bool // 重新建立连接是否需要拉取所有数据
-		roomID         uint32
-		feec		int
+		owner  *core.Actor
+		init   bool // 重新建立连接是否需要拉取所有数据
+		roomID uint32
+		feec   int
 	}
 )
 
 var count = 0
 var fee = 0
 var total = 0
+
 func NewGame() *Game {
 	return &Game{}
 }
+
 var game_GLobal *Client
+
 func (self *Game) Init(actor *core.Actor) bool {
 	self.owner = actor
-	
+
 	//game_GLobal = NewWebsocketClient("47.108.87.29:41201","/connect")
-	game_GLobal = NewWebsocketClient("192.168.2.100:41401","/connect")
+	game_GLobal = NewWebsocketClient("192.168.2.100:41601", "/connect")
 	game_GLobal.connect()
 	if game_GLobal.ws == nil {
 		log.Printf("connect faild \r\n")
@@ -41,10 +44,10 @@ func (self *Game) Init(actor *core.Actor) bool {
 	fmt.Println("connected success :", game_GLobal.ws.RemoteAddr())
 	go func() {
 		for {
-			recv := make([]byte,65535)
-			n,err := game_GLobal.ws.Read(recv)
-			if err != nil{
-				log.Warnf("err:%v",err.Error())
+			recv := make([]byte, 65535)
+			n, err := game_GLobal.ws.Read(recv)
+			if err != nil {
+				log.Warnf("err:%v", err.Error())
 				continue
 			}
 			//log.Infof("读出%v个字节",n)
@@ -52,20 +55,20 @@ func (self *Game) Init(actor *core.Actor) bool {
 			buffer := new(bytes.Buffer)
 			buffer.Write(recv)
 			_, content, errcode := self.decode(buffer)
-			if errcode != 0{
-				log.Warnf("错误:%v",errcode)
+			if errcode != 0 {
+				log.Warnf("错误:%v", errcode)
 			}
-			self.HandleMessage(0, content,0)
+			self.HandleMessage(0, content, 0)
 		}
 	}()
 
-	Send2Game(protomsg.JPMMSG_CS_ENTER_GAME_JPM_REQ.UInt16(),&protomsg.ENTER_GAME_JPM_REQ{
-		AccountID:AccountID,
-		RoomID:self.roomID,
+	Send2Game(protomsg.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ.UInt16(), &protomsg.ENTER_GAME_JPM_REQ{
+		AccountID: AccountID,
+		RoomID:    self.roomID,
 	})
 
-	self.owner.AddTimer(30000,-1, func(dt int64) {
-		Send2Game(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(),nil)
+	self.owner.AddTimer(30000, -1, func(dt int64) {
+		Send2Game(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil)
 	})
 	return true
 }
@@ -109,37 +112,36 @@ func (self *Game) Stop() {
 func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
-	case protomsg.JPMMSG_SC_ENTER_GAME_JPM_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.ENTER_GAME_JPM_RES{}).(*protomsg.ENTER_GAME_JPM_RES)
-		log.Infof(colorized.Blue("进入游戏成功：%+v"),pb)
+	case protomsg.RED2BLACKMSG_SC_ENTER_GAME_RED2BLACK_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_GAME_JPM_RES{}).(*protomsg.ENTER_GAME_JPM_RES)
+		log.Infof(colorized.Blue("进入游戏成功：%+v"), pb)
 
 	case protomsg.JPMMSG_SC_START_JPM_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.START_JPM_RES{}).(*protomsg.START_JPM_RES)
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.START_JPM_RES{}).(*protomsg.START_JPM_RES)
 		//log.Infof(colorized.Blue("开始游戏：%+v"),pb)
 		//time2.Sleep(time2.Duration(rand.Int63n(10000))*time2.Microsecond)
 		self.feec = int(pb.GetFreeCount())
-		if self.feec > 0{
-			Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(),&protomsg.START_JPM_REQ{Bet:uint64(100)})
+		if self.feec > 0 {
+			Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(), &protomsg.START_JPM_REQ{Bet: uint64(100)})
 			return true
 		}
 
 		count--
 		if count > 0 {
-			Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(),&protomsg.START_JPM_REQ{Bet:uint64(100)})
-		}else{
+			Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(), &protomsg.START_JPM_REQ{Bet: uint64(100)})
+		} else {
 			log.Infof("身上的钱--:%v", pb.GetMoney())
 		}
 
-		if count % 100000 == 0{
+		if count%100000 == 0 {
 			log.Infof("sleep start")
-			time2.Sleep(678*time2.Millisecond)
+			time2.Sleep(678 * time2.Millisecond)
 			log.Infof("sleep end")
 		}
 	}
 
 	return true
 }
-
 
 func Send2Game(msgId uint16, pb proto.Message) {
 	var bytes []byte
