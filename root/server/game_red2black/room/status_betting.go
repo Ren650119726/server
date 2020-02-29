@@ -51,6 +51,7 @@ func (self *betting) Enter(now int64) {
 	}
 
 	for accid, acc := range self.accounts {
+		acc.Betcount = 0
 		if acc.GetMoney() < uint64(self.betlimit) {
 			self.forbidBetplayer[acc.AccountId] = true
 		}
@@ -117,6 +118,8 @@ func (self *betting) Handle(actor int32, msg []byte, session int64) bool {
 	switch pack.GetMsgID() {
 	case protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16():
 		self.RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor, msg, session)
+	case protomsg.RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ.UInt16():
+		self.RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor, msg, session)
 	default:
 		log.Warnf("betting 状态 没有处理消息msgId:%v", pack.GetMsgID())
 		return false
@@ -146,6 +149,10 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 	if last := self.cd[acc.GetAccountId()]; now-last < self.interval_conf {
 		return
 	}
+	if now-acc.CLeanTime < 3000 {
+		log.Warnf("acc:%v 还未收到三方的清除消息，不能押注:%v ", acc.GetAccountId(), now-acc.CLeanTime)
+		return
+	}
 
 	check := false
 	for _, betVal := range self.bets_conf {
@@ -159,6 +166,7 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 		return
 	}
 
+	self.cd[acc.GetAccountId()] = now
 	back := func(backunique string, backmoney int64) {
 		if acc.GetMoney()-betdata.GetBet() != uint64(backmoney) {
 			log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v", acc.GetUnDevice(), acc.GetMoney(), betdata.GetBet(), backmoney)
@@ -167,16 +175,17 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 			acc.AddMoney(int64(-(betdata.GetBet())), common.EOperateType_RED2BLACK_BET)
 		}
 
-		self.cd[acc.GetAccountId()] = now
 		self.betPlayers[acc.AccountId][betdata.Area] += int64(betdata.Bet)
 		self.bets_cache = append(self.bets_cache, &protomsg.BET_RED2BLACK_RES_BetPlayer{
 			AccountID: acc.GetAccountId(),
 			Area:      betdata.GetArea(),
 			Bet:       betdata.Bet,
 		})
+		acc.Betcount--
 	}
 
-	if acc.Robot == 0 {
+	acc.Betcount++
+	if acc.Robot == 0 || acc.GetOSType() != 4 {
 		back(acc.UnDevice, int64(acc.GetMoney()-betdata.GetBet()))
 	} else {
 		// 错误返回
@@ -185,5 +194,61 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 		}
 		asyn_addMoney(acc.UnDevice, -int64(betdata.GetBet()), int32(self.roomId), fmt.Sprintf("红黑大战请求下注:%v", betdata.GetBet()), back, errback)
 	}
+}
+func (self *betting) RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor int32, msg []byte, session int64) {
+	betdata := packet.PBUnmarshal(msg, &protomsg.CLEAN_BET_RED2BLACK_REQ{}).(*protomsg.CLEAN_BET_RED2BLACK_REQ)
+	var acc *account.Account
+	now := utils.MilliSecondTimeSince1970()
+	if session == 0 {
+		acc = account.AccountMgr.GetAccountByIDAssert(betdata.GetAccountID())
+	} else {
+		acc = account.AccountMgr.GetAccountBySessionIDAssert(session)
+	}
+	if acc.Betcount > 0 {
+		log.Warnf("玩家:%v 下注计数为:%v 需要等到所有下注都成功，才能清除", acc.GetAccountId(), acc.Betcount)
+		return
+	}
 
+	// 先统计一下玩家的总下注
+	totalBets := self.betPlayers[acc.GetAccountId()]
+	totalVal := uint64(0)
+	for _, v := range totalBets {
+		totalVal += uint64(v)
+	}
+
+	if totalVal == 0 {
+		log.Warnf("玩家:%v 下注 为0 区域下注为:%v 不需要清除", acc.GetAccountId(), totalBets)
+		return
+	}
+
+	acc.CLeanTime = now
+	self.cd[acc.GetAccountId()] = now
+	back := func(backunique string, backmoney int64) {
+		if acc.GetMoney()+totalVal != uint64(backmoney) {
+			log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v", acc.GetUnDevice(), acc.GetMoney(), totalVal, backmoney)
+			acc.AddMoney(backmoney-int64(acc.GetMoney()), common.EOperateType_INIT)
+		} else {
+			acc.AddMoney(int64(totalVal), common.EOperateType_RED2BLACK_BET_CLEAN)
+		}
+
+		delete(self.betPlayers, acc.AccountId)
+		acc.CLeanTime = 0
+		// 通知玩家更新下注区域
+		total, _ := self.areaBetVal(true, 0)
+		msg := &protomsg.CLEAN_BET_RED2BLACK_RES{
+			AccountID:  acc.AccountId,
+			AreaBetVal: total,
+		}
+		self.SendBroadcast(protomsg.RED2BLACKMSG_SC_CLEAN_BET_RED2BLACK_RES.UInt16(), msg)
+	}
+
+	if acc.Robot == 0 {
+		back(acc.UnDevice, int64(acc.GetMoney()+totalVal))
+	} else {
+		// 错误返回
+		errback := func() {
+			log.Panicf("http请求报错 玩家:%v roomID:%v  下注:%v 失败", acc.GetAccountId(), self.roomId, totalVal)
+		}
+		asyn_addMoney(acc.UnDevice, int64(totalVal), int32(self.roomId), fmt.Sprintf("红黑大战请求下注:%v ", totalVal), back, errback)
+	}
 }

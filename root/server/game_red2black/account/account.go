@@ -23,6 +23,8 @@ type (
 		SessionId      int64
 		BetVal         [BET_KIND + 1]uint32 // 下注金额 1红、2黑、3特
 		IsAllowBetting bool                 // 当前局能否下注
+		Betcount       int32                // 下注缓存数量
+		CLeanTime      int64                // 清除下注时间
 	}
 
 	Master struct {

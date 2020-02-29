@@ -97,6 +97,8 @@ It has these top-level messages:
 	Status_Settle
 	BET_RED2BLACK_REQ
 	BET_RED2BLACK_RES
+	CLEAN_BET_RED2BLACK_REQ
+	CLEAN_BET_RED2BLACK_RES
 	PLAYERS_RED2BLACK_LIST_RES
 */
 package protomsg

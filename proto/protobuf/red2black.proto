@@ -14,7 +14,8 @@ enum RED2BLACKMSG {
 	
 	CS_BET_RED2BLACK_REQ      	= 60008; // 请求下注
 	SC_BET_RED2BLACK_RES      	= 60009;
-	
+    CS_CLEAN_BET_RED2BLACK_REQ  = 60010; // 请求清除下注
+    SC_CLEAN_BET_RED2BLACK_RES  = 60011;
 
 
 	CS_PLAYERS_RED2BLACK_LIST_REQ = 60015;// 请求在线玩家列表
@@ -139,15 +140,27 @@ message BET_RED2BLACK_REQ {
 	uint64 Bet       	 = 3; 	// 下注的筹码
 }
 
-// 间隔 500 毫秒一次 广播玩家下注
+// 间隔 200 毫秒一次 广播玩家下注
 message BET_RED2BLACK_RES {
 	message BetPlayer {
 		uint32 AccountID   = 1;
 		RED2BLACKAREA Area = 2;// 下注区域
 		uint64 Bet 		   = 3; // 下注的筹码
 	}
-	repeated BetPlayer Players 			 = 1; // 间隔时间内，所有玩家的下注
+	repeated BetPlayer Players 	 = 1; // 间隔时间内，所有玩家的下注
 	map<int32,int64> AreaBetVal  = 2; // 3个区域的押注值
+}
+
+
+// 请求清除下注
+message CLEAN_BET_RED2BLACK_REQ {
+	uint32 AccountID 	 = 1;   // 客户端可发可不发,机器人下注用
+}
+
+// 服务器广播清除下注
+message CLEAN_BET_RED2BLACK_RES {
+	uint32 AccountID 	 = 1;        // 清除的玩家
+	map<int32,int64> AreaBetVal = 2; // 3个区域所有人的总押注值
 }
 
 // 请求RED2BLACK玩家列表
