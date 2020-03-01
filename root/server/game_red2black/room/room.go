@@ -151,6 +151,9 @@ func (self *Room) enterRoom(accountId uint32) {
 		BetLimit:       uint64(self.betlimit),
 		Status:         statusEnter.enterData(accountId),
 	}
+	if enterRoom.Status == nil {
+		log.Errorf("进入房间没有Status！！！！！！！！！！！！！")
+	}
 	// 通知玩家进入游戏
 	send_tools.Send2Account(protomsg.RED2BLACKMSG_SC_ENTER_GAME_RED2BLACK_RES.UInt16(), enterRoom, acc.SessionId)
 
