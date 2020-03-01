@@ -10,6 +10,7 @@ import (
 	"root/core/utils"
 	"root/protomsg"
 	"root/server/game_red2black/algorithm"
+	"root/server/game_red2black/send_tools"
 	"sort"
 )
 
@@ -116,12 +117,20 @@ func (self *settlement) Enter(now int64) {
 		Status_StartTime: uint64(self.start_timestamp),
 		Status_EndTime:   uint64(self.end_timestamp),
 		RedCards:         self.GameCards[0:3],
-		BlackCards:       self.GameCards[3 : 3+3],
+		BlackCards:       self.GameCards[3:6],
 		AreaBetVal:       betval,
 		AreaBetVal_Own:   betval_own,
 		Status_Data:      settle,
 	}
-	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{NextStatus: self.enterMsg})
+
+	for accid, acc := range self.accounts {
+		if acc.SessionId == 0 {
+			continue
+		}
+		_, betval_own := self.areaBetVal(true, accid)
+		self.enterMsg.AreaBetVal_Own = betval_own
+		send_tools.Send2Account(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg}, acc.SessionId)
+	}
 	log.Infof("win:%v 红方牌:%v  黑方牌:%v 房间盈利:%v", win, tred, tblack, self.profit)
 }
 
@@ -136,6 +145,8 @@ func (self *settlement) leave(accid uint32) bool {
 }
 
 func (self *settlement) enterData(accountId uint32) *protomsg.StatusMsg {
+	_, betval_own := self.areaBetVal(true, accountId)
+	self.enterMsg.AreaBetVal_Own = betval_own
 	return self.enterMsg
 }
 
