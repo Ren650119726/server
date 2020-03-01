@@ -237,15 +237,17 @@ func (self *betting) RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor int32, msg []
 		}
 
 		acc.CLeanTime = 0
+		bet := self.betPlayers[acc.AccountId]
+		delete(self.betPlayers, acc.AccountId)
 		// 通知玩家更新下注区域
 		total := self.areaBetVal(true)
 		msg := &protomsg.CLEAN_BET_RED2BLACK_RES{
 			AccountID:        acc.AccountId,
 			AreaBetVal:       total,
-			PlayerAreaBetVal: self.betPlayers[acc.AccountId],
+			PlayerAreaBetVal: bet,
 		}
 		self.SendBroadcast(protomsg.RED2BLACKMSG_SC_CLEAN_BET_RED2BLACK_RES.UInt16(), msg)
-		delete(self.betPlayers, acc.AccountId)
+
 	}
 
 	log.Infof("玩家:%v  请求清除下注", acc.GetAccountId())

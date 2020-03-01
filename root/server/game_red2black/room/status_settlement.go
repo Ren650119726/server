@@ -89,6 +89,9 @@ func (self *settlement) Enter(now int64) {
 			asyn_addMoney(acc.UnDevice, val, int32(self.roomId), "红黑大战盈利", nil, nil) //中奖
 		}
 		allprofit[int32(accid)] = winArea_profit + specialArea_profit - loss_val
+		if acc.Robot == 0 {
+			self.profit -= allprofit[int32(accid)]
+		}
 		log.Infof("玩家:%v 押注:%v 输掉的钱:%v 归还本金:%v 赢方区域盈利:%v 特殊区域盈利:%v 总输赢(不算本金):%v ", accid, bets, loss_val, principal_val, winArea_profit, specialArea_profit, winArea_profit+specialArea_profit-loss_val)
 	}
 	self.history = append(self.history, &protomsg.ENTER_GAME_RED2BLACK_RES_Winner{
