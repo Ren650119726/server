@@ -42,7 +42,7 @@ func (self *waitting) Enter(now int64) {
 		log.Panicf("错误:%v ", err.Error())
 	}
 
-	betval, betval_own := self.areaBetVal(true, 0)
+	betval := self.areaBetVal(true)
 	self.enterMsg = &protomsg.StatusMsg{
 		Status:           protomsg.RED2BLACKGAMESTATUS(self.s),
 		Status_StartTime: uint64(self.start_timestamp),
@@ -50,7 +50,7 @@ func (self *waitting) Enter(now int64) {
 		RedCards:         self.GameCards,
 		BlackCards:       self.GameCards,
 		AreaBetVal:       betval,
-		AreaBetVal_Own:   betval_own,
+		AreaBetVal_Own:   map[int32]int64{},
 		Status_Data:      wait,
 	}
 	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{
