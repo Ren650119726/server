@@ -13,30 +13,35 @@ import (
 
 type (
 	Logic struct {
-		owner          *core.Actor
-		init           bool // 重新建立连接是否需要拉取所有数据
-		ListenActor     *core.Actor
+		owner       *core.Actor
+		init        bool // 重新建立连接是否需要拉取所有数据
+		ListenActor *core.Actor
 	}
 )
 
 var AccountID = uint32(0)
+var addr = "47.108.87.29"
+
+//var addr = "192.168.2.100"
+
 func NewLogic() *Logic {
 	return &Logic{}
 }
+
 var client_Global *Client
+
 func (self *Logic) Init(actor *core.Actor) bool {
 	self.owner = actor
 
-	//client_Global = NewWebsocketClient("47.108.87.29:41000","/connect")
-	client_Global = NewWebsocketClient("192.168.2.100:41000","/connect")
+	client_Global = NewWebsocketClient(addr+":41000", "/connect")
 	client_Global.connect()
 	fmt.Println("connected success :", client_Global.ws.RemoteAddr())
 	go func() {
 		for {
-			recv := make([]byte,65535)
-			n,err := client_Global.ws.Read(recv)
-			if err != nil{
-				log.Warnf("err:%v",err.Error())
+			recv := make([]byte, 65535)
+			n, err := client_Global.ws.Read(recv)
+			if err != nil {
+				log.Warnf("err:%v", err.Error())
 				continue
 			}
 			//log.Infof("读出%v个字节",n)
@@ -44,15 +49,15 @@ func (self *Logic) Init(actor *core.Actor) bool {
 			buffer := new(bytes.Buffer)
 			buffer.Write(recv)
 			_, content, errcode := self.decode(buffer)
-			if errcode != 0{
-				log.Warnf("错误:%v",errcode)
+			if errcode != 0 {
+				log.Warnf("错误:%v", errcode)
 			}
-			self.HandleMessage(0, content,0)
+			self.HandleMessage(0, content, 0)
 		}
 	}()
 
-	self.owner.AddTimer(30000,-1, func(dt int64) {
-		Send2Hall(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(),nil)
+	self.owner.AddTimer(30000, -1, func(dt int64) {
+		Send2Hall(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil)
 	})
 	//login([]string{"aabbcc"})
 	return true
@@ -98,10 +103,10 @@ func (self *Logic) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
 	case protomsg.MSG_SC_LOGIN_HALL_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.LOGIN_HALL_RES{}).(*protomsg.LOGIN_HALL_RES)
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.LOGIN_HALL_RES{}).(*protomsg.LOGIN_HALL_RES)
 		AccountID = pb.GetAccount().AccountId
-		log.Infof(colorized.Blue("登陆成功：%+v"),pb)
-		if pb.AccountData.RoomID !=0 {
+		log.Infof(colorized.Blue("登陆成功：%+v"), pb)
+		if pb.AccountData.RoomID != 0 {
 			game := NewGame()
 			msgchan := make(chan core.IMessage, 10000)
 			actor := core.NewActor(common.EActorType_MAIN.Int32(), game, msgchan)
@@ -109,17 +114,17 @@ func (self *Logic) HandleMessage(actor int32, msg []byte, session int64) bool {
 		}
 
 	case protomsg.MSG_SC_SYNC_SERVER_TIME.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.SYNC_SERVER_TIME{}).(*protomsg.SYNC_SERVER_TIME)
-		log.Infof(colorized.Blue("同步服务器时间：%+v"),pb)
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.SYNC_SERVER_TIME{}).(*protomsg.SYNC_SERVER_TIME)
+		log.Infof(colorized.Blue("同步服务器时间：%+v"), pb)
 
 	case protomsg.MSG_SC_UPDATE_ROOMLIST.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.UPDATE_ROOMLIST{}).(*protomsg.UPDATE_ROOMLIST)
-		for _,v := range pb.GetGames(){
-			log.Infof(colorized.Blue("服务器更新房间 游戏:%v 房间:%+v"),common.EGameType(v.GetGameType()),v.GetRooms())
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.UPDATE_ROOMLIST{}).(*protomsg.UPDATE_ROOMLIST)
+		for _, v := range pb.GetGames() {
+			log.Infof(colorized.Blue("服务器更新房间 游戏:%v 房间:%+v"), common.EGameType(v.GetGameType()), v.GetRooms())
 		}
 	case protomsg.MSG_SC_ENTER_ROOM_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(),&protomsg.ENTER_ROOM_RES{}).(*protomsg.ENTER_ROOM_RES)
-		log.Infof(colorized.Blue("可以进入房间 房间:%+v"),pb)
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_ROOM_RES{}).(*protomsg.ENTER_ROOM_RES)
+		log.Infof(colorized.Blue("可以进入房间 房间:%+v"), pb)
 
 		game := NewGame()
 		game.roomID = pb.GetRoomID()
