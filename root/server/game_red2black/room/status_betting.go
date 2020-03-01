@@ -116,10 +116,10 @@ func (self *betting) Leave(now int64) {
 func (self *betting) Handle(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
-	case protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16():
-		self.RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor, msg, session)
-	case protomsg.RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ.UInt16():
-		self.RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor, msg, session)
+	case protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16(): // 请求下注
+		self.RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ.UInt16(): // 请求清空下注
+		self.RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor, pack.ReadBytes(), session)
 	default:
 		log.Warnf("betting 状态 没有处理消息msgId:%v", pack.GetMsgID())
 		return false
@@ -174,13 +174,18 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 		} else {
 			acc.AddMoney(int64(-(betdata.GetBet())), common.EOperateType_RED2BLACK_BET)
 		}
-
-		self.betPlayers[acc.AccountId][betdata.Area] += int64(betdata.Bet)
+		playerBets, e := self.betPlayers[acc.AccountId]
+		if !e {
+			self.betPlayers[acc.AccountId] = make(map[protomsg.RED2BLACKAREA]int64)
+			playerBets, _ = self.betPlayers[acc.AccountId]
+		}
+		playerBets[betdata.Area] += int64(betdata.Bet)
 		self.bets_cache = append(self.bets_cache, &protomsg.BET_RED2BLACK_RES_BetPlayer{
 			AccountID: acc.GetAccountId(),
 			Area:      betdata.GetArea(),
 			Bet:       betdata.Bet,
 		})
+		log.Infof("acc:%v下注成功,下注区域:%v 金额:%v", acc.GetAccountId(), betdata.Area, betdata.Bet)
 		acc.Betcount--
 	}
 
@@ -192,6 +197,7 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 		errback := func() {
 			log.Panicf("http请求报错 玩家:%v roomID:%v  下注:%v 失败", acc.GetAccountId(), self.roomId, betdata.GetBet())
 		}
+		log.Infof("acc:%v unique:%v 请求下注,下注区域:%v 金额:%v", acc.GetAccountId(), acc.UnDevice, betdata.Area, betdata.Bet)
 		asyn_addMoney(acc.UnDevice, -int64(betdata.GetBet()), int32(self.roomId), fmt.Sprintf("红黑大战请求下注:%v", betdata.GetBet()), back, errback)
 	}
 }

@@ -44,8 +44,8 @@ func login(s []string) {
 	}
 
 	acc := s[0]
-	Send2Hall(protomsg.MSG_CS_LOGIN_HALL_REQ.UInt16(),&protomsg.LOGIN_HALL_REQ{
-		LoginType: uint32(1),	// 1 游客 2 手机 3 微信
+	Send2Hall(protomsg.MSG_CS_LOGIN_HALL_REQ.UInt16(), &protomsg.LOGIN_HALL_REQ{
+		LoginType: uint32(1), // 1 游客 2 手机 3 微信
 		OSType:    1,
 		Unique:    acc,
 		Sign:      "",
@@ -53,7 +53,7 @@ func login(s []string) {
 }
 
 func time(s []string) {
-	Send2Hall(protomsg.MSG_CS_SYNC_SERVER_TIME.UInt16(),nil)
+	Send2Hall(protomsg.MSG_CS_SYNC_SERVER_TIME.UInt16(), nil)
 }
 
 func engame(s []string) {
@@ -61,8 +61,8 @@ func engame(s []string) {
 		fmt.Printf("× 参数错误 \r\n")
 		return
 	}
-	room,_ := strconv.Atoi(s[0])
-	Send2Hall(protomsg.MSG_CS_ENTER_ROOM_REQ.UInt16(),&protomsg.ENTER_ROOM_REQ{RoomID:uint32(room)})
+	room, _ := strconv.Atoi(s[0])
+	Send2Hall(protomsg.MSG_CS_ENTER_ROOM_REQ.UInt16(), &protomsg.ENTER_ROOM_REQ{RoomID: uint32(room)})
 }
 
 func start1(s []string) {
@@ -70,15 +70,15 @@ func start1(s []string) {
 		fmt.Printf("× 参数错误 \r\n")
 		return
 	}
-	bet,_ := strconv.Atoi(s[0])
-	c,_ := strconv.Atoi(s[1])
-	if c == 0{
+	bet, _ := strconv.Atoi(s[0])
+	c, _ := strconv.Atoi(s[1])
+	if c == 0 {
 		c = 1
 	}
 	count = c
-	log.Infof("请求开始:%v",count)
-	Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(),&protomsg.START_JPM_REQ{Bet:uint64(bet)})
+	log.Infof("请求开始:%v", count)
+	Send2Game(protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16(), &protomsg.BET_RED2BLACK_REQ{Area: protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED, Bet: uint64(bet)})
 }
 func show(s []string) {
-	log.Infof("count:%v fee:%v", count,fee)
+	log.Infof("count:%v fee:%v", count, fee)
 }

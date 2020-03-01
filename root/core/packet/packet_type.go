@@ -21,10 +21,10 @@ func PacketMakeup(one IPacket, two IPacket) IPacket {
 	}
 	return packet
 }
-// 将2个Packet的协议体组装到一起, 返回一个新Packet, 协议头使用one Packet的协议头
+
 func PBUnmarshal(bytes []byte, pb proto.Message) proto.Message {
-	if err :=proto.Unmarshal(bytes, pb); err != nil{
-		log.Panicf("解析错误:%v",err.Error())
+	if err := proto.Unmarshal(bytes, pb); err != nil {
+		log.Panicf("解析错误:%v", err.Error())
 	}
 
 	return pb

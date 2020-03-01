@@ -9,7 +9,6 @@ import (
 	"root/core/log/colorized"
 	"root/core/packet"
 	"root/protomsg"
-	time2 "time"
 )
 
 type (
@@ -113,33 +112,13 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
 	case protomsg.RED2BLACKMSG_SC_ENTER_GAME_RED2BLACK_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_GAME_JPM_RES{}).(*protomsg.ENTER_GAME_JPM_RES)
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_GAME_RED2BLACK_RES{}).(*protomsg.ENTER_GAME_RED2BLACK_RES)
 		log.Infof(colorized.Blue("进入游戏成功：%+v"), pb)
 
-	case protomsg.JPMMSG_SC_START_JPM_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.START_JPM_RES{}).(*protomsg.START_JPM_RES)
-		//log.Infof(colorized.Blue("开始游戏：%+v"),pb)
-		//time2.Sleep(time2.Duration(rand.Int63n(10000))*time2.Microsecond)
-		self.feec = int(pb.GetFreeCount())
-		if self.feec > 0 {
-			Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(), &protomsg.START_JPM_REQ{Bet: uint64(100)})
-			return true
-		}
-
-		count--
-		if count > 0 {
-			Send2Game(protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(), &protomsg.START_JPM_REQ{Bet: uint64(100)})
-		} else {
-			log.Infof("身上的钱--:%v", pb.GetMoney())
-		}
-
-		if count%100000 == 0 {
-			log.Infof("sleep start")
-			time2.Sleep(678 * time2.Millisecond)
-			log.Infof("sleep end")
-		}
+	case protomsg.RED2BLACKMSG_SC_BET_RED2BLACK_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.BET_RED2BLACK_RES{}).(*protomsg.BET_RED2BLACK_RES)
+		log.Infof(colorized.Blue("押注成功：%+v"), pb)
 	}
-
 	return true
 }
 
