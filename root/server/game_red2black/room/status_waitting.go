@@ -26,7 +26,7 @@ func (self *waitting) Enter(now int64) {
 	log.Debugf(colorized.Blue("waitting enter duration:%v"), duration)
 
 	self.GameCards = make([]*protomsg.Card, 0, 6)
-	self.betPlayers = make(map[uint32]map[protomsg.RED2BLACKAREA]int64) // 清理押注过的玩家
+	self.betPlayers = make(map[uint32]map[int32]int64) // 清理押注过的玩家
 	// 踢出下线的玩家
 	for _, acc := range self.accounts {
 		if !acc.IsOnline() {

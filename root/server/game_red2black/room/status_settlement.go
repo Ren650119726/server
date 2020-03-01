@@ -65,10 +65,10 @@ func (self *settlement) Enter(now int64) {
 	allprofit := map[int32]int64{}
 	for accid, bets := range self.betPlayers {
 		loss_val := int64(0) // 输的钱
-		loss_val += bets[3-win]
+		loss_val += bets[int32(3-win)]
 
 		principal_val := int64(0) // 本金
-		principal_val += bets[win]
+		principal_val += bets[int32(win)]
 		if bets[3] != 0 && specialArea_odd != 0 {
 			principal_val += bets[3]
 		} else {
@@ -76,7 +76,7 @@ func (self *settlement) Enter(now int64) {
 		}
 
 		// 计算利润
-		winArea_profit := bets[win] * self.odds_conf[win] * (10000 - self.pump_conf[win]) / 10000
+		winArea_profit := bets[int32(win)] * self.odds_conf[win] * (10000 - self.pump_conf[win]) / 10000
 		specialArea_profit := bets[3] * specialArea_odd * (10000 - self.pump_conf[3]) / 10000
 
 		acc := self.accounts[accid]
@@ -111,7 +111,7 @@ func (self *settlement) Enter(now int64) {
 		log.Panicf("错误:%v ", err.Error())
 	}
 
-	betval, betval_own := self.areaBetVal(true, 0)
+	betval := self.areaBetVal(true)
 	self.enterMsg = &protomsg.StatusMsg{
 		Status:           protomsg.RED2BLACKGAMESTATUS(self.s),
 		Status_StartTime: uint64(self.start_timestamp),
@@ -119,7 +119,7 @@ func (self *settlement) Enter(now int64) {
 		RedCards:         self.GameCards[0:3],
 		BlackCards:       self.GameCards[3:6],
 		AreaBetVal:       betval,
-		AreaBetVal_Own:   betval_own,
+		AreaBetVal_Own:   nil,
 		Status_Data:      settle,
 	}
 
@@ -127,7 +127,7 @@ func (self *settlement) Enter(now int64) {
 		if acc.SessionId == 0 {
 			continue
 		}
-		_, betval_own := self.areaBetVal(true, accid)
+		betval_own := self.playerAreaBetVal(accid)
 		self.enterMsg.AreaBetVal_Own = betval_own
 		send_tools.Send2Account(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg}, acc.SessionId)
 	}
@@ -145,7 +145,7 @@ func (self *settlement) leave(accid uint32) bool {
 }
 
 func (self *settlement) enterData(accountId uint32) *protomsg.StatusMsg {
-	_, betval_own := self.areaBetVal(true, accountId)
+	betval_own := self.playerAreaBetVal(accountId)
 	self.enterMsg.AreaBetVal_Own = betval_own
 	return self.enterMsg
 }

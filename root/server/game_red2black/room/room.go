@@ -26,7 +26,7 @@ type (
 
 		history         []*protomsg.ENTER_GAME_RED2BLACK_RES_Winner // 历史结果
 		status_duration map[ERoomStatus]int64                       // 每个状态的持续时间 (毫秒)
-		betPlayers      map[uint32]map[protomsg.RED2BLACKAREA]int64 // 玩家每个区域的押注
+		betPlayers      map[uint32]map[int32]int64                  // 玩家每个区域的押注
 		bets_conf       []int64                                     // 房间可押注筹码值
 		odds_conf       map[protomsg.RED2BLACKAREA]int64            // 区域赔率
 		pump_conf       map[protomsg.RED2BLACKAREA]int64            // 区域抽水比例
@@ -216,17 +216,25 @@ func (self *Room) count() int {
 	return len(self.accounts)
 }
 
-// 分别获得3个区域的总押注 robot 是否计算机器人
-func (self *Room) areaBetVal(robot bool, accID uint32) (map[int32]int64, map[int32]int64) {
+// 玩家三个区域的总押注
+func (self *Room) playerAreaBetVal(accID uint32) map[int32]int64 {
 	ret := make(map[int32]int64)
-	ret2 := make(map[int32]int64)
+	pb, e := self.betPlayers[accID]
+	if !e {
+		return ret
+	} else {
+		return pb
+	}
+	return ret
+}
+
+// 分别获得3个区域的总押注 robot 是否计算机器人
+func (self *Room) areaBetVal(robot bool) map[int32]int64 {
+	ret := make(map[int32]int64)
 	if robot {
-		for accid, bet := range self.betPlayers {
+		for _, bet := range self.betPlayers {
 			for area, val := range bet {
-				ret[int32(area)] += val
-				if accid == accID {
-					ret2[int32(area)] += val
-				}
+				ret[area] += val
 			}
 
 		}
@@ -235,16 +243,13 @@ func (self *Room) areaBetVal(robot bool, accID uint32) (map[int32]int64, map[int
 			acc := self.accounts[accid]
 			if acc.Robot == 0 {
 				for area, val := range bet {
-					ret[int32(area)] += val
-					if accid == accID {
-						ret2[int32(area)] += val
-					}
+					ret[area] += val
 				}
 			}
 		}
 	}
 
-	return ret, ret2
+	return ret
 }
 
 func (self *Room) SendBroadcast(msgID uint16, pb proto.Message) {

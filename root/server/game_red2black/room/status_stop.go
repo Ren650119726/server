@@ -34,7 +34,7 @@ func (self *stop) Enter(now int64) {
 		kill = true
 	}
 	if kill {
-		killbetVal, _ := self.areaBetVal(false, 0)
+		killbetVal := self.areaBetVal(false)
 		self.kill(killbetVal)
 	}
 
@@ -46,7 +46,7 @@ func (self *stop) Enter(now int64) {
 		log.Panicf("错误:%v ", err.Error())
 	}
 
-	betval, _ := self.areaBetVal(true, 0)
+	betval := self.areaBetVal(true)
 	self.enterMsg = &protomsg.StatusMsg{
 		Status:           protomsg.RED2BLACKGAMESTATUS(self.s),
 		Status_StartTime: uint64(self.start_timestamp),
@@ -62,7 +62,7 @@ func (self *stop) Enter(now int64) {
 		if acc.SessionId == 0 {
 			continue
 		}
-		_, betval_own := self.areaBetVal(true, accid)
+		betval_own := self.playerAreaBetVal(accid)
 		self.enterMsg.AreaBetVal_Own = betval_own
 		send_tools.Send2Account(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg}, acc.SessionId)
 	}
@@ -86,7 +86,7 @@ func (self *stop) leave(accid uint32) bool {
 }
 
 func (self *stop) enterData(accountId uint32) *protomsg.StatusMsg {
-	_, betval_own := self.areaBetVal(true, accountId)
+	betval_own := self.playerAreaBetVal(accountId)
 	self.enterMsg.AreaBetVal_Own = betval_own
 	return self.enterMsg
 }

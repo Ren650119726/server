@@ -49,7 +49,7 @@ func (self *betting) Enter(now int64) {
 		log.Panicf("错误:%v ", err.Error())
 	}
 
-	betval, _ := self.areaBetVal(true, 0)
+	betval := self.areaBetVal(true)
 	for _, acc := range self.accounts {
 		acc.Betcount = 0
 		if acc.GetMoney() < uint64(self.betlimit) {
@@ -74,7 +74,7 @@ func (self *betting) Enter(now int64) {
 
 func (self *betting) updateBetPlayers(now int64) {
 	if len(self.bets_cache) != 0 {
-		betval, _ := self.areaBetVal(true, 0)
+		betval := self.areaBetVal(true)
 		self.SendBroadcast(protomsg.RED2BLACKMSG_SC_BET_RED2BLACK_RES.UInt16(), &protomsg.BET_RED2BLACK_RES{
 			Players:    self.bets_cache,
 			AreaBetVal: betval,
@@ -102,7 +102,7 @@ func (self *betting) leave(accid uint32) bool {
 }
 
 func (self *betting) enterData(accountId uint32) *protomsg.StatusMsg {
-	_, betval_own := self.areaBetVal(true, accountId)
+	betval_own := self.playerAreaBetVal(accountId)
 	self.enterMsg.AreaBetVal_Own = betval_own
 	return self.enterMsg
 }
@@ -175,10 +175,10 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 		}
 		playerBets, e := self.betPlayers[acc.AccountId]
 		if !e {
-			self.betPlayers[acc.AccountId] = make(map[protomsg.RED2BLACKAREA]int64)
+			self.betPlayers[acc.AccountId] = make(map[int32]int64)
 			playerBets, _ = self.betPlayers[acc.AccountId]
 		}
-		playerBets[betdata.Area] += int64(betdata.Bet)
+		playerBets[int32(betdata.Area)] += int64(betdata.Bet)
 		self.bets_cache = append(self.bets_cache, &protomsg.BET_RED2BLACK_RES_BetPlayer{
 			AccountID: acc.GetAccountId(),
 			Area:      betdata.GetArea(),
@@ -239,7 +239,7 @@ func (self *betting) RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor int32, msg []
 		delete(self.betPlayers, acc.AccountId)
 		acc.CLeanTime = 0
 		// 通知玩家更新下注区域
-		total, _ := self.areaBetVal(true, 0)
+		total := self.areaBetVal(true)
 		msg := &protomsg.CLEAN_BET_RED2BLACK_RES{
 			AccountID:  acc.AccountId,
 			AreaBetVal: total,
