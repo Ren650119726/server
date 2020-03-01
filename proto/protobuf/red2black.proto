@@ -159,8 +159,9 @@ message CLEAN_BET_RED2BLACK_REQ {
 
 // 服务器广播清除下注
 message CLEAN_BET_RED2BLACK_RES {
-	uint32 AccountID 	 = 1;        // 清除的玩家
-	map<int32,int64> AreaBetVal = 2; // 3个区域所有人的总押注值
+	uint32 AccountID 	              = 1; // 清除的玩家
+	map<int32,int64> PlayerAreaBetVal = 2; // 玩家个人清除之前总押注值
+	map<int32,int64> AreaBetVal       = 3; // 3个区域所有人的总押注值
 }
 
 // 请求RED2BLACK玩家列表

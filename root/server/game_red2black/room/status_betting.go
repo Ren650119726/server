@@ -236,25 +236,26 @@ func (self *betting) RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor int32, msg []
 			acc.AddMoney(int64(totalVal), common.EOperateType_RED2BLACK_BET_CLEAN)
 		}
 
-		delete(self.betPlayers, acc.AccountId)
 		acc.CLeanTime = 0
 		// 通知玩家更新下注区域
 		total := self.areaBetVal(true)
 		msg := &protomsg.CLEAN_BET_RED2BLACK_RES{
-			AccountID:  acc.AccountId,
-			AreaBetVal: total,
+			AccountID:        acc.AccountId,
+			AreaBetVal:       total,
+			PlayerAreaBetVal: self.betPlayers[acc.AccountId],
 		}
 		self.SendBroadcast(protomsg.RED2BLACKMSG_SC_CLEAN_BET_RED2BLACK_RES.UInt16(), msg)
+		delete(self.betPlayers, acc.AccountId)
 	}
 
-	log.Infof("玩家请求清除:%v ", acc.GetAccountId())
-	if acc.Robot == 0 {
+	log.Infof("玩家:%v  请求清除下注", acc.GetAccountId())
+	if acc.Robot == 0 || acc.OSType != 4 {
 		back(acc.UnDevice, int64(acc.GetMoney()+totalVal))
 	} else {
 		// 错误返回
 		errback := func() {
 			log.Panicf("http请求报错 玩家:%v roomID:%v  下注:%v 失败", acc.GetAccountId(), self.roomId, totalVal)
 		}
-		asyn_addMoney(acc.UnDevice, int64(totalVal), int32(self.roomId), fmt.Sprintf("红黑大战请求下注:%v ", totalVal), back, errback)
+		asyn_addMoney(acc.UnDevice, int64(totalVal), int32(self.roomId), fmt.Sprintf("红黑大战请求清除下注:%v ", totalVal), back, errback)
 	}
 }

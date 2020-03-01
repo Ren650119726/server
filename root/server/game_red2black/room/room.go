@@ -253,9 +253,21 @@ func (self *Room) areaBetVal(robot bool) map[int32]int64 {
 }
 
 func (self *Room) SendBroadcast(msgID uint16, pb proto.Message) {
+	var bytes []byte
+	if pb == nil {
+		bytes = []byte{}
+	} else {
+		data, error := proto.Marshal(pb)
+		if error != nil {
+			log.Errorf("发送数据出错 :%v", error.Error())
+			return
+		}
+		bytes = data
+	}
+
 	for _, acc := range self.accounts {
 		if acc.Robot == 0 && acc.SessionId > 0 {
-			send_tools.Send2Account(msgID, pb, acc.SessionId)
+			send_tools.Send2AccountBytes(msgID, bytes, acc.SessionId)
 		}
 	}
 }
