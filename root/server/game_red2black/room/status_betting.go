@@ -247,6 +247,7 @@ func (self *betting) RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor int32, msg []
 		self.SendBroadcast(protomsg.RED2BLACKMSG_SC_CLEAN_BET_RED2BLACK_RES.UInt16(), msg)
 	}
 
+	log.Infof("玩家请求清除:%v ", acc.GetAccountId())
 	if acc.Robot == 0 {
 		back(acc.UnDevice, int64(acc.GetMoney()+totalVal))
 	} else {
