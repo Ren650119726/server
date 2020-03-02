@@ -9,9 +9,11 @@ import (
 	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
+	"root/protomsg/inner"
 	"root/server/game_red2black/algorithm"
 	"root/server/game_red2black/send_tools"
 	"sort"
+	"strconv"
 )
 
 type (
@@ -134,6 +136,11 @@ func (self *settlement) Enter(now int64) {
 		self.enterMsg.AreaBetVal_Own = betval_own
 		send_tools.Send2Account(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg}, acc.SessionId)
 	}
+
+	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_PROFIT_SAVE.UInt16(), &inner.ROOM_PROFIT_SAVE{
+		RoomID: self.roomId,
+		Value:  strconv.Itoa(int(self.profit)),
+	})
 	log.Infof("win:%v 红方牌:%v  黑方牌:%v 房间盈利:%v", win, tred, tblack, self.profit)
 }
 

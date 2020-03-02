@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	arr := []int{1, 4, 6, 2}
+	arr := arr[]
 	// 创建server
 	r2b := logic.NewRed2Black()
 	msgchan := make(chan core.IMessage, 10000)

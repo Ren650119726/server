@@ -75,6 +75,12 @@ func (self *Hall) SERVERMSG_GH_ROOM_BONUS_SAVE(actor int32, msg []byte, session 
 	GameMgr.savebounus = true
 }
 
+// 游戏请求回存盈利金额
+func (self *Hall) SERVERMSG_GH_ROOM_PROFIT_SAVE(actor int32, msg []byte, session int64) {
+	data := packet.PBUnmarshal(msg, &inner.ROOM_PROFIT_SAVE{}).(*inner.ROOM_PROFIT_SAVE)
+	GameMgr.room_profit[data.GetRoomID()] = data.GetValue()
+}
+
 // db返回的所有房间水池
 func (self *Hall) SERVERMSG_DH_ALL_ROOM_BONUS(actor int32, msg []byte, session int64) {
 	if session != 0 {

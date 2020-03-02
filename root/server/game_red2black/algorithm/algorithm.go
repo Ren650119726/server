@@ -1,7 +1,6 @@
 package algorithm
 
 import (
-	"math/rand"
 	"root/core/log"
 	"root/core/utils"
 	"root/protomsg"
@@ -9,7 +8,6 @@ import (
 
 // 随机获得不重复的n张牌
 func GetRandom_Card(cards []*protomsg.Card, count int) []*protomsg.Card {
-	rand.Seed(utils.SecondTimeSince1970())
 	ret := make([]*protomsg.Card, 0, count)
 	for i := 0; i < count; i++ {
 		last := len(cards) - 1 - i

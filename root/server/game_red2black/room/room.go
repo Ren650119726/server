@@ -2,6 +2,7 @@ package room
 
 import (
 	"github.com/golang/protobuf/proto"
+	"math/rand"
 	"root/common"
 	"root/core"
 	"root/core/log"
@@ -64,6 +65,7 @@ func (self *Room) Init(actor *core.Actor) bool {
 	// 200ms 更新一次
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*0.2, -1, self.update)
 
+	rand.Seed(utils.SecondTimeSince1970())
 	// 初始化，获取房间盈利
 	return true
 }

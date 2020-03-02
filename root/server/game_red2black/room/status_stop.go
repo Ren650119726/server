@@ -125,7 +125,7 @@ func (self *stop) kill(betVal map[int32]int64) {
 	for _, v := range arr {
 		log.Infof("演算结果:%v", v)
 	}
-	for i := 0; i < len(arr)-1; i++ {
+	for i := 0; i < len(arr); i++ {
 		if arr[i].syswinVal < 0 {
 			if i == 0 {
 				log.Errorf("计算不出吃大赔小的情况，请检查 初始随机牌组:%v 押注：%v", self.GameCards, betVal)
@@ -139,7 +139,7 @@ func (self *stop) kill(betVal map[int32]int64) {
 
 	// 做一个随机，最终取用下标0的值
 	if l := len(arr); l >= 2 {
-		i := utils.Randx_y(1, l)
+		i := utils.Randx_y(0, l)
 		arr[0], arr[i] = arr[i], arr[0]
 	}
 	log.Infof("决定取用的杀分结果:%v", arr[0])
@@ -170,14 +170,16 @@ func (self *stop) kill(betVal map[int32]int64) {
 		for i := 0; i < 5000; i++ {
 			red := append([]*protomsg.Card{}, self.GameCards[:self.showNum]...)
 			black := append([]*protomsg.Card{}, self.GameCards[3:3+self.showNum]...)
+
 			cards := algorithm.GetRandom_Card(availableCard, num)
+			log.Infof("随机得到的牌:%v", cards)
 			red = append(red, cards[:num/2]...)
 			black = append(black, cards[num/2:num]...)
 			if len(red) != 3 || len(black) != 3 {
 				log.Errorf("逻辑错误 red:%v black:%v show:%v len(availableCard):%v", red, black, self.showNum, len(availableCard))
 				break
 			}
-			result, tred, tblack = algorithm.Compare(red, black)
+			result, tred, tblack = algorithm.Compare(append([]*protomsg.Card{}, red...), append([]*protomsg.Card{}, black...))
 			if result {
 				win = protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED
 				t = tred

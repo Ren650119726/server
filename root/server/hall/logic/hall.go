@@ -169,6 +169,8 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.SERVERMSG_GH_ROOM_BONUS_REQ(actor, pack.ReadBytes(), session)
 	case inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(): // 游戏请求回存水池金额
 		self.SERVERMSG_GH_ROOM_BONUS_SAVE(actor, pack.ReadBytes(), session)
+	case inner.SERVERMSG_GH_ROOM_PROFIT_SAVE.UInt16(): // 游戏请求回存盈利金额
+		self.SERVERMSG_GH_ROOM_PROFIT_SAVE(actor, pack.ReadBytes(), session)
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到测试网络消息 SessionID:%v", session)

@@ -40,6 +40,7 @@ enum SERVERMSG {
 	GH_ROOM_BONUS_REQ    = 185; // 请求房间水池金额
 	HG_ROOM_BONUS_RES    = 186; //
 	GH_ROOM_BONUS_SAVE   = 187; // 回存房间水池金额
+	GH_ROOM_PROFIT_SAVE  = 188; // 回存房间盈利金额
 }
 
 // 发送到db执行 sql syntax
@@ -166,6 +167,12 @@ message ROOM_BONUS_RES {
 
 // 回存房间水池金额
 message ROOM_BONUS_SAVE {
+    uint32 RoomID    = 1;
+	string Value     = 2;// 房间水池金额
+}
+
+// 回存房间水池金额
+message ROOM_PROFIT_SAVE {
     uint32 RoomID    = 1;
 	string Value     = 2;// 房间水池金额
 }
