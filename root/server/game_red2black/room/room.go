@@ -3,7 +3,6 @@ package room
 import (
 	"github.com/golang/protobuf/proto"
 	"root/common"
-	"root/common/config"
 	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
@@ -64,7 +63,6 @@ func (self *Room) Init(actor *core.Actor) bool {
 
 	// 200ms 更新一次
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*0.2, -1, self.update)
-	self.profit = int64(config.Get_configInt("red2black_room", int(self.roomId), "Lose_Gold"))
 
 	// 初始化，获取房间盈利
 	return true

@@ -30,10 +30,11 @@ func (self *stop) Enter(now int64) {
 	log.Debugf(colorized.Yellow("stop enter duration:%v"), duration)
 
 	kill := utils.Probability10000(config.Get_configInt("red2black_room", int(self.roomId), "Kill_Point"))
-	if self.profit < 0 {
+	if self.profit < -int64(config.Get_configInt("red2black_room", int(self.roomId), "Lose_Gold")) {
 		kill = true
 	}
 	if kill {
+		log.Debugf("杀分前 结果牌:%v ", self.GameCards)
 		killbetVal := self.areaBetVal(false)
 		self.kill(killbetVal)
 	}
@@ -94,7 +95,7 @@ func (self *stop) enterData(accountId uint32) *protomsg.StatusMsg {
 //三方押注
 func (self *stop) kill(betVal map[int32]int64) {
 	if len(betVal) == 0 {
-		// 没有一个真实玩家下注，不需要处理吃大配小逻辑
+		// 没有一个真实玩家下注，不需要处理吃大配小
 		return
 	}
 
@@ -120,7 +121,10 @@ func (self *stop) kill(betVal map[int32]int64) {
 	sort.Slice(arr, func(i, j int) bool {
 		return arr[i].syswinVal > arr[j].syswinVal
 	})
-	log.Infof("三方押注触发 吃大赔小 对子赔率:%v 演算结果:%+v ", duizi_odds, arr)
+	log.Infof("三方押注触发 吃大赔小 对子赔率:%v", duizi_odds)
+	for _, v := range arr {
+		log.Infof("演算结果:%v", v)
+	}
 	for i := 0; i < len(arr)-1; i++ {
 		if arr[i].syswinVal < 0 {
 			if i == 0 {
@@ -145,7 +149,10 @@ func (self *stop) kill(betVal map[int32]int64) {
 		win protomsg.RED2BLACKAREA
 		t   protomsg.RED2BLACKCARDTYPE
 	)
-	result, tred, tblack := algorithm.Compare(self.GameCards[:3], self.GameCards[3:6])
+	redc := append([]*protomsg.Card{}, self.GameCards[:3]...)
+	blackc := append([]*protomsg.Card{}, self.GameCards[3:6]...)
+	result, tred, tblack := algorithm.Compare(redc, blackc)
+	log.Infof("自然结果 ret:%v tred:%v tblack:%v ", result, tred, tblack)
 	if result {
 		win = protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED
 		t = tred
@@ -158,13 +165,13 @@ func (self *stop) kill(betVal map[int32]int64) {
 	if int32(win) == arr[0].win && odd <= arr[0].odds {
 		log.Infof("结果和杀分结果一致，不需要配牌 win:%v t:%v", win.String(), t.String())
 	} else {
-		// 先给输家配牌
 		num := (3 - self.showNum) * 2 // 1边需要随3-show张牌
+
 		for i := 0; i < 5000; i++ {
-			cards := algorithm.GetRandom_Card(availableCard, num)
 			red := append([]*protomsg.Card{}, self.GameCards[:self.showNum]...)
+			black := append([]*protomsg.Card{}, self.GameCards[3:3+self.showNum]...)
+			cards := algorithm.GetRandom_Card(availableCard, num)
 			red = append(red, cards[:num/2]...)
-			black := append([]*protomsg.Card{}, self.GameCards[self.showNum:3+self.showNum]...)
 			black = append(black, cards[num/2:num]...)
 			if len(red) != 3 || len(black) != 3 {
 				log.Errorf("逻辑错误 red:%v black:%v show:%v len(availableCard):%v", red, black, self.showNum, len(availableCard))
