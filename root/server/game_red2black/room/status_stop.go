@@ -27,14 +27,14 @@ func (self *stop) Enter(now int64) {
 	duration := self.status_duration[self.s]
 	self.start_timestamp = utils.MilliSecondTimeSince1970()
 	self.end_timestamp = self.start_timestamp + duration
-	log.Debugf(colorized.Yellow("stop enter duration:%v"), duration)
+	self.log(colorized.Yellow("stop enter duration:%v"), duration)
 
 	kill := utils.Probability10000(config.Get_configInt("red2black_room", int(self.roomId), "Kill_Point"))
 	if self.profit < -int64(config.Get_configInt("red2black_room", int(self.roomId), "Lose_Gold")) {
 		kill = true
 	}
 	if kill {
-		log.Debugf("杀分前 结果牌:%v ", self.GameCards)
+		self.log("杀分前 结果牌:%v ", self.GameCards)
 		killbetVal := self.areaBetVal(false)
 		self.kill(killbetVal)
 	}
@@ -67,7 +67,7 @@ func (self *stop) Enter(now int64) {
 		self.enterMsg.AreaBetVal_Own = betval_own
 		send_tools.Send2Account(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg}, acc.SessionId)
 	}
-	log.Debugf("结果牌:%v 三方押注:%v", self.GameCards, betval)
+	self.log("结果牌:%v 三方押注:%v", self.GameCards, betval)
 }
 
 func (self *stop) Tick(now int64) {
@@ -123,12 +123,12 @@ func (self *stop) kill(betVal map[int32]int64) {
 	})
 	log.Infof("三方押注触发 吃大赔小 对子赔率:%v", duizi_odds)
 	for _, v := range arr {
-		log.Infof("演算结果:%v", v)
+		self.log("演算结果:%v", v)
 	}
 	for i := 0; i < len(arr); i++ {
 		if arr[i].syswinVal < 0 {
 			if i == 0 {
-				log.Errorf("计算不出吃大赔小的情况，请检查 初始随机牌组:%v 押注：%v", self.GameCards, betVal)
+				log.Errorf("计算不出吃大赔小的情况，请检查 初始随机牌组:%v 押注：%v roomid:%v ", self.GameCards, betVal, self.roomId)
 				break
 			}
 			// 去掉所有系统亏钱的情况
@@ -142,7 +142,7 @@ func (self *stop) kill(betVal map[int32]int64) {
 		i := utils.Randx_y(0, l)
 		arr[0], arr[i] = arr[i], arr[0]
 	}
-	log.Infof("决定取用的杀分结果:%v", arr[0])
+	self.log("决定取用的杀分结果:%v", arr[0])
 
 	// 如果当前结果满足吃大赔小，不需要配牌
 	var (
@@ -152,7 +152,7 @@ func (self *stop) kill(betVal map[int32]int64) {
 	redc := append([]*protomsg.Card{}, self.GameCards[:3]...)
 	blackc := append([]*protomsg.Card{}, self.GameCards[3:6]...)
 	result, tred, tblack := algorithm.Compare(redc, blackc)
-	log.Infof("自然结果 ret:%v tred:%v tblack:%v ", result, tred, tblack)
+	self.log("自然结果 ret:%v tred:%v tblack:%v ", result, tred, tblack)
 	if result {
 		win = protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED
 		t = tred
@@ -163,7 +163,7 @@ func (self *stop) kill(betVal map[int32]int64) {
 	odd := int64(config.Get_configInt("red2black_card", int(t), "Card_Odds"))
 
 	if int32(win) == arr[0].win && odd <= arr[0].odds {
-		log.Infof("结果和杀分结果一致，不需要配牌 win:%v t:%v", win.String(), t.String())
+		self.log("结果和杀分结果一致，不需要配牌 win:%v t:%v", win.String(), t.String())
 	} else {
 		num := (3 - self.showNum) * 2 // 1边需要随3-show张牌
 
@@ -172,11 +172,11 @@ func (self *stop) kill(betVal map[int32]int64) {
 			black := append([]*protomsg.Card{}, self.GameCards[3:3+self.showNum]...)
 
 			cards := algorithm.GetRandom_Card(availableCard, num)
-			log.Infof("随机得到的牌:%v", cards)
+			self.log("随机得到的牌:%v", cards)
 			red = append(red, cards[:num/2]...)
 			black = append(black, cards[num/2:num]...)
 			if len(red) != 3 || len(black) != 3 {
-				log.Errorf("逻辑错误 red:%v black:%v show:%v len(availableCard):%v", red, black, self.showNum, len(availableCard))
+				log.Errorf("逻辑错误 red:%v black:%v show:%v len(availableCard):%v roomid:%v ", red, black, self.showNum, len(availableCard), self.roomId)
 				break
 			}
 			result, tred, tblack = algorithm.Compare(append([]*protomsg.Card{}, red...), append([]*protomsg.Card{}, black...))
@@ -189,12 +189,12 @@ func (self *stop) kill(betVal map[int32]int64) {
 			}
 			odd = int64(config.Get_configInt("red2black_card", int(t), "Card_Odds"))
 			if int32(win) == arr[0].win && odd <= arr[0].odds {
-				log.Infof("随机配牌结果成功，result:%v red:%v %v black:%v %v ", result, red, tred.String(), black, tblack.String())
+				self.log("随机配牌结果成功，result:%v red:%v %v black:%v %v ", result, red, tred.String(), black, tblack.String())
 				self.GameCards = self.GameCards[:0]
 				self.GameCards = append(red, black...)
 				break
 			} else {
-				log.Infof("随机配牌结果失败，result:%v red:%v %v black:%v %v ", result, red, tred.String(), black, tblack.String())
+				self.log("随机配牌结果失败，result:%v red:%v %v black:%v %v ", result, red, tred.String(), black, tblack.String())
 			}
 		}
 	}
@@ -214,8 +214,8 @@ func (self *stop) prep_settlement(betVal map[int32]int64, win protomsg.RED2BLACK
 }
 
 func (self *stop) Leave(now int64) {
-	log.Debugf(colorized.Green("stop leave\n"))
-	log.Debugf("")
+	self.log(colorized.Green("stop leave\n"))
+	self.log("")
 }
 func (self *stop) Handle(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)

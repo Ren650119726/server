@@ -30,7 +30,7 @@ func (self *settlement) Enter(now int64) {
 	duration := self.status_duration[self.s]
 	self.start_timestamp = utils.MilliSecondTimeSince1970()
 	self.end_timestamp = self.start_timestamp + duration
-	log.Debugf(colorized.Gray("settlement enter duration:%v"), duration)
+	self.log(colorized.Gray("settlement enter duration:%v"), duration)
 
 	var (
 		win   protomsg.RED2BLACKAREA
@@ -57,7 +57,7 @@ func (self *settlement) Enter(now int64) {
 		sort.Slice(wincard, func(i, j int) bool {
 			return wincard[i].Number > wincard[j].Number
 		})
-		log.Infof("特殊对子判断:%v ", wincard)
+		self.log("特殊对子判断:%v ", wincard)
 		// 特殊对子，没有赔率
 		if 2 <= wincard[1].Number && wincard[1].Number <= 8 {
 			specialArea_odd = 0
@@ -94,7 +94,7 @@ func (self *settlement) Enter(now int64) {
 		if acc.Robot == 0 {
 			self.profit -= winArea_profit + specialArea_profit - loss_val
 		}
-		log.Infof("玩家:%v 押注:%v 输掉的钱:%v 归还本金:%v 赢方区域盈利:%v 特殊区域盈利:%v 总输赢(不算本金):%v ", accid, bets, loss_val, principal_val, winArea_profit, specialArea_profit, winArea_profit+specialArea_profit-loss_val)
+		self.log("玩家:%v 押注:%v 输掉的钱:%v 归还本金:%v 赢方区域盈利:%v 特殊区域盈利:%v 总输赢(不算本金):%v ", accid, bets, loss_val, principal_val, winArea_profit, specialArea_profit, winArea_profit+specialArea_profit-loss_val)
 	}
 	self.history = append(self.history, &protomsg.ENTER_GAME_RED2BLACK_RES_Winner{
 		WinArea:     win,
@@ -141,7 +141,7 @@ func (self *settlement) Enter(now int64) {
 		RoomID: self.roomId,
 		Value:  strconv.Itoa(int(self.profit)),
 	})
-	log.Infof("win:%v 红方牌:%v  黑方牌:%v 房间盈利:%v", win, tred, tblack, self.profit)
+	self.log("win:%v 红方牌:%v  黑方牌:%v 房间盈利:%v", win, tred, tblack, self.profit)
 }
 
 func (self *settlement) Tick(now int64) {
@@ -161,8 +161,8 @@ func (self *settlement) enterData(accountId uint32) *protomsg.StatusMsg {
 }
 
 func (self *settlement) Leave(now int64) {
-	log.Debugf(colorized.Gray("settlement leave\n"))
-	log.Debugf(colorized.Blue(""))
+	self.log(colorized.Gray("settlement leave\n"))
+	self.log("")
 }
 
 func (self *settlement) Handle(actor int32, msg []byte, session int64) bool {

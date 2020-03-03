@@ -20,10 +20,23 @@ type (
 )
 
 func (self *waitting) Enter(now int64) {
+	log.Infof("****************************************************************************")
+	log.Infof("****************************************************************************")
+	log.Infof("****************************************************************************")
+	log.Infof("----------------------房间:[%v] origin----------------------", self.roomId)
+	for _, str := range self.logStack {
+		log.Info(str)
+	}
+	self.logStack = self.logStack[:0]
+	log.Infof("----------------------房间:[%v] final----------------------", self.roomId)
+	log.Infof("****************************************************************************")
+	log.Infof("****************************************************************************")
+	log.Infof("****************************************************************************")
+
 	duration := self.status_duration[self.s]
 	self.start_timestamp = utils.MilliSecondTimeSince1970()
 	self.end_timestamp = self.start_timestamp + duration
-	log.Debugf(colorized.Blue("waitting enter duration:%v"), duration)
+	self.log(colorized.Blue("waitting enter duration:%v"), duration)
 
 	self.GameCards = make([]*protomsg.Card, 0, 6)
 	self.betPlayers = make(map[uint32]map[int32]int64) // 清理押注过的玩家
@@ -82,8 +95,8 @@ func (self *waitting) enterData(accountId uint32) *protomsg.StatusMsg {
 }
 
 func (self *waitting) Leave(now int64) {
-	log.Debugf(colorized.Blue("waitting leave\n"))
-	log.Debugf(colorized.Blue(""))
+	self.log(colorized.Blue("waitting leave\n"))
+	self.log(colorized.Blue(""))
 }
 
 func (self *waitting) Handle(actor int32, msg []byte, session int64) bool {

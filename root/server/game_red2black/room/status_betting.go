@@ -32,13 +32,13 @@ func (self *betting) Enter(now int64) {
 	duration := self.status_duration[self.s]
 	self.start_timestamp = utils.MilliSecondTimeSince1970()
 	self.end_timestamp = self.start_timestamp + duration
-	log.Debugf(colorized.Yellow("betting enter duration:%v"), duration)
+	self.log(colorized.Yellow("betting enter duration:%v"), duration)
 
 	self.cd = make(map[uint32]int64)
 	self.forbidBetplayer = make(map[uint32]bool)
 	// 随机获得6张牌
 	self.GameCards = algorithm.GetRandom_Card(self.RoomCards, 6)
-	log.Infof("开始下注显示:%v 张 本局牌:%+v ", self.showNum, self.GameCards)
+	self.log("开始下注显示:%v 张 本局牌:%+v ", self.showNum, self.GameCards)
 
 	self.bets_cache = make([]*protomsg.BET_RED2BLACK_RES_BetPlayer, 0)
 	// 广播房间玩家，切换状态
@@ -108,8 +108,8 @@ func (self *betting) enterData(accountId uint32) *protomsg.StatusMsg {
 }
 
 func (self *betting) Leave(now int64) {
-	log.Debugf(colorized.Yellow("betting leave\n"))
-	log.Debugf(colorized.Blue(""))
+	self.log(colorized.Yellow("betting leave\n"))
+	self.log(colorized.Blue(""))
 }
 
 func (self *betting) Handle(actor int32, msg []byte, session int64) bool {
@@ -184,7 +184,7 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 			Area:      betdata.GetArea(),
 			Bet:       betdata.Bet,
 		})
-		log.Infof("acc:%v下注成功,下注区域:%v 金额:%v", acc.GetAccountId(), betdata.Area, betdata.Bet)
+		self.log("acc:%v下注成功,下注区域:%v 金额:%v", acc.GetAccountId(), betdata.Area, betdata.Bet)
 		acc.Betcount--
 	}
 
@@ -196,7 +196,7 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 		errback := func() {
 			log.Panicf("http请求报错 玩家:%v roomID:%v  下注:%v 失败", acc.GetAccountId(), self.roomId, betdata.GetBet())
 		}
-		log.Infof("acc:%v unique:%v 请求下注,下注区域:%v 金额:%v", acc.GetAccountId(), acc.UnDevice, betdata.Area, betdata.Bet)
+		self.log("acc:%v unique:%v 请求下注,下注区域:%v 金额:%v", acc.GetAccountId(), acc.UnDevice, betdata.Area, betdata.Bet)
 		asyn_addMoney(acc.UnDevice, -int64(betdata.GetBet()), int32(self.roomId), fmt.Sprintf("红黑大战请求下注:%v", betdata.GetBet()), back, errback)
 	}
 }
@@ -230,7 +230,7 @@ func (self *betting) RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor int32, msg []
 	self.cd[acc.GetAccountId()] = now
 	back := func(backunique string, backmoney int64) {
 		if acc.GetMoney()+totalVal != uint64(backmoney) {
-			log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v", acc.GetUnDevice(), acc.GetMoney(), totalVal, backmoney)
+			self.log("数据错误  ->>>>>> roomid:%v userID:%v money:%v Bet:%v gold:%v", self.roomId, acc.GetUnDevice(), acc.GetMoney(), totalVal, backmoney)
 			acc.AddMoney(backmoney-int64(acc.GetMoney()), common.EOperateType_INIT)
 		} else {
 			acc.AddMoney(int64(totalVal), common.EOperateType_RED2BLACK_BET_CLEAN)

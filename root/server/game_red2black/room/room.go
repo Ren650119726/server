@@ -1,6 +1,7 @@
 package room
 
 import (
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"math/rand"
 	"root/common"
@@ -35,6 +36,7 @@ type (
 		showNum         int                                         // 开局显示的牌数
 		betlimit        int64                                       //
 		GameCards       []*protomsg.Card                            // 本局随机牌组 0-2 红方   3-5 黑方
+		logStack        []string                                    // 房间日志堆栈
 	}
 )
 
@@ -47,6 +49,7 @@ func NewRoom(id uint32) *Room {
 		odds_conf:       make(map[protomsg.RED2BLACKAREA]int64),
 		pump_conf:       make(map[protomsg.RED2BLACKAREA]int64),
 		history:         make([]*protomsg.ENTER_GAME_RED2BLACK_RES_Winner, 0, 70),
+		logStack:        make([]string, 0, 40),
 	}
 }
 
@@ -70,11 +73,18 @@ func (self *Room) Init(actor *core.Actor) bool {
 	return true
 }
 
+func (self *Room) log(format string, args ...interface{}) {
+	str := fmt.Sprintf(format, args...)
+	s := fmt.Sprintf("roomID:%v ", self.roomId)
+	self.logStack = append(self.logStack, s+str)
+	log.Infof(str)
+}
+
 func (self *Room) Stop() {
 	log.Infof("房间:%v 关闭", self.roomId)
 }
 func (self *Room) close() {
-	log.Infof("房间:%v 正在关闭", self.roomId)
+	log.Infof("房间:%v 开始关闭", self.roomId)
 	roomId := self.roomId
 	core.LocalCoreSend(0, common.EActorType_MAIN.Int32(), func() {
 		delete(RoomMgr.rooms, roomId)
@@ -152,7 +162,7 @@ func (self *Room) enterRoom(accountId uint32) {
 		Status:         statusEnter.enterData(accountId),
 	}
 	if enterRoom.Status == nil {
-		log.Errorf("进入房间没有Status！！！！！！！！！！！！！")
+		log.Errorf("进入房间:%v 没有Status！！！！！！！！！！！！！", self.roomId)
 	}
 	// 通知玩家进入游戏
 	send_tools.Send2Account(protomsg.RED2BLACKMSG_SC_ENTER_GAME_RED2BLACK_RES.UInt16(), enterRoom, acc.SessionId)
@@ -179,7 +189,7 @@ func (self *Room) canleave(accountId uint32) bool {
 	if b {
 		return iLeave.leave(accountId)
 	} else {
-		log.Errorf("当前状态没有处理leave  玩家不能退出 状态:%v ", self.status.State())
+		log.Errorf("当前状态没有处理leave roomid:%v  玩家不能退出 状态:%v ", self.roomId, self.status.State())
 	}
 	return false
 }
@@ -188,7 +198,7 @@ func (self *Room) canleave(accountId uint32) bool {
 func (self *Room) leaveRoom(accountId uint32) {
 	acc := self.accounts[accountId]
 	if acc == nil {
-		log.Debugf("离开房间找不到玩家:%v", accountId)
+		log.Debugf("离开房间%v 找不到玩家:%v", self.roomId, accountId)
 		return
 	}
 
@@ -259,7 +269,7 @@ func (self *Room) SendBroadcast(msgID uint16, pb proto.Message) {
 	} else {
 		data, error := proto.Marshal(pb)
 		if error != nil {
-			log.Errorf("发送数据出错 :%v", error.Error())
+			log.Errorf("发送数据出错 roomid:%v err:%v", self.roomId, error.Error())
 			return
 		}
 		bytes = data
