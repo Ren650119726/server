@@ -111,6 +111,9 @@ func (self *lhd) HandleMessage(actor int32, msg []byte, session int64) bool {
 				self.owner.Suspend()
 			}
 		})
+		for _, actor := range room.RoomMgr.Rooms {
+			core.CoreSend(self.owner.Id, int32(actor), msg, session)
+		}
 	case inner.SERVERMSG_HG_ROOM_WATER_PROFIT.UInt16():
 		PB := packet.PBUnmarshal(pack.ReadBytes(), &inner.SAVE_WATER_LINE{}).(*inner.SAVE_WATER_LINE)
 		core.CoreSend(self.owner.Id, int32(PB.GetRoomID()), msg, session)

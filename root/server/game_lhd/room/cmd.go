@@ -36,7 +36,7 @@ func reload(s []string) {
 
 	msg := packet.NewPacket(nil)
 	msg.SetMsgID(inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16())
-	for roomID, _ := range RoomMgr.rooms {
+	for roomID, _ := range RoomMgr.Rooms {
 		core.CoreSend(0, int32(roomID), msg.GetData(), 0)
 	}
 }
@@ -51,7 +51,7 @@ func Close(s []string) {
 	send := packet.NewPacket(nil)
 	send.SetMsgID(inner.SERVERMSG_SS_CLOSE_SERVER.UInt16())
 	core.CoreSend(0, common.EActorType_MAIN.Int32(), send.GetData(), 0)
-	for _, room := range RoomMgr.rooms {
+	for _, room := range RoomMgr.Rooms {
 		core.CoreSend(0, int32(room), send.GetData(), 0)
 	}
 }

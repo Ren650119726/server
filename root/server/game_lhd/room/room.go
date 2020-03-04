@@ -87,7 +87,7 @@ func (self *Room) close() {
 	log.Infof("房间:%v 开始关闭", self.roomId)
 	roomId := self.roomId
 	core.LocalCoreSend(0, common.EActorType_MAIN.Int32(), func() {
-		delete(RoomMgr.rooms, roomId)
+		delete(RoomMgr.Rooms, roomId)
 	})
 	self.Close = true
 }

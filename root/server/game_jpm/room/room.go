@@ -16,32 +16,31 @@ import (
 
 type (
 	Room struct {
-		owner     *core.Actor
-		status    *utils.FSM
-		roomId    uint32
-		accounts  map[uint32]*account.Account // 进房间的所有人
-		Close     bool
-		bonus     int64 // 奖金池
+		owner    *core.Actor
+		status   *utils.FSM
+		roomId   uint32
+		accounts map[uint32]*account.Account // 进房间的所有人
+		Close    bool
+		bonus    int64 // 奖金池
 
-		bets      []uint64
-		basics    int64 // 奖金池 中将的基础金额系数
-		jackpotRate uint64 // 滚动率
+		bets            []uint64
+		basics          int64  // 奖金池 中将的基础金额系数
+		jackpotRate     uint64 // 滚动率
 		mapPictureNodes map[int]*pictureNode
-		jackLimit int64
-		lineConf  [][5]int
-		mainWheel []*wheelNode
-		freeWheel []*wheelNode
-		JPMWheel []*wheelNode
-		bonus_pattern map[int]int
-
+		jackLimit       int64
+		lineConf        [][5]int
+		mainWheel       []*wheelNode
+		freeWheel       []*wheelNode
+		JPMWheel        []*wheelNode
+		bonus_pattern   map[int]int
 	}
 )
 
 func NewRoom(id uint32) *Room {
 	return &Room{
-		accounts: 	make(map[uint32]*account.Account),
-		roomId:   	id,
-		Close:    	false,
+		accounts: make(map[uint32]*account.Account),
+		roomId:   id,
+		Close:    false,
 	}
 }
 
@@ -58,20 +57,20 @@ func (self *Room) Init(actor *core.Actor) bool {
 	self.bonus = 0
 
 	// 请求水池金额
-	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_REQ.UInt16(),&inner.ROOM_BONUS_REQ{
-		RoomID:    self.roomId,
+	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_REQ.UInt16(), &inner.ROOM_BONUS_REQ{
+		RoomID: self.roomId,
 	})
 	return true
 }
 
 func (self *Room) Stop() {
-	log.Infof("房间:%v 关闭，回存房间水池:%v ",self.roomId,self.bonus)
+	log.Infof("房间:%v 关闭，回存房间水池:%v ", self.roomId, self.bonus)
 }
 func (self *Room) close() {
-	log.Infof("房间:%v 正在关闭",self.roomId)
+	log.Infof("房间:%v 正在关闭", self.roomId)
 	roomId := self.roomId
-	core.LocalCoreSend(0,common.EActorType_MAIN.Int32(), func() {
-		delete(RoomMgr.rooms,roomId)
+	core.LocalCoreSend(0, common.EActorType_MAIN.Int32(), func() {
+		delete(RoomMgr.Rooms, roomId)
 	})
 	self.Close = true
 	self.owner.Suspend()
@@ -86,19 +85,19 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 	case inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16(): // 更新配置
 		self.LoadConfig()
 	case inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(): // 大厅通知修改玩家数据
-		self.SERVERMSG_HG_NOTIFY_ALTER_DATE(actor,pack.ReadBytes(),session)
+		self.SERVERMSG_HG_NOTIFY_ALTER_DATE(actor, pack.ReadBytes(), session)
 	case utils.ID_DISCONNECT: // 有连接断开
 		self.Disconnect(session)
 	case protomsg.JPMMSG_CS_ENTER_GAME_JPM_REQ.UInt16(): // 请求进入房间
-		self.JPMMSG_CS_ENTER_GAME_JPM_REQ(actor,pack.ReadBytes(),session)
+		self.JPMMSG_CS_ENTER_GAME_JPM_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.JPMMSG_CS_LEAVE_GAME_JPM_REQ.UInt16(): // 请求离开房间
-		self.JPMMSG_CS_LEAVE_GAME_JPM_REQ(actor,pack.ReadBytes(),session)
+		self.JPMMSG_CS_LEAVE_GAME_JPM_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(): // 请求开始游戏
-		self.JPMMSG_CS_START_JPM_REQ(actor,pack.ReadBytes(),session)
-	case protomsg.JPMMSG_CS_PLAYERS_JPM_LIST_REQ.UInt16():// 请求玩家列表
-		self.JPMMSG_CS_PLAYERS_JPM_LIST_REQ(actor,pack.ReadBytes(),session)
-	case inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16():// 水池金额
-		self.SERVERMSG_HG_ROOM_BONUS_RES(actor,pack.ReadBytes(),session)
+		self.JPMMSG_CS_START_JPM_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.JPMMSG_CS_PLAYERS_JPM_LIST_REQ.UInt16(): // 请求玩家列表
+		self.JPMMSG_CS_PLAYERS_JPM_LIST_REQ(actor, pack.ReadBytes(), session)
+	case inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16(): // 水池金额
+		self.SERVERMSG_HG_ROOM_BONUS_RES(actor, pack.ReadBytes(), session)
 	default:
 		self.status.Handle(actor, msg, session)
 	}
@@ -126,13 +125,12 @@ func (self *Room) canEnterRoom(accountId uint32) int {
 }
 
 // 进入房间
-func (self *Room) enterRoom(accountId uint32){
+func (self *Room) enterRoom(accountId uint32) {
 	acc := account.AccountMgr.GetAccountByID(accountId)
 	if acc == nil {
 		log.Errorf("找不到acc:%v", accountId)
 		return
 	}
-
 
 	acc.RoomID = self.roomId
 	self.accounts[accountId] = acc
@@ -144,30 +142,30 @@ func (self *Room) enterRoom(accountId uint32){
 	}
 
 	// 通知玩家进入游戏
-	send_tools.Send2Account(protomsg.JPMMSG_SC_ENTER_GAME_JPM_RES.UInt16(),&protomsg.ENTER_GAME_JPM_RES{
-		RoomID:self.roomId,
-		Basics:self.basics,
-		Bonus:self.bonus,
-		LastBet:int64(acc.LastBet),
-		Bets:self.bets,
-		FeeCount:acc.FeeCount,
-	},acc.SessionId)
+	send_tools.Send2Account(protomsg.JPMMSG_SC_ENTER_GAME_JPM_RES.UInt16(), &protomsg.ENTER_GAME_JPM_RES{
+		RoomID:   self.roomId,
+		Basics:   self.basics,
+		Bonus:    self.bonus,
+		LastBet:  int64(acc.LastBet),
+		Bets:     self.bets,
+		FeeCount: acc.FeeCount,
+	}, acc.SessionId)
 
 	// 通知大厅 玩家进入房间
-	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_ENTER_ROOM.UInt16(),&inner.PLAYER_ENTER_ROOM{
+	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_ENTER_ROOM.UInt16(), &inner.PLAYER_ENTER_ROOM{
 		AccountID: acc.GetAccountId(),
 		RoomID:    self.roomId,
 	})
 	return
 }
 
-func (self *Room)canleave(accountId uint32) bool  {
+func (self *Room) canleave(accountId uint32) bool {
 	acc := self.accounts[accountId]
 	if acc == nil {
-		log.Warnf("找不到玩家:%v ",accountId)
+		log.Warnf("找不到玩家:%v ", accountId)
 		return false
 	}
-	if acc.FeeCount > 0{
+	if acc.FeeCount > 0 {
 		return false
 	}
 	return true
@@ -194,7 +192,7 @@ func (self *Room) leaveRoom(accountId uint32) {
 	})
 
 	// 通知大厅 玩家离开房间
-	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_LEAVE_ROOM.UInt16(),&inner.PLAYER_LEAVE_ROOM{
+	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_LEAVE_ROOM.UInt16(), &inner.PLAYER_LEAVE_ROOM{
 		AccountID: acc.GetAccountId(),
 		RoomID:    self.roomId,
 	})
@@ -207,7 +205,7 @@ func (self *Room) count() int {
 func (self *Room) SendBroadcast(msgID uint16, pb proto.Message) {
 	for _, acc := range self.accounts {
 		if acc.Robot == 0 && acc.SessionId > 0 {
-			send_tools.Send2Account(msgID, pb,acc.SessionId)
+			send_tools.Send2Account(msgID, pb, acc.SessionId)
 		}
 	}
 }
