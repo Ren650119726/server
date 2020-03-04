@@ -109,9 +109,7 @@ func (self *jpm) HandleMessage(actor int32, msg []byte, session int64) bool {
 				self.owner.Suspend()
 			}
 		})
-		for _, actor := range room.RoomMgr.Rooms {
-			core.CoreSend(self.owner.Id, int32(actor), msg, session)
-		}
+		room.Close(nil)
 	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16(): // 心跳
 		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
@@ -139,13 +137,4 @@ func (self *jpm) HandleMessage(actor int32, msg []byte, session int64) bool {
 		break
 	}
 	return true
-}
-
-func (self *jpm) Old_MSGID_MAINTENANCE_NOTICE(actor int32, msg []byte, session int64) {
-	pack := packet.NewPacket(msg)
-	if session != 0 {
-		log.Warnf("Error, 异常session:%v 处理消息编号:%v", session, pack.GetMsgID())
-		return
-	}
-	room.Close(nil)
 }
