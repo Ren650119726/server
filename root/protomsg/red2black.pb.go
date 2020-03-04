@@ -62,7 +62,7 @@ var RED2BLACKMSG_value = map[string]int32{
 func (x RED2BLACKMSG) String() string {
 	return proto.EnumName(RED2BLACKMSG_name, int32(x))
 }
-func (RED2BLACKMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
+func (RED2BLACKMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
 
 // //////////////////////////////////////////////////// 游戏枚举 /////////////////////////////////////////////////////////////
 // 下注区域
@@ -91,7 +91,7 @@ var RED2BLACKAREA_value = map[string]int32{
 func (x RED2BLACKAREA) String() string {
 	return proto.EnumName(RED2BLACKAREA_name, int32(x))
 }
-func (RED2BLACKAREA) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
+func (RED2BLACKAREA) EnumDescriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
 
 // 牌型
 type RED2BLACKCARDTYPE int32
@@ -131,7 +131,7 @@ var RED2BLACKCARDTYPE_value = map[string]int32{
 func (x RED2BLACKCARDTYPE) String() string {
 	return proto.EnumName(RED2BLACKCARDTYPE_name, int32(x))
 }
-func (RED2BLACKCARDTYPE) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{2} }
+func (RED2BLACKCARDTYPE) EnumDescriptor() ([]byte, []int) { return fileDescriptor7, []int{2} }
 
 // 游戏状态
 type RED2BLACKGAMESTATUS int32
@@ -162,7 +162,7 @@ var RED2BLACKGAMESTATUS_value = map[string]int32{
 func (x RED2BLACKGAMESTATUS) String() string {
 	return proto.EnumName(RED2BLACKGAMESTATUS_name, int32(x))
 }
-func (RED2BLACKGAMESTATUS) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{3} }
+func (RED2BLACKGAMESTATUS) EnumDescriptor() ([]byte, []int) { return fileDescriptor7, []int{3} }
 
 // //////////////////////////////////////////////////// 消息数据结构 /////////////////////////////////////////////////////////////
 // 请求进入房间
@@ -174,7 +174,7 @@ type ENTER_GAME_RED2BLACK_REQ struct {
 func (m *ENTER_GAME_RED2BLACK_REQ) Reset()                    { *m = ENTER_GAME_RED2BLACK_REQ{} }
 func (m *ENTER_GAME_RED2BLACK_REQ) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_RED2BLACK_REQ) ProtoMessage()               {}
-func (*ENTER_GAME_RED2BLACK_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
+func (*ENTER_GAME_RED2BLACK_REQ) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
 
 func (m *ENTER_GAME_RED2BLACK_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -203,7 +203,7 @@ type ENTER_GAME_RED2BLACK_RES struct {
 func (m *ENTER_GAME_RED2BLACK_RES) Reset()                    { *m = ENTER_GAME_RED2BLACK_RES{} }
 func (m *ENTER_GAME_RED2BLACK_RES) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_RED2BLACK_RES) ProtoMessage()               {}
-func (*ENTER_GAME_RED2BLACK_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
+func (*ENTER_GAME_RED2BLACK_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
 
 func (m *ENTER_GAME_RED2BLACK_RES) GetRoomID() uint32 {
 	if m != nil {
@@ -256,7 +256,7 @@ func (m *ENTER_GAME_RED2BLACK_RES_Winner) Reset()         { *m = ENTER_GAME_RED2
 func (m *ENTER_GAME_RED2BLACK_RES_Winner) String() string { return proto.CompactTextString(m) }
 func (*ENTER_GAME_RED2BLACK_RES_Winner) ProtoMessage()    {}
 func (*ENTER_GAME_RED2BLACK_RES_Winner) Descriptor() ([]byte, []int) {
-	return fileDescriptor6, []int{1, 0}
+	return fileDescriptor7, []int{1, 0}
 }
 
 func (m *ENTER_GAME_RED2BLACK_RES_Winner) GetWinArea() RED2BLACKAREA {
@@ -282,7 +282,7 @@ type LEAVE_GAME_RED2BLACK_REQ struct {
 func (m *LEAVE_GAME_RED2BLACK_REQ) Reset()                    { *m = LEAVE_GAME_RED2BLACK_REQ{} }
 func (m *LEAVE_GAME_RED2BLACK_REQ) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_RED2BLACK_REQ) ProtoMessage()               {}
-func (*LEAVE_GAME_RED2BLACK_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{2} }
+func (*LEAVE_GAME_RED2BLACK_REQ) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{2} }
 
 func (m *LEAVE_GAME_RED2BLACK_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -306,7 +306,7 @@ type LEAVE_GAME_RED2BLACK_RES struct {
 func (m *LEAVE_GAME_RED2BLACK_RES) Reset()                    { *m = LEAVE_GAME_RED2BLACK_RES{} }
 func (m *LEAVE_GAME_RED2BLACK_RES) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_RED2BLACK_RES) ProtoMessage()               {}
-func (*LEAVE_GAME_RED2BLACK_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{3} }
+func (*LEAVE_GAME_RED2BLACK_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{3} }
 
 func (m *LEAVE_GAME_RED2BLACK_RES) GetRet() uint32 {
 	if m != nil {
@@ -331,7 +331,7 @@ type SWITCH_GAME_STATUS_BROADCAST struct {
 func (m *SWITCH_GAME_STATUS_BROADCAST) Reset()                    { *m = SWITCH_GAME_STATUS_BROADCAST{} }
 func (m *SWITCH_GAME_STATUS_BROADCAST) String() string            { return proto.CompactTextString(m) }
 func (*SWITCH_GAME_STATUS_BROADCAST) ProtoMessage()               {}
-func (*SWITCH_GAME_STATUS_BROADCAST) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{4} }
+func (*SWITCH_GAME_STATUS_BROADCAST) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{4} }
 
 func (m *SWITCH_GAME_STATUS_BROADCAST) GetNextStatus() *StatusMsg {
 	if m != nil {
@@ -355,7 +355,7 @@ type StatusMsg struct {
 func (m *StatusMsg) Reset()                    { *m = StatusMsg{} }
 func (m *StatusMsg) String() string            { return proto.CompactTextString(m) }
 func (*StatusMsg) ProtoMessage()               {}
-func (*StatusMsg) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{5} }
+func (*StatusMsg) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{5} }
 
 func (m *StatusMsg) GetStatus() RED2BLACKGAMESTATUS {
 	if m != nil {
@@ -420,7 +420,7 @@ type Status_Wait struct {
 func (m *Status_Wait) Reset()                    { *m = Status_Wait{} }
 func (m *Status_Wait) String() string            { return proto.CompactTextString(m) }
 func (*Status_Wait) ProtoMessage()               {}
-func (*Status_Wait) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{6} }
+func (*Status_Wait) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{6} }
 
 // 2.押注
 type Status_Bet struct {
@@ -429,7 +429,7 @@ type Status_Bet struct {
 func (m *Status_Bet) Reset()                    { *m = Status_Bet{} }
 func (m *Status_Bet) String() string            { return proto.CompactTextString(m) }
 func (*Status_Bet) ProtoMessage()               {}
-func (*Status_Bet) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{7} }
+func (*Status_Bet) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{7} }
 
 // 3.停止下注
 type Status_Stop struct {
@@ -438,7 +438,7 @@ type Status_Stop struct {
 func (m *Status_Stop) Reset()                    { *m = Status_Stop{} }
 func (m *Status_Stop) String() string            { return proto.CompactTextString(m) }
 func (*Status_Stop) ProtoMessage()               {}
-func (*Status_Stop) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{8} }
+func (*Status_Stop) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{8} }
 
 // 4.结算
 type Status_Settle struct {
@@ -452,7 +452,7 @@ type Status_Settle struct {
 func (m *Status_Settle) Reset()                    { *m = Status_Settle{} }
 func (m *Status_Settle) String() string            { return proto.CompactTextString(m) }
 func (*Status_Settle) ProtoMessage()               {}
-func (*Status_Settle) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{9} }
+func (*Status_Settle) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{9} }
 
 func (m *Status_Settle) GetWinArea() RED2BLACKAREA {
 	if m != nil {
@@ -499,7 +499,7 @@ type BET_RED2BLACK_REQ struct {
 func (m *BET_RED2BLACK_REQ) Reset()                    { *m = BET_RED2BLACK_REQ{} }
 func (m *BET_RED2BLACK_REQ) String() string            { return proto.CompactTextString(m) }
 func (*BET_RED2BLACK_REQ) ProtoMessage()               {}
-func (*BET_RED2BLACK_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{10} }
+func (*BET_RED2BLACK_REQ) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{10} }
 
 func (m *BET_RED2BLACK_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -531,7 +531,7 @@ type BET_RED2BLACK_RES struct {
 func (m *BET_RED2BLACK_RES) Reset()                    { *m = BET_RED2BLACK_RES{} }
 func (m *BET_RED2BLACK_RES) String() string            { return proto.CompactTextString(m) }
 func (*BET_RED2BLACK_RES) ProtoMessage()               {}
-func (*BET_RED2BLACK_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{11} }
+func (*BET_RED2BLACK_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{11} }
 
 func (m *BET_RED2BLACK_RES) GetPlayers() []*BET_RED2BLACK_RES_BetPlayer {
 	if m != nil {
@@ -556,7 +556,7 @@ type BET_RED2BLACK_RES_BetPlayer struct {
 func (m *BET_RED2BLACK_RES_BetPlayer) Reset()                    { *m = BET_RED2BLACK_RES_BetPlayer{} }
 func (m *BET_RED2BLACK_RES_BetPlayer) String() string            { return proto.CompactTextString(m) }
 func (*BET_RED2BLACK_RES_BetPlayer) ProtoMessage()               {}
-func (*BET_RED2BLACK_RES_BetPlayer) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{11, 0} }
+func (*BET_RED2BLACK_RES_BetPlayer) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{11, 0} }
 
 func (m *BET_RED2BLACK_RES_BetPlayer) GetAccountID() uint32 {
 	if m != nil {
@@ -587,7 +587,7 @@ type CLEAN_BET_RED2BLACK_REQ struct {
 func (m *CLEAN_BET_RED2BLACK_REQ) Reset()                    { *m = CLEAN_BET_RED2BLACK_REQ{} }
 func (m *CLEAN_BET_RED2BLACK_REQ) String() string            { return proto.CompactTextString(m) }
 func (*CLEAN_BET_RED2BLACK_REQ) ProtoMessage()               {}
-func (*CLEAN_BET_RED2BLACK_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{12} }
+func (*CLEAN_BET_RED2BLACK_REQ) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{12} }
 
 func (m *CLEAN_BET_RED2BLACK_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -606,7 +606,7 @@ type CLEAN_BET_RED2BLACK_RES struct {
 func (m *CLEAN_BET_RED2BLACK_RES) Reset()                    { *m = CLEAN_BET_RED2BLACK_RES{} }
 func (m *CLEAN_BET_RED2BLACK_RES) String() string            { return proto.CompactTextString(m) }
 func (*CLEAN_BET_RED2BLACK_RES) ProtoMessage()               {}
-func (*CLEAN_BET_RED2BLACK_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{13} }
+func (*CLEAN_BET_RED2BLACK_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{13} }
 
 func (m *CLEAN_BET_RED2BLACK_RES) GetAccountID() uint32 {
 	if m != nil {
@@ -637,7 +637,7 @@ type PLAYERS_RED2BLACK_LIST_RES struct {
 func (m *PLAYERS_RED2BLACK_LIST_RES) Reset()                    { *m = PLAYERS_RED2BLACK_LIST_RES{} }
 func (m *PLAYERS_RED2BLACK_LIST_RES) String() string            { return proto.CompactTextString(m) }
 func (*PLAYERS_RED2BLACK_LIST_RES) ProtoMessage()               {}
-func (*PLAYERS_RED2BLACK_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{14} }
+func (*PLAYERS_RED2BLACK_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{14} }
 
 func (m *PLAYERS_RED2BLACK_LIST_RES) GetPlayers() []*AccountStorageData {
 	if m != nil {
@@ -670,9 +670,9 @@ func init() {
 	proto.RegisterEnum("protomsg.RED2BLACKGAMESTATUS", RED2BLACKGAMESTATUS_name, RED2BLACKGAMESTATUS_value)
 }
 
-func init() { proto.RegisterFile("protobuf/red2black.proto", fileDescriptor6) }
+func init() { proto.RegisterFile("protobuf/red2black.proto", fileDescriptor7) }
 
-var fileDescriptor6 = []byte{
+var fileDescriptor7 = []byte{
 	// 1163 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0x4d, 0x6f, 0xdb, 0x46,
 	0x13, 0x0e, 0x45, 0x59, 0xb2, 0xc7, 0x96, 0xbc, 0x59, 0x3b, 0x31, 0x23, 0xdb, 0xb0, 0x5e, 0xe5,

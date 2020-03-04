@@ -1,0 +1,153 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+
+import "protobuf/data.proto";
+
+////////////////////////////////////////////////////// 网络消息 /////////////////////////////////////////////////////////////
+enum LHDMSG {
+	UNKNOW_LHD = 0;
+	CS_ENTER_GAME_LHD_REQ = 70001; // 玩家请求进入房间
+	SC_ENTER_GAME_LHD_RES = 70002;
+	CS_LEAVE_GAME_LHD_REQ = 70003; // 玩家请求退出房间
+	SC_LEAVE_GAME_LHD_RES = 70004;
+	
+	CS_BET_LHD_REQ        = 70008; // 请求下注
+	SC_BET_LHD_RES        = 70009;
+    CS_CLEAN_BET_LHD_REQ  = 70010; // 请求清除下注
+    SC_CLEAN_BET_LHD_RES  = 70011;
+
+
+	CS_PLAYERS_LHD_LIST_REQ = 70015;// 请求在线玩家列表
+	SC_PLAYERS_LHD_LIST_RES = 70016;
+	
+	SC_SWITCH_GAME_STATUS_BROADCAST_LHD = 70020; // 服务器主动广播，切换状态消息
+}
+
+////////////////////////////////////////////////////// 游戏枚举 /////////////////////////////////////////////////////////////
+// 下注区域
+enum LHDAREA {
+	LHD_AREA_Unknow   = 0;  // 无用的
+	
+	LHD_AREA_DRAGON   = 1; // 龙区域
+	LHD_AREA_TIGER    = 2; // 虎区域
+	LHD_AREA_PEACE    = 3; // 和区域
+}
+
+// 游戏状态
+enum LHDGAMESTATUS {
+	LHD_GAMESTATUS_Unknow   = 0;  // 无用的
+	
+	LHD_GAMESTATUS_WAIT     = 1; // 等待开始
+	LHD_GAMESTATUS_BET      = 2; // 开始下注
+	LHD_GAMESTATUS_STOP     = 3; // 停止下注
+	LHD_GAMESTATUS_SETTLE   = 4; // 结算
+}
+
+////////////////////////////////////////////////////// 消息数据结构 /////////////////////////////////////////////////////////////
+// 请求进入房间
+message ENTER_GAME_LHD_REQ {
+	uint32 AccountID = 1;// 
+	uint32 RoomID    = 2;// 房间ID
+}
+
+// 进入房间，服务器返回房间、游戏状态相关数据
+message ENTER_GAME_LHD_RES {
+	message Winner{
+		LHDAREA WinArea 		  = 1; // 获胜区域 (龙、 虎、和)
+	}
+	
+	uint32 RoomID 	    		   = 1; // 房间ID
+	repeated Winner HistoryWinners = 2; // 最近70局的获胜区域
+	repeated int64 bets            = 3; // 当前房间可押注筹码值
+	uint32 ShowNum                 = 4; // 当前房间开局前亮牌的数量
+	uint64 BetLimit                = 5; // 当前房间下注身上最少要带的钱
+	StatusMsgLHD Status 		   = 6; //  当前状态
+}
+
+// 请求退出房间
+message LEAVE_GAME_LHD_REQ {
+	uint32 AccountID = 1;
+	uint32 RoomID    = 2;// 房间ID
+}
+
+message LEAVE_GAME_LHD_RES {
+    uint32 Ret    = 1; // 0.可以退出  1.不能退出房间
+	uint32 RoomID = 2; // 房间ID
+}
+
+////////////////////////////////////////////// 游戏 /////////////////////////////////////////////
+// 服务器广播切换状态
+message SWITCH_GAME_STATUS_BROADCAST_LHD{
+	StatusMsgLHD NextStatus = 1;// 切换下一个状态
+}
+
+// 状态结构
+message StatusMsgLHD{
+	LHDGAMESTATUS Status 			    = 1; // (1.等待、2.押注、3.停止下注、4.结算)
+	uint64 Status_StartTime    			= 2; // 状态开始时间						注:(服务器发的所有时间都是 utc+8 时间戳 毫秒)
+	uint64 Status_EndTime      			= 3; // 状态到期时间
+	map<int32,int64> AreaBetVal 		= 4; // 3个区域所有人的总押注值
+	map<int32,int64> AreaBetVal_Own 	= 5; // 3个区域自己的总押注值
+	bytes  Status_Data         			= 6; // 根据房间状态解析 1.Status_Wait 2.Status_Bet 3.Status_Stop 4.Status_Settle
+}
+
+// 1.等待
+message Status_Wait_LHD{
+	// todo .............
+}
+
+// 2.押注
+message Status_Bet_LHD{
+	// todo .............
+}
+
+// 3.停止下注
+message Status_Stop_LHD{
+	// todo .............
+}
+
+// 4.结算
+message Status_Settle_LHD{
+	LHDAREA WinArea 		      = 1; // 获胜区域 (龙、 虎、和)
+	Card GragonCards     		  = 2; // 龙牌
+	Card TigerCards   			  = 3; // 虎牌
+	map<int32,int64> Players      = 4; // 所有盈利的玩家 key:AccountID val:获利 (不包含本金)
+	// todo .............
+}
+	
+// 请求下注
+message BET_LHD_REQ {
+	uint32 AccountID 	 = 1;   // 客户端可发可不发,机器人下注用
+	LHDAREA Area 	     = 2; 	// 下注区域
+	uint64 Bet       	 = 3; 	// 下注的筹码
+}
+
+// 间隔 200 毫秒一次 广播玩家下注
+message BET_LHD_RES {
+	message BetPlayer {
+		uint32 AccountID   = 1;
+		LHDAREA Area = 2;// 下注区域
+		uint64 Bet 		   = 3; // 下注的筹码
+	}
+	repeated BetPlayer Players 	 = 1; // 间隔时间内，所有玩家的下注
+	map<int32,int64> AreaBetVal  = 2; // 3个区域的押注值
+}
+
+
+// 请求清除下注
+message CLEAN_BET_LHD_REQ {
+	uint32 AccountID 	 = 1;   // 客户端可发可不发,机器人下注用
+}
+
+// 服务器广播清除下注
+message CLEAN_BET_LHD_RES {
+	uint32 AccountID 	              = 1; // 清除的玩家
+	map<int32,int64> PlayerAreaBetVal = 2; // 玩家个人清除之前总押注值
+	map<int32,int64> AreaBetVal       = 3; // 3个区域所有人的总押注值
+}
+
+// 请求LHD玩家列表
+message PLAYERS_LHD_LIST_RES{
+   repeated AccountStorageData players = 1; // 房间内所有的玩家
+}

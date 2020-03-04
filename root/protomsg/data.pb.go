@@ -10,6 +10,7 @@ It is generated from these files:
 	protobuf/fruitmary.proto
 	protobuf/hall.proto
 	protobuf/jpm.proto
+	protobuf/lhd.proto
 	protobuf/luckfruit.proto
 	protobuf/red2black.proto
 
@@ -75,6 +76,21 @@ It has these top-level messages:
 	JPM_Result
 	UPDATE_JPM_BONUS
 	PLAYERS_JPM_LIST_RES
+	ENTER_GAME_LHD_REQ
+	ENTER_GAME_LHD_RES
+	LEAVE_GAME_LHD_REQ
+	LEAVE_GAME_LHD_RES
+	SWITCH_GAME_STATUS_BROADCAST_LHD
+	StatusMsgLHD
+	Status_Wait_LHD
+	Status_Bet_LHD
+	Status_Stop_LHD
+	Status_Settle_LHD
+	BET_LHD_REQ
+	BET_LHD_RES
+	CLEAN_BET_LHD_REQ
+	CLEAN_BET_LHD_RES
+	PLAYERS_LHD_LIST_RES
 	ENTER_GAME_LUCKFRUIT_REQ
 	ENTER_GAME_LUCKFRUIT_RES
 	LEAVE_GAME_LUCKFRUIT_REQ

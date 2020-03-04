@@ -13,26 +13,26 @@ import (
 	"root/core/packet"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_red2black/account"
-	"root/server/game_red2black/room"
-	"root/server/game_red2black/send_tools"
+	"root/server/game_lhd/account"
+	"root/server/game_lhd/room"
+	"root/server/game_lhd/send_tools"
 	"strconv"
 	"time"
 )
 
 type (
-	red2black struct {
+	lhd struct {
 		owner *core.Actor
 		init  bool // 是否是第一次启动程序
 		close bool // 关服
 	}
 )
 
-func NewRed2Black() *red2black {
-	return &red2black{}
+func NewLHD() *lhd {
+	return &lhd{}
 }
 
-func (self *red2black) Init(actor *core.Actor) bool {
+func (self *lhd) Init(actor *core.Actor) bool {
 	// 先处理脚本
 	if core.ScriptDir != "" {
 		core.InitScript(core.ScriptDir)
@@ -52,7 +52,7 @@ func (self *red2black) Init(actor *core.Actor) bool {
 }
 
 // 向hall注册
-func (self *red2black) registerHall() {
+func (self *lhd) registerHall() {
 	// 发送注册消息登记自身信息
 	sid, _ := strconv.Atoi(core.Appname)
 	count := uint32(room.RoomMgr.RoomCount())
@@ -77,7 +77,7 @@ func (self *red2black) registerHall() {
 	self.init = true
 }
 
-func (self *red2black) StartService() {
+func (self *lhd) StartService() {
 	// 监听端口，客户端连接用
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
@@ -87,11 +87,11 @@ func (self *red2black) StartService() {
 	core.CoreRegisteActor(room.ServerActor)
 }
 
-func (self *red2black) Stop() {
+func (self *lhd) Stop() {
 
 }
 
-func (self *red2black) HandleMessage(actor int32, msg []byte, session int64) bool {
+func (self *lhd) HandleMessage(actor int32, msg []byte, session int64) bool {
 	if self.close {
 		return true
 	}
@@ -118,8 +118,8 @@ func (self *red2black) HandleMessage(actor int32, msg []byte, session int64) boo
 		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
 		self.SERVERMSG_HG_PLAYER_DATA_REQ(actor, pack.ReadBytes(), session)
-	case protomsg.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ.UInt16(): // 请求进入小玛利房间
-		actor := self.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.LHDMSG_CS_ENTER_GAME_LHD_REQ.UInt16(): // 请求进入房间
+		actor := self.LHDMSG_CS_ENTER_GAME_LHD_REQ(actor, pack.ReadBytes(), session)
 		core.CoreSend(self.owner.Id, actor, msg, session)
 	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():
 		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
@@ -140,7 +140,7 @@ func (self *red2black) HandleMessage(actor int32, msg []byte, session int64) boo
 	return true
 }
 
-func (self *red2black) Old_MSGID_MAINTENANCE_NOTICE(actor int32, msg []byte, session int64) {
+func (self *lhd) Old_MSGID_MAINTENANCE_NOTICE(actor int32, msg []byte, session int64) {
 	pack := packet.NewPacket(msg)
 	if session != 0 {
 		log.Warnf("Error, 异常session:%v 处理消息编号:%v", session, pack.GetMsgID())
