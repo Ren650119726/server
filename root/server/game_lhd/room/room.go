@@ -34,7 +34,7 @@ type (
 		peaceBack_conf  int64                                 // 开和退还龙虎下注比例
 		interval_conf   int64                                 // 两次下注间隔时间
 		profit          int64                                 // 房间盈利
-		betlimit_conf   int64                                 //配置
+		betlimit_conf   int64                                 // 配置
 		GameCards       []*protomsg.Card                      // 本局随机牌组
 		logStack        []string                              // 房间日志堆栈
 	}
