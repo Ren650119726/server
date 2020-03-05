@@ -62,7 +62,7 @@ func (self *betting) Enter(now int64) {
 	betval := self.areaBetVal(true)
 	for _, acc := range self.accounts {
 		acc.Betcount = 0
-		if acc.GetMoney() < uint64(self.betlimit) {
+		if acc.GetMoney() < uint64(self.betlimit_conf) {
 			self.forbidBetplayer[acc.AccountId] = true
 		}
 	}
