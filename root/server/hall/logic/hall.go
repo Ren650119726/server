@@ -96,8 +96,7 @@ func (self *Hall) SERVERMSG_DH_FINISH_DATA(session int64) {
 }
 
 func (self *Hall) SERVERMSG_HD_SAVE_ALL() {
-	log.Info("数据回存完毕!!! 按下先关闭所有游戏服务器")
-	log.Info("数据回存完毕!!! 按下再关闭HallServer服务器")
+	log.Info("数据回存完毕!!! ")
 }
 func (self *Hall) Stop() {
 
