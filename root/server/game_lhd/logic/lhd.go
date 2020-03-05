@@ -24,7 +24,6 @@ type (
 	lhd struct {
 		owner *core.Actor
 		init  bool // 是否是第一次启动程序
-		close bool // 关服
 	}
 )
 
@@ -92,9 +91,6 @@ func (self *lhd) Stop() {
 }
 
 func (self *lhd) HandleMessage(actor int32, msg []byte, session int64) bool {
-	if self.close {
-		return true
-	}
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
 	case inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(): // 大厅通知修改玩家数据
@@ -104,16 +100,14 @@ func (self *lhd) HandleMessage(actor int32, msg []byte, session int64) bool {
 		config.Load_Conf()
 		room.RoomMgr.BraodcastReload()
 	case inner.SERVERMSG_SS_CLOSE_SERVER.UInt16():
-		self.close = true
 		self.owner.AddTimer(1000, -1, func(dt int64) {
 			if room.RoomMgr.RoomCount() == 0 {
 				log.Infof("所有房间关闭完成，可以关闭服务器!")
+				send_tools.Send2Hall(inner.SERVERMSG_GH_CLOSE_SERVER_FIN.UInt16(), nil)
 				self.owner.Suspend()
 			}
 		})
-		for _, actor := range room.RoomMgr.Rooms {
-			core.CoreSend(self.owner.Id, int32(actor), msg, session)
-		}
+		room.Close(nil)
 	case inner.SERVERMSG_HG_ROOM_WATER_PROFIT.UInt16():
 		PB := packet.PBUnmarshal(pack.ReadBytes(), &inner.SAVE_WATER_LINE{}).(*inner.SAVE_WATER_LINE)
 		core.CoreSend(self.owner.Id, int32(PB.GetRoomID()), msg, session)

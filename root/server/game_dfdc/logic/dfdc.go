@@ -106,6 +106,7 @@ func (self *DFDC) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.owner.AddTimer(1000, -1, func(dt int64) {
 			if room.RoomMgr.RoomCount() == 0 {
 				log.Infof("所有房间关闭完成，可以关闭服务器!")
+				send_tools.Send2Hall(inner.SERVERMSG_GH_CLOSE_SERVER_FIN.UInt16(), nil)
 				self.owner.Suspend()
 			}
 		})

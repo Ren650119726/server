@@ -9,7 +9,8 @@ enum SERVERMSG {
 	HD_HELLO_DB     	 = 100; // 大厅向db建立链接
 	SS_TEST_NETWORK      = 101; // 网络测试
 	SS_CLOSE_SERVER      = 102; // 关闭服务器消息
-	SS_RELOAD_CONFIG     = 103; // 更新配置
+	GH_CLOSE_SERVER_FIN  = 103; // 游戏通知大厅，关闭完成
+	SS_RELOAD_CONFIG     = 104; // 更新配置
 	HD_ALL_DATA          = 105; // 开服获取所有数据
 	DH_ALL_ACCOUNT_RESP  = 106; // db返回所有 账号 给大厅
 	DH_ALL_EMAIL_RESP    = 107; // db返回所有 邮件 给大厅

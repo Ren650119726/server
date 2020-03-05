@@ -49,7 +49,6 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	self.owner.AddEverydayTimer("23:59:59", ZeroUpdate)
 	core.Cmd.Regist("help", CMD_Help, true)
 	core.Cmd.Regist("reload", self.CMD_LoadConfig, true)
-	core.Cmd.Regist("count", CMD_Count, true)
 	core.Cmd.Regist("player", CMD_Player, true)
 	core.Cmd.Regist("on", CMD_On, true)
 	core.Cmd.Regist("off", CMD_Off, true)
@@ -62,7 +61,10 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	core.Cmd.Regist("kill", CMD_Kill, true)
 	core.Cmd.Regist("todb", CMD_ToDB, true)
 	core.Cmd.Regist("save", CMD_Save, true)
+	core.Cmd.Regist("room", self.CMD_RoomInfo, true)
 	core.Cmd.Regist("stop", self.CMD_Stop, true)
+	core.Cmd.Regist("close", self.CMD_Close, true)
+
 	return true
 }
 
@@ -115,6 +117,13 @@ func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 	case inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(): // game向hall请求连接
 		self.SERVERMSG_GH_GAME_CONNECT_HALL(actor, pack.ReadBytes(), session)
+	case inner.SERVERMSG_GH_CLOSE_SERVER_FIN.UInt16():
+		for _, node := range GameMgr.nodes {
+			if node.session == session {
+				log.Infof("游戏:%v 完成关闭！", common.EGameType(node.gameType))
+				break
+			}
+		}
 	case inner.SERVERMSG_GH_ROOM_INFO.UInt16(): // game向hall 发送房间信息
 		self.SERVERMSG_GH_ROOM_INFO(actor, pack.ReadBytes(), session)
 

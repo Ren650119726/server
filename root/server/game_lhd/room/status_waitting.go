@@ -2,6 +2,8 @@ package room
 
 import (
 	"github.com/golang/protobuf/proto"
+	"root/common"
+	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
@@ -79,6 +81,10 @@ func (self *waitting) Tick(now int64) {
 		for _, acc := range self.accounts {
 			self.leaveRoom(acc.AccountId)
 		}
+		roomid := self.roomId
+		core.LocalCoreSend(self.owner.Id, common.EActorType_MAIN.Int32(), func() {
+			delete(RoomMgr.Rooms, roomid)
+		})
 		self.owner.Suspend()
 		log.Infof("房间关闭完成")
 	}

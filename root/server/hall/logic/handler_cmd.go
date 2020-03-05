@@ -33,27 +33,9 @@ func (self *Hall) CMD_LoadConfig(sParam []string) {
 
 	strServerIP := utils.GetLocalIP()
 	GameMgr.PrintSign(strServerIP)
-	for _,v := range GameMgr.nodes{
-		send_tools.Send2Game(inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16(),nil,v.session)
+	for _, v := range GameMgr.nodes {
+		send_tools.Send2Game(inner.SERVERMSG_SS_RELOAD_CONFIG.UInt16(), nil, v.session)
 	}
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
-
-func CMD_Count(sParam []string) {
-	nRegCount := len(account.AccountMgr.AccountbyID)
-	nRobot := 0
-	nOnline := 0
-	nOffline := 0
-	for _, tAccount := range account.AccountMgr.AccountbyID {
-		if tAccount.Robot > 0 {
-			nRobot++
-		} else if tAccount.IsOnline() == true {
-			nOnline++
-		} else {
-			nOffline++
-		}
-	}
-	fmt.Printf("总注册:%v  当前在线玩家:%v  当前离线玩家:%v  机器人个数:%v  可分配帐号ID个数:%v\r\n", nRegCount, nOnline, nOffline, nRobot, len(account.AccountMgr.IDAssign))
 	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
@@ -81,9 +63,9 @@ func CMD_Player(sParam []string) {
 			strType = "离线"
 		}
 		if tAccount.Robot > 0 {
-			fmt.Printf("%v 机器人 %v %v 所在:%v 房间ID:%v 元宝:%v 保险箱:%v 特殊:%v \r\n", strType, tAccount.AccountId, tAccount.Name,  tAccount.RoomID, tAccount.Money, tAccount.SafeMoney,tAccount.Special)
+			fmt.Printf("%v 机器人 %v %v 所在:%v 房间ID:%v 元宝:%v 保险箱:%v 特殊:%v \r\n", strType, tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, tAccount.Special)
 		} else {
-			fmt.Printf("%v 玩家 %v %v 所在:%v 房间ID:%v  元宝:%v 保险箱:%v 代理:%v 特殊:%v 系统:%v\r\n", strType, tAccount.AccountId, tAccount.Name,  tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, types.ESalesmanType(tAccount.Salesman), tAccount.Special, tAccount.OSType)
+			fmt.Printf("%v 玩家 %v %v 所在:%v 房间ID:%v  元宝:%v 保险箱:%v 代理:%v 特殊:%v 系统:%v\r\n", strType, tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, types.ESalesmanType(tAccount.Salesman), tAccount.Special, tAccount.OSType)
 		}
 
 		fmt.Printf("%v 头像URL:%v\r\n", strType, tAccount.HeadURL)
@@ -98,21 +80,21 @@ func CMD_On(sParam []string) {
 	for _, tAccount := range account.AccountMgr.AccountbyID {
 		if tAccount.Robot == 0 {
 			if tAccount.IsOnline() == true {
-				fmt.Printf("在线玩家 %v %v 房间ID:%v  元宝:%v 保险箱:%v 代理:%v 特殊:%v 系统:%v\r\n", tAccount.AccountId, tAccount.Name,  tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, types.ESalesmanType(tAccount.Salesman), tAccount.Special, tAccount.OSType)
+				fmt.Printf("在线玩家 %v %v 房间ID:%v  元宝:%v 保险箱:%v 代理:%v 特殊:%v 系统:%v\r\n", tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, types.ESalesmanType(tAccount.Salesman), tAccount.Special, tAccount.OSType)
 				nCount++
 			}
 			nTotalRMB += tAccount.Money
 			nTotalSafeRMB += tAccount.SafeMoney
 		}
 	}
-	fmt.Printf("%v 总在线:%v 全服玩家身上元宝:%v, 保险箱元宝:%v, 总计:%v\r\n", utils.DateString(), nCount, nTotalRMB, nTotalSafeRMB, (nTotalRMB+nTotalSafeRMB))
+	fmt.Printf("%v 总在线:%v 全服玩家身上元宝:%v, 保险箱元宝:%v, 总计:%v\r\n", utils.DateString(), nCount, nTotalRMB, nTotalSafeRMB, (nTotalRMB + nTotalSafeRMB))
 	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 func CMD_Off(sParam []string) {
 	nCount := 0
 	for _, tAccount := range account.AccountMgr.AccountbyID {
 		if tAccount.IsOnline() == false && tAccount.Robot == 0 {
-			fmt.Printf("离线玩家 %v %v 房间ID:%v  元宝:%v 保险箱:%v 代理:%v 特殊:%v 系统:%v\r\n", tAccount.AccountId, tAccount.Name,  tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, types.ESalesmanType(tAccount.Salesman), tAccount.Special, tAccount.OSType)
+			fmt.Printf("离线玩家 %v %v 房间ID:%v  元宝:%v 保险箱:%v 代理:%v 特殊:%v 系统:%v\r\n", tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, types.ESalesmanType(tAccount.Salesman), tAccount.Special, tAccount.OSType)
 			nCount++
 		}
 	}
@@ -206,6 +188,7 @@ func CMD_Del_Email(sParam []string) {
 	}
 	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
+
 func CMD_Add_Money(sParam []string) {
 	if len(sParam) < 1 {
 		fmt.Printf("× 参数错误, 参数1: 玩家ID; 参数2: 改变元宝数量\r\n")
@@ -229,21 +212,21 @@ func CMD_Add_Money(sParam []string) {
 		return
 	}
 	m := acc.GetMoney()
-	if acc.RoomID == 0{
-		if changeValue < 0 && -changeValue > int(acc.GetMoney()){
+	if acc.RoomID == 0 {
+		if changeValue < 0 && -changeValue > int(acc.GetMoney()) {
 			changeValue = int(-acc.GetMoney())
 		}
 		acc.AddMoney(int64(changeValue), common.EOperateType_CMD)
-		fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", acc.GetAccountId(),m, changeValue,acc.GetMoney())
-	}else{
-		GameMgr.Send2Game(inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(),&inner.NOTIFY_ALTER_DATE{
-			AccountID:  acc.GetAccountId(),
-			Type:       1,
-			AlterValue: int64(changeValue),
-			RoomID:     acc.RoomID,
-			OperateType:common.EOperateType_CMD,
+		fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", acc.GetAccountId(), m, changeValue, acc.GetMoney())
+	} else {
+		GameMgr.Send2Game(inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(), &inner.NOTIFY_ALTER_DATE{
+			AccountID:   acc.GetAccountId(),
+			Type:        1,
+			AlterValue:  int64(changeValue),
+			RoomID:      acc.RoomID,
+			OperateType: common.EOperateType_CMD,
 		}, acc.RoomID)
-		fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v) 请在玩家房间内查看金币 ======\r\n", acc.GetAccountId(),m, changeValue)
+		fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v) 请在玩家房间内查看金币 ======\r\n", acc.GetAccountId(), m, changeValue)
 	}
 
 }
@@ -271,8 +254,8 @@ func CMD_Kill(sParam []string) {
 		return
 	}
 
-	if acc.RoomID != 0{
-		GameMgr.Send2Game(inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(),&inner.NOTIFY_ALTER_DATE{
+	if acc.RoomID != 0 {
+		GameMgr.Send2Game(inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(), &inner.NOTIFY_ALTER_DATE{
 			AccountID:  acc.GetAccountId(),
 			Type:       2,
 			AlterValue: int64(changeValue),
@@ -283,10 +266,8 @@ func CMD_Kill(sParam []string) {
 	k := acc.Kill
 	acc.Kill = int32(changeValue)
 
-
-	fmt.Printf("====== 命令执行成功 玩家:%v 当前杀数:%v 修改为:%v ======\r\n", acc.GetAccountId(),k, changeValue)
+	fmt.Printf("====== 命令执行成功 玩家:%v 当前杀数:%v 修改为:%v ======\r\n", acc.GetAccountId(), k, changeValue)
 }
-
 
 func CMD_ToDB(s []string) {
 	send_tools.Send2DB(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(), nil)
@@ -296,7 +277,20 @@ func CMD_Save(s []string) {
 	GameMgr.Save()
 	log.Infof("====== 回存命令执行成功 ======")
 }
-func (self *Hall)CMD_Stop(s []string) {
-	CMD_Save(nil)
+func (self *Hall) CMD_RoomInfo(s []string) {
+	for roomid, _ := range GameMgr.rooms {
+		log.Infof(" 房间:%v", roomid)
+	}
+}
+
+func (self *Hall) CMD_Stop(s []string) {
+	for _, node := range GameMgr.nodes {
+		send_tools.Send2Game(inner.SERVERMSG_SS_CLOSE_SERVER.UInt16(), nil, int64(node.session))
+		log.Infof("通知游戏服关闭 游戏:%v", common.EGameType(node.gameType))
+	}
+}
+
+func (self *Hall) CMD_Close(s []string) {
 	self.ListenActor.Suspend()
+	CMD_Save(nil)
 }

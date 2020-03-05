@@ -46,11 +46,8 @@ func info(s []string) {
 }
 
 func Close(s []string) {
-	ServerActor.Suspend()
-
 	send := packet.NewPacket(nil)
 	send.SetMsgID(inner.SERVERMSG_SS_CLOSE_SERVER.UInt16())
-	core.CoreSend(0, common.EActorType_MAIN.Int32(), send.GetData(), 0)
 	for _, room := range RoomMgr.Rooms {
 		core.CoreSend(0, int32(room), send.GetData(), 0)
 	}
