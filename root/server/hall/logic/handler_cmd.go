@@ -275,6 +275,7 @@ func CMD_ToDB(s []string) {
 func CMD_Save(s []string) {
 	account.AccountMgr.ArchiveAll()
 	GameMgr.Save()
+	send_tools.Send2DB(inner.SERVERMSG_HD_SAVE_ALL.UInt16(), nil)
 	log.Infof("====== 回存命令执行成功 ======")
 }
 func (self *Hall) CMD_RoomInfo(s []string) {
