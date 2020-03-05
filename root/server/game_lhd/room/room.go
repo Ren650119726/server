@@ -34,7 +34,7 @@ type (
 		peaceBack_conf  int64                                 // 开和退还龙虎下注比例
 		interval_conf   int64                                 // 两次下注间隔时间
 		profit          int64                                 // 房间盈利
-		betlimit        int64                                 //
+		betlimit_conf   int64                                 // 押注限制
 		GameCards       []*protomsg.Card                      // 本局随机牌组
 		logStack        []string                              // 房间日志堆栈
 	}
@@ -154,7 +154,7 @@ func (self *Room) enterRoom(accountId uint32) {
 		RoomID:         self.roomId,
 		HistoryWinners: self.history,
 		Bets:           self.bets_conf,
-		BetLimit:       uint64(self.betlimit),
+		BetLimit:       uint64(self.betlimit_conf),
 		Status:         statusEnter.enterData(accountId),
 	}
 	if enterRoom.Status == nil {

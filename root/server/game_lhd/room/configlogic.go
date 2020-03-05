@@ -87,7 +87,7 @@ func (self *Room) LoadConfig() {
 	self.pump_conf[protomsg.LHDAREA_LHD_AREA_PEACE] = int64(config.Get_configInt("lhd_room", int(self.roomId), "Peace_Pump"))
 	self.peaceBack_conf = int64(config.Get_configInt("lhd_room", int(self.roomId), "Peace_Back"))
 
-	self.betlimit = int64(config.Get_configInt("lhd_room", int(self.roomId), "Bet_Limit"))
+	self.betlimit_conf = int64(config.Get_configInt("lhd_room", int(self.roomId), "Bet_Limit"))
 	self.bets_conf = utils.SplitConf2ArrInt64(config.Get_configString("lhd_room", int(self.roomId), "Bet"))
 	self.interval_conf = int64(config.Get_configInt("lhd_room", int(self.roomId), "Bet_Cd"))
 	self.status_duration = make(map[ERoomStatus]int64)
