@@ -36,16 +36,19 @@ func (self *betting) Enter(now int64) {
 
 	self.cd = make(map[uint32]int64)
 	self.forbidBetplayer = make(map[uint32]bool)
-	// 如果没有靴牌了，就随机一组靴牌
-	if len(self.GameCards) == 0 {
+	// 如果没有牌靴了，就随机一组牌靴
+	if len(self.GameCards) <= 2 {
 		num := utils.Randx_y(100, 350)
 		if num%2 == 1 {
 			num++
 		}
 		self.GameCards = algorithm.GetRandom_Card(self.RoomCards, num)
+		self.history = self.history[:0]
+	} else {
+		self.GameCards = self.GameCards[2:]
 	}
 
-	self.log("开始下注 剩余:%v 张靴牌，本局牌:%+v ", len(self.GameCards), self.GameCards[:2])
+	self.log("开始下注 靴牌剩余:%v张，本局牌:%+v ", len(self.GameCards), self.GameCards[:2])
 
 	self.bets_cache = make([]*protomsg.BET_LHD_RES_BetPlayer, 0)
 	// 广播房间玩家，切换状态

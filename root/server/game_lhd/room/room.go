@@ -31,9 +31,9 @@ type (
 		bets_conf       []int64                               // 房间可押注筹码值
 		odds_conf       map[protomsg.LHDAREA]int64            // 区域赔率
 		pump_conf       map[protomsg.LHDAREA]int64            // 区域抽水比例
+		peaceBack_conf  int64                                 // 开和退还龙虎下注比例
 		interval_conf   int64                                 // 两次下注间隔时间
 		profit          int64                                 // 房间盈利
-		showNum         int                                   // 开局显示的牌数
 		betlimit        int64                                 //
 		GameCards       []*protomsg.Card                      // 本局随机牌组
 		logStack        []string                              // 房间日志堆栈
@@ -50,6 +50,7 @@ func NewRoom(id uint32) *Room {
 		pump_conf:       make(map[protomsg.LHDAREA]int64),
 		history:         make([]*protomsg.ENTER_GAME_LHD_RES_Winner, 0, 70),
 		logStack:        make([]string, 0, 40),
+		GameCards:       make([]*protomsg.Card, 0),
 	}
 }
 
@@ -153,7 +154,6 @@ func (self *Room) enterRoom(accountId uint32) {
 		RoomID:         self.roomId,
 		HistoryWinners: self.history,
 		Bets:           self.bets_conf,
-		ShowNum:        uint32(self.showNum),
 		BetLimit:       uint64(self.betlimit),
 		Status:         statusEnter.enterData(accountId),
 	}

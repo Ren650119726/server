@@ -3,16 +3,13 @@ package room
 import (
 	"github.com/golang/protobuf/proto"
 	"root/common"
-	"root/common/config"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_lhd/algorithm"
 	"root/server/game_lhd/send_tools"
-	"sort"
 	"strconv"
 )
 
@@ -33,84 +30,59 @@ func (self *settlement) Enter(now int64) {
 	self.log(colorized.Gray("settlement enter duration:%v"), duration)
 
 	var (
-		win   protomsg.LHDAREA
-		t     protomsg.LHDCARDTYPE
-		losst protomsg.LHDCARDTYPE
+		win protomsg.LHDAREA
 	)
-	redcard := append([]*protomsg.Card{}, self.GameCards[:3]...)
-	blackcard := append([]*protomsg.Card{}, self.GameCards[3:6]...)
-	result, tred, tblack := algorithm.Compare(redcard, blackcard)
-	var wincard []*protomsg.Card
-	if result {
-		win = protomsg.LHDAREA_LHD_AREA_RED
-		t = tred
-		wincard = redcard
-		losst = tblack
+	cards := self.GameCards[:2]
+	if cards[0].Number > cards[1].Number {
+		win = protomsg.LHDAREA_LHD_AREA_DRAGON
+	} else if cards[0].Number < cards[1].Number {
+		win = protomsg.LHDAREA_LHD_AREA_TIGER
 	} else {
-		win = protomsg.LHDAREA_LHD_AREA_BLACK
-		t = tblack
-		wincard = blackcard
-		losst = tred
-	}
-	specialArea_odd := int64(config.Get_configInt("lhd_card", int(t), "Card_Odds"))
-	if t == protomsg.LHDCARDTYPE_LHD_CARDTYPE_2 {
-		sort.Slice(wincard, func(i, j int) bool {
-			return wincard[i].Number > wincard[j].Number
-		})
-		self.log("特殊对子判断:%v ", wincard)
-		// 特殊对子，没有赔率
-		if 2 <= wincard[1].Number && wincard[1].Number <= 8 {
-			specialArea_odd = 0
-		}
+		win = protomsg.LHDAREA_LHD_AREA_PEACE
 	}
 
 	allprofit := map[int32]int64{}
 	for accid, bets := range self.betPlayers {
 		loss_val := int64(0) // 输的钱
-		loss_val += bets[int32(3-win)]
+		// 先统计三方押注总额
+		loss_val += bets[1] + bets[2] + bets[3]
+		// 扣掉退还的钱
+		loss_val -= bets[int32(win)]
+		if win == protomsg.LHDAREA_LHD_AREA_PEACE {
+			loss_val -= (bets[1] + bets[2]) * self.peaceBack_conf / 10000
+		}
 
 		principal_val := int64(0) // 本金
 		principal_val += bets[int32(win)]
-		if bets[3] != 0 && specialArea_odd != 0 {
-			principal_val += bets[3]
-		} else {
-			loss_val += bets[3]
-		}
 
 		// 计算利润
 		winArea_profit := bets[int32(win)] * self.odds_conf[win] * (10000 - self.pump_conf[win]) / 10000
-		specialArea_profit := bets[3] * specialArea_odd * (10000 - self.pump_conf[3]) / 10000
 
 		acc := self.accounts[accid]
 		if acc == nil {
 			continue
 		}
-		val := winArea_profit + specialArea_profit + principal_val
+		val := winArea_profit + principal_val
 		acc.AddMoney(val, common.EOperateType_LHD_WIN)
 		if acc.Robot == 0 && acc.OSType == 4 {
-			asyn_addMoney(acc.UnDevice, val, int32(self.roomId), "红黑大战盈利", nil, nil) //中奖
+			asyn_addMoney(acc.UnDevice, val, int32(self.roomId), "龙虎斗盈利", nil, nil) //中奖
 		}
-		allprofit[int32(accid)] = winArea_profit + specialArea_profit
+		allprofit[int32(accid)] = winArea_profit
 		if acc.Robot == 0 {
-			self.profit -= winArea_profit + specialArea_profit - loss_val
+			self.profit -= winArea_profit - loss_val
 		}
-		self.log("玩家:%v 押注:%v 输掉的钱:%v 归还本金:%v 赢方区域盈利:%v 特殊区域盈利:%v 总输赢(不算本金):%v ", accid, bets, loss_val, principal_val, winArea_profit, specialArea_profit, winArea_profit+specialArea_profit-loss_val)
+		self.log("玩家:%v 押注:%v 输掉的钱:%v 归还本金:%v 赢方区域盈利:%v 总输赢(不算本金):%v ", accid, bets, loss_val, principal_val, winArea_profit, winArea_profit-loss_val)
 	}
 	self.history = append(self.history, &protomsg.ENTER_GAME_LHD_RES_Winner{
-		WinArea:     win,
-		WinCardType: t,
+		WinArea: win,
 	})
-	if len(self.history) > 70 {
-		self.history = self.history[1:]
-	}
 
 	// 组装消息
-	settle, err := proto.Marshal(&protomsg.Status_Settle{
-		WinArea:      win,
-		WinCardType:  t,
-		LossCardType: losst,
-		WinOdds:      uint64(specialArea_odd),
-		Players:      allprofit,
+	settle, err := proto.Marshal(&protomsg.Status_Settle_LHD{
+		WinArea:     win,
+		DragonCards: self.GameCards[0],
+		TigerCards:  self.GameCards[1],
+		Players:     allprofit,
 	})
 	if err != nil {
 		log.Panicf("错误:%v ", err.Error())
@@ -121,8 +93,6 @@ func (self *settlement) Enter(now int64) {
 		Status:           protomsg.LHDGAMESTATUS(self.s),
 		Status_StartTime: uint64(self.start_timestamp),
 		Status_EndTime:   uint64(self.end_timestamp),
-		RedCards:         self.GameCards[0:3],
-		BlackCards:       self.GameCards[3:6],
 		AreaBetVal:       betval,
 		AreaBetVal_Own:   nil,
 		Status_Data:      settle,
@@ -141,7 +111,7 @@ func (self *settlement) Enter(now int64) {
 		RoomID: self.roomId,
 		Value:  strconv.Itoa(int(self.profit)),
 	})
-	self.log("win:%v 红方牌:%v  黑方牌:%v 房间盈利:%v", win, tred, tblack, self.profit)
+	self.log("win:%v 龙牌:%v  虎牌:%v 房间盈利:%v", win, self.GameCards[0], self.GameCards[1], self.profit)
 }
 
 func (self *settlement) Tick(now int64) {

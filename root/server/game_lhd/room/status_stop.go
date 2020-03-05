@@ -8,9 +8,7 @@ import (
 	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
-	"root/server/game_lhd/algorithm"
 	"root/server/game_lhd/send_tools"
-	"sort"
 )
 
 type (
@@ -34,7 +32,6 @@ func (self *stop) Enter(now int64) {
 		kill = true
 	}
 	if kill {
-		self.log("杀分前 结果牌:%v ", self.GameCards)
 		killbetVal := self.areaBetVal(false)
 		self.kill(killbetVal)
 	}
@@ -65,7 +62,7 @@ func (self *stop) Enter(now int64) {
 		self.enterMsg.AreaBetVal_Own = betval_own
 		send_tools.Send2Account(protomsg.LHDMSG_SC_SWITCH_GAME_STATUS_BROADCAST_LHD.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST_LHD{self.enterMsg}, acc.SessionId)
 	}
-	self.log("结果牌:%v 三方押注:%v", self.GameCards, betval)
+	self.log("结果牌:%v 三方押注:%v", self.GameCards[:2], betval)
 }
 
 func (self *stop) Tick(now int64) {
@@ -97,108 +94,35 @@ func (self *stop) kill(betVal map[int32]int64) {
 		return
 	}
 
-	availableCard := self.RoomCards[:46] // 剩下的46张牌可以用来进行配牌
-	type temp struct {
-		win       int32
-		odds      int64
-		syswinVal int64
-	}
-
-	duizi_odds := int64(config.Get_configInt("lhd_card", int(protomsg.LHDCARDTYPE_LHD_CARDTYPE_2), "Card_Odds"))
-	arr := []*temp{
-		{win: 1, odds: 0, syswinVal: 0},
-		{win: 1, odds: duizi_odds, syswinVal: 0},
-		{win: 2, odds: 0, syswinVal: 0},
-		{win: 2, odds: duizi_odds, syswinVal: 0},
-	}
-
-	for _, v := range arr {
-		v.syswinVal = self.prep_settlement(betVal, protomsg.LHDAREA(v.win), v.odds)
-	}
-
-	sort.Slice(arr, func(i, j int) bool {
-		return arr[i].syswinVal > arr[j].syswinVal
-	})
-	log.Infof("三方押注触发 吃大赔小 对子赔率:%v", duizi_odds)
-	for _, v := range arr {
-		self.log("演算结果:%v", v)
-	}
-	for i := 0; i < len(arr); i++ {
-		if arr[i].syswinVal < 0 {
-			if i == 0 {
-				log.Errorf("计算不出吃大赔小的情况，请检查 初始随机牌组:%v 押注：%v roomid:%v ", self.GameCards, betVal, self.roomId)
-				break
-			}
-			// 去掉所有系统亏钱的情况
-			arr = arr[:i]
-			break
-		}
-	}
-
-	// 做一个随机，最终取用下标0的值
-	if l := len(arr); l >= 2 {
-		i := utils.Randx_y(0, l)
-		arr[0], arr[i] = arr[i], arr[0]
-	}
-	self.log("决定取用的杀分结果:%v", arr[0])
-
-	// 如果当前结果满足吃大赔小，不需要配牌
 	var (
 		win protomsg.LHDAREA
-		t   protomsg.LHDCARDTYPE
 	)
-	redc := append([]*protomsg.Card{}, self.GameCards[:3]...)
-	blackc := append([]*protomsg.Card{}, self.GameCards[3:6]...)
-	result, tred, tblack := algorithm.Compare(redc, blackc)
-	self.log("自然结果 ret:%v tred:%v tblack:%v ", result, tred, tblack)
-	if result {
-		win = protomsg.LHDAREA_LHD_AREA_RED
-		t = tred
+	cards := self.GameCards[:2]
+	if cards[0].Number > cards[1].Number {
+		win = protomsg.LHDAREA_LHD_AREA_DRAGON
+	} else if cards[0].Number == cards[1].Number {
+		win = protomsg.LHDAREA_LHD_AREA_TIGER
 	} else {
-		win = protomsg.LHDAREA_LHD_AREA_BLACK
-		t = tblack
+		win = protomsg.LHDAREA_LHD_AREA_PEACE
 	}
-	odd := int64(config.Get_configInt("lhd_card", int(t), "Card_Odds"))
 
-	if int32(win) == arr[0].win && odd <= arr[0].odds {
-		self.log("结果和杀分结果一致，不需要配牌 win:%v t:%v", win.String(), t.String())
-	} else {
-		num := (3 - self.showNum) * 2 // 1边需要随3-show张牌
+	self.log("杀分处理 牌组:%v  win：%v ", cards, win)
+	val := self.prep_settlement(betVal, win)
+	if win == protomsg.LHDAREA_LHD_AREA_PEACE {
+		self.log("平 不处理杀分")
+		return
+	}
+	self.log("系统盈利:%v ", val)
 
-		for i := 0; i < 5000; i++ {
-			red := append([]*protomsg.Card{}, self.GameCards[:self.showNum]...)
-			black := append([]*protomsg.Card{}, self.GameCards[3:3+self.showNum]...)
-
-			cards := algorithm.GetRandom_Card(availableCard, num)
-			self.log("随机得到的牌:%v", cards)
-			red = append(red, cards[:num/2]...)
-			black = append(black, cards[num/2:num]...)
-			if len(red) != 3 || len(black) != 3 {
-				log.Errorf("逻辑错误 red:%v black:%v show:%v len(availableCard):%v roomid:%v ", red, black, self.showNum, len(availableCard), self.roomId)
-				break
-			}
-			result, tred, tblack = algorithm.Compare(append([]*protomsg.Card{}, red...), append([]*protomsg.Card{}, black...))
-			if result {
-				win = protomsg.LHDAREA_LHD_AREA_RED
-				t = tred
-			} else {
-				win = protomsg.LHDAREA_LHD_AREA_BLACK
-				t = tblack
-			}
-			odd = int64(config.Get_configInt("lhd_card", int(t), "Card_Odds"))
-			if int32(win) == arr[0].win && odd <= arr[0].odds {
-				self.log("随机配牌结果成功，result:%v red:%v %v black:%v %v ", result, red, tred.String(), black, tblack.String())
-				self.GameCards = self.GameCards[:0]
-				self.GameCards = append(red, black...)
-				break
-			} else {
-				self.log("随机配牌结果失败，result:%v red:%v %v black:%v %v ", result, red, tred.String(), black, tblack.String())
-			}
-		}
+	if val < 0 {
+		self.GameCards[0], self.GameCards[1] = self.GameCards[1], self.GameCards[0]
+		cards = self.GameCards[:2]
+		val := self.prep_settlement(betVal, win)
+		self.log("换牌后 牌组:%v 系统盈利:%v ", cards, val)
 	}
 }
 
-// totalBetVal 总押注 win 赢的一方, 牌型赔率
+// betVal  真实玩家总押注 win 赢的一方, 牌型赔率
 func (self *stop) prep_settlement(betVal map[int32]int64, win protomsg.LHDAREA) int64 {
 	sysWinVal := int64(0)
 	for a, v := range betVal {

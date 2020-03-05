@@ -60,9 +60,8 @@ message ENTER_GAME_LHD_RES {
 	uint32 RoomID 	    		   = 1; // 房间ID
 	repeated Winner HistoryWinners = 2; // 最近70局的获胜区域
 	repeated int64 bets            = 3; // 当前房间可押注筹码值
-	uint32 ShowNum                 = 4; // 当前房间开局前亮牌的数量
-	uint64 BetLimit                = 5; // 当前房间下注身上最少要带的钱
-	StatusMsgLHD Status 		   = 6; //  当前状态
+	uint64 BetLimit                = 4; // 当前房间下注身上最少要带的钱
+	StatusMsgLHD Status 		   = 5; //  当前状态
 }
 
 // 请求退出房间
@@ -110,7 +109,7 @@ message Status_Stop_LHD{
 // 4.结算
 message Status_Settle_LHD{
 	LHDAREA WinArea 		      = 1; // 获胜区域 (龙、 虎、和)
-	Card GragonCards     		  = 2; // 龙牌
+	Card DragonCards     		  = 2; // 龙牌
 	Card TigerCards   			  = 3; // 虎牌
 	map<int32,int64> Players      = 4; // 所有盈利的玩家 key:AccountID val:获利 (不包含本金)
 	// todo .............
