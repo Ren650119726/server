@@ -33,7 +33,7 @@ var game_GLobal *Client
 func (self *Game) Init(actor *core.Actor) bool {
 	self.owner = actor
 
-	game_GLobal = NewWebsocketClient(addr+":41601", "/connect")
+	game_GLobal = NewWebsocketClient(addr+":41701", "/connect")
 	game_GLobal.connect()
 	if game_GLobal.ws == nil {
 		log.Printf("connect faild \r\n")
@@ -60,7 +60,7 @@ func (self *Game) Init(actor *core.Actor) bool {
 		}
 	}()
 
-	Send2Game(protomsg.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ.UInt16(), &protomsg.ENTER_GAME_JPM_REQ{
+	Send2Game(protomsg.LHDMSG_CS_ENTER_GAME_LHD_REQ.UInt16(), &protomsg.ENTER_GAME_LHD_REQ{
 		AccountID: AccountID,
 		RoomID:    self.roomID,
 	})
@@ -110,12 +110,12 @@ func (self *Game) Stop() {
 func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
-	case protomsg.RED2BLACKMSG_SC_ENTER_GAME_RED2BLACK_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_GAME_RED2BLACK_RES{}).(*protomsg.ENTER_GAME_RED2BLACK_RES)
+	case protomsg.LHDMSG_SC_ENTER_GAME_LHD_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_GAME_LHD_RES{}).(*protomsg.ENTER_GAME_LHD_RES)
 		log.Infof(colorized.Blue("进入游戏成功：%+v"), pb)
 
-	case protomsg.RED2BLACKMSG_SC_BET_RED2BLACK_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.BET_RED2BLACK_RES{}).(*protomsg.BET_RED2BLACK_RES)
+	case protomsg.LHDMSG_SC_BET_LHD_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.BET_LHD_RES{}).(*protomsg.BET_LHD_RES)
 		log.Infof(colorized.Blue("押注成功：%+v"), pb)
 	}
 	return true
