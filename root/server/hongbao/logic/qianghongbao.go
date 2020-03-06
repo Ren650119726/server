@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"fmt"
+	"github.com/astaxie/beego"
 	"root/common"
 	"root/common/config"
 	"root/common/tools"
@@ -10,8 +12,6 @@ import (
 	"root/core/network"
 	"root/core/packet"
 	"root/core/utils"
-	"fmt"
-	"github.com/astaxie/beego"
 	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/hongbao/account"
@@ -66,9 +66,9 @@ func (self *Hongbao) registerHall() {
 	// 发送注册消息登记自身信息
 	sid, _ := strconv.Atoi(core.Appname)
 
-	send_tools.Send2Hall(inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(),&inner.GAME_CONNECT_HALL{
+	send_tools.Send2Hall(inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(), &inner.GAME_CONNECT_HALL{
 		ServerID: uint32(sid),
-		GameType: uint32(beego.AppConfig.DefaultInt("gametype",0)),
+		GameType: uint32(beego.AppConfig.DefaultInt("gametype", 0)),
 	})
 	log.Infof("连接大厅成功  sid:%v", sid)
 	room.RoomMgr.InitRoomMgr()
@@ -79,7 +79,7 @@ func (self *Hongbao) StartService() {
 	// 监听端口，客户端连接用
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
-	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""))
+	listen_actor := network.NewNetworkServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""))
 	child := core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(child)
 }

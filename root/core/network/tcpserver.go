@@ -1,34 +1,34 @@
 package network
 
 import (
+	"fmt"
 	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
 	"root/core/utils"
-	"fmt"
 	"strconv"
 )
 
 /*
  * 针对客户端连接的server, 负责逻辑和client之间的消息中转，不处理任何消息
  */
-type TCPServer struct {
-	acceptor   *Acceptor
-	customer   []*core.Actor
-	owner      *core.Actor
-	hashring   *utils.HashRing
-	listenaddr string
-	httpaddr   string
+type NetworkServer struct {
+	acceptor        *Acceptor
+	customer        []*core.Actor
+	owner           *core.Actor
+	hashring        *utils.HashRing
+	listen_TCPaddr  string // 监听的tcp
+	listen_HTTPaddr string // 监听的http
 }
 
 // 创建一个TCPServer
-func NewTCPServer(customer []*core.Actor, laddr,haddr string) *TCPServer {
-	server := &TCPServer{}
+func NewNetworkServer(customer []*core.Actor, laddr, haddr string) *NetworkServer {
+	server := &NetworkServer{}
 	server.customer = append(server.customer, customer...)
 	server.acceptor = NewAcceptor(server)
-	server.listenaddr = laddr
-	server.httpaddr = haddr
+	server.listen_TCPaddr = laddr
+	server.listen_HTTPaddr = haddr
 
 	// 构建400个虚拟节点
 	server.hashring = utils.NewHashRing(400)
@@ -38,32 +38,32 @@ func NewTCPServer(customer []*core.Actor, laddr,haddr string) *TCPServer {
 	}
 
 	if server.acceptor == nil {
+		log.Errorf("accept 为 nil ")
 		return nil
 	}
 	return server
 }
 
 // actor初始化(actor接口定义)
-func (self *TCPServer) Init(owner *core.Actor) bool {
-	if err := self.acceptor.Start(self.listenaddr,self.httpaddr); err != nil {
+func (self *NetworkServer) Init(owner *core.Actor) bool {
+	if err := self.acceptor.Start(self.listen_TCPaddr, self.listen_HTTPaddr); err != nil {
 		panic(err)
 	}
 	self.owner = owner
 	// 启动定时器(执行update逻辑)
 	self.owner.AddTimer(1, -1, self.update)
-	//self.owner.AddTimer(HANDLE_HEARTBEAT_TIMEOUT*1000, -1, self.doHeartbeat)
 
-	log.Infof(colorized.Green("actor:[%v]  listen:[%v]"), self.owner.Id, self.listenaddr)
+	log.Infof(colorized.Green("actor:[%v]  listenTCP:[%v] listenHTTP:[%v]"), self.owner.Id, self.listen_TCPaddr, self.listen_HTTPaddr)
 	return true
 }
 
 // 资源清理
-func (self *TCPServer) Stop() {
+func (self *NetworkServer) Stop() {
 	self.acceptor.Stop()
 }
 
 // actor消息处理 网络actor收到逻辑actor发送的消息
-func (self *TCPServer) HandleMessage(actor int32, msg []byte, session int64) bool {
+func (self *NetworkServer) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
 	case utils.ID_KICK_CLIENT: //踢玩家下线，断连接
@@ -80,7 +80,7 @@ func (self *TCPServer) HandleMessage(actor int32, msg []byte, session int64) boo
 }
 
 /* 网络层回调接口 */
-func (self *TCPServer) handle_input(session int64, data []byte) {
+func (self *NetworkServer) handle_input(session int64, data []byte) {
 	pack := packet.NewPacket(data)
 
 	switch pack.GetMsgID() {
@@ -107,20 +107,20 @@ func (self *TCPServer) handle_input(session int64, data []byte) {
 }
 
 /* 网络层回调接口 */
-func (self *TCPServer) update(dt int64) {
+func (self *NetworkServer) update(dt int64) {
 	self.acceptor.Update()
 }
 
-func (self *TCPServer) doHeartbeat(dt int64) {
+func (self *NetworkServer) doHeartbeat(dt int64) {
 	self.acceptor.timingHandleHeartbeatTimeout()
 }
 
-func (self *TCPServer) handleHeartbeat(buf []byte, session int64) {
+func (self *NetworkServer) handleHeartbeat(buf []byte, session int64) {
 	self.acceptor.updateHeartbeat(buf, session)
 }
 
 /* 网络层回调接口 */
-func (self *TCPServer) GetSessionIP(sesseionId int64) string {
+func (self *NetworkServer) GetSessionIP(sesseionId int64) string {
 	self.acceptor.sessions.RLock()
 	defer self.acceptor.sessions.RUnlock()
 

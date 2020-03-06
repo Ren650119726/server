@@ -88,7 +88,7 @@ func (self *Hall) SERVERMSG_DH_FINISH_DATA(session int64) {
 	// 大厅完成所有数据初始化, 开启监听，让客户端可连接
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
-	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""), beego.AppConfig.DefaultString(core.Appname+"::listenHttp", ""))
+	listen_actor := network.NewNetworkServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""), beego.AppConfig.DefaultString(core.Appname+"::listenHttp", ""))
 	self.ListenActor = core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(self.ListenActor)
 	strServerIP := utils.GetLocalIP()

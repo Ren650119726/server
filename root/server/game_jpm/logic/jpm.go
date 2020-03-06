@@ -79,7 +79,7 @@ func (self *jpm) StartService() {
 	// 监听端口，客户端连接用
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
-	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""),
+	listen_actor := network.NewNetworkServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""),
 		beego.AppConfig.DefaultString(core.Appname+"::listenHttp", ""))
 	room.ServerActor = core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(room.ServerActor)

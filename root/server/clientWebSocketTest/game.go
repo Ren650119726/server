@@ -33,7 +33,7 @@ var game_GLobal *Client
 func (self *Game) Init(actor *core.Actor) bool {
 	self.owner = actor
 
-	game_GLobal = NewWebsocketClient(addr+":41701", "/connect")
+	game_GLobal = NewWebsocketClient(addr+":51701", "/connect")
 	game_GLobal.connect()
 	if game_GLobal.ws == nil {
 		log.Printf("connect faild \r\n")

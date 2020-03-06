@@ -59,9 +59,9 @@ func (self *CatchFish) registerHall() {
 	strSign = tools.MD5(strSign)
 
 	// 组装消息
-	send_tools.Send2Hall(inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(),&inner.GAME_CONNECT_HALL{
+	send_tools.Send2Hall(inner.SERVERMSG_GH_GAME_CONNECT_HALL.UInt16(), &inner.GAME_CONNECT_HALL{
 		ServerID: uint32(sid),
-		GameType: uint32(beego.AppConfig.DefaultInt(fmt.Sprintf("%v::gametype",sid),0)),
+		GameType: uint32(beego.AppConfig.DefaultInt(fmt.Sprintf("%v::gametype", sid), 0)),
 	})
 	log.Infof("连接大厅成功  sid:%v", sid)
 	room.RoomMgr.InitRoomMgr()
@@ -72,7 +72,7 @@ func (self *CatchFish) StartService() {
 	// 监听端口，客户端连接用
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
-	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""))
+	listen_actor := network.NewNetworkServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""))
 	child := core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(child)
 }
@@ -91,13 +91,13 @@ func (self *CatchFish) HandleMessage(actor int32, msg []byte, session int64) boo
 	//case protomsg.Old_MSGID_ENTER_GAME.UInt16(): // 客户端链接进入游戏
 	//	self.Old_MSGID_ENTER_GAME(actor, msg, session)
 	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():
-		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(),nil, session)
+		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到来自大厅的测试网络消息 SessionID:%v", session)
 		req := packet.NewPacket(nil)
 		req.SetMsgID(inner.SERVERMSG_SS_TEST_NETWORK.UInt16())
-		send_tools.Send2Hall(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(),nil)
+		send_tools.Send2Hall(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(), nil)
 	default: // 客户端游戏消息，统一发送给房间处理
 		acc := account.AccountMgr.GetAccountBySessionID(session)
 		if acc == nil {
@@ -109,7 +109,6 @@ func (self *CatchFish) HandleMessage(actor int32, msg []byte, session int64) boo
 	}
 	return true
 }
-
 
 func (self *CatchFish) Old_MSGID_MAINTENANCE_NOTICE(actor int32, msg []byte, session int64) {
 	pack := packet.NewPacket(msg)

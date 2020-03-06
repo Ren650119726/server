@@ -70,7 +70,7 @@ func (self *DBServer) Init(actor *core.Actor) bool {
 	// 监听端口
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
-	listen_actor := network.NewTCPServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""),
+	listen_actor := network.NewNetworkServer(customer, beego.AppConfig.DefaultString(core.Appname+"::listen", ""),
 		beego.AppConfig.DefaultString(core.Appname+"::listenHttp", ""))
 	child = core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 100000))
 	core.CoreRegisteActor(child)

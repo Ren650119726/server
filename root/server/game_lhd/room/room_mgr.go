@@ -43,7 +43,6 @@ func (self *roomMgr) BraodcastReload() {
 	for roomID, _ := range self.Rooms {
 		core.CoreSend(0, int32(roomID), msg.GetData(), 0)
 	}
-
 }
 
 func (self *roomMgr) SendRoomInfo2Hall() {

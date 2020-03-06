@@ -15,8 +15,8 @@ import (
 type Acceptor struct {
 	listener *net.TCPListener // 监听socket
 	httpser  *http.Server
-	offchan  chan int64       // 断线的channel
-	newchan  chan net.Conn    // 新的链接channel
+	offchan  chan int64    // 断线的channel
+	newchan  chan net.Conn // 新的链接channel
 	sessions struct {
 		sync.RWMutex
 		m map[int64]*Session
@@ -43,7 +43,7 @@ func NewAcceptor(callback NetCallBackIF) *Acceptor {
 }
 
 // 启动
-func (self *Acceptor) Start(addr,httpAddr string) error {
+func (self *Acceptor) Start(addr, httpAddr string) error {
 	// 解析IP地址
 	ip_addr, err := net.ResolveTCPAddr("tcp", addr)
 	if nil != err {
@@ -57,7 +57,7 @@ func (self *Acceptor) Start(addr,httpAddr string) error {
 	}
 
 	go self.DoListen()
-	if httpAddr != ""{
+	if httpAddr != "" {
 		go self.DoListenHttp(httpAddr)
 	}
 
@@ -72,7 +72,6 @@ func (self *Acceptor) Stop() {
 	if self.httpser != nil {
 		self.httpser.Shutdown(nil)
 	}
-
 
 	for _, sess := range self.sessions.m {
 		sess.Kick()
@@ -100,7 +99,7 @@ func (self *Acceptor) DoListen() {
 }
 
 func (self *Acceptor) DoListenHttp(httpAddr string) {
-	self.httpser = &http.Server{Addr:httpAddr}
+	self.httpser = &http.Server{Addr: httpAddr}
 
 	http.Handle("/connect", websocket.Handler(func(ws *websocket.Conn) {
 		self.sessions.Lock()
@@ -113,15 +112,15 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 			session.DoWork()
 		}
 		self.sessions.Unlock()
-		select{
+		select {
 		case <-session.httpchan:
 			//log.Infof("断开连接：%v",ws.RemoteAddr())
 			return
 		}
 	}))
-	log.Infof("监听websocket:%v",httpAddr)
+
 	if err := self.httpser.ListenAndServe(); err != nil {
-		log.Infof("http监听失败: err:%v ",err.Error())
+		log.Infof("http监听失败: err:%v ", err.Error())
 	}
 }
 
