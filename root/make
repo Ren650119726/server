@@ -2,3 +2,7 @@ go install -mod=vendor -v root/server/db
 go install -mod=vendor -v root/server/hall
 go install -mod=vendor -v root/server/game_fruitMary
 go install -mod=vendor -v root/server/game_dfdc
+go install -mod=vendor -v root/server/game_jpm
+go install -mod=vendor -v root/server/game_luckfruit
+go install -mod=vendor -v root/server/game_red2black
+go install -mod=vendor -v root/server/game_lhd
