@@ -89,7 +89,6 @@ func (self *stop) leave(accid uint32) bool {
 func (self *stop) enterData(accountId uint32) *protomsg.StatusMsg {
 	betval_own := self.playerAreaBetVal(accountId)
 	self.enterMsg.AreaBetVal_Own = betval_own
-	self.enterMsg.AreaBetVal = self.areaBetVal(true)
 	return self.enterMsg
 }
 
