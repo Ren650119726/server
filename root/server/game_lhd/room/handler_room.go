@@ -21,6 +21,7 @@ func (self *Room) SERVERMSG_HG_ROOM_WATER_PROFIT(actor int32, msg []byte, sessio
 // 玩家进入游戏
 func (self *Room) LHDMSG_CS_ENTER_GAME_LHD_REQ(actor int32, msg []byte, session int64) {
 	enterPB := packet.PBUnmarshal(msg, &protomsg.ENTER_GAME_LHD_REQ{}).(*protomsg.ENTER_GAME_LHD_REQ)
+	log.Infof("玩家请求进入游戏:%v", enterPB.GetAccountID())
 	self.enterRoom(enterPB.GetAccountID())
 }
 

@@ -24,7 +24,7 @@ type (
 		accountbyWeiXin    map[string]*Account
 		AccountbyID        map[uint32]*Account
 		accountbySessionID map[int64]*Account
-		IDAssign []uint32
+		IDAssign           []uint32
 	}
 )
 
@@ -36,10 +36,11 @@ func newAccountMgr() *accountMgr {
 		accountbyWeiXin:    make(map[string]*Account),
 		AccountbyID:        make(map[uint32]*Account),
 		accountbySessionID: make(map[int64]*Account),
-		IDAssign:           make([]uint32, 0, 100000),
+		IDAssign:           make([]uint32, 0, 1000000),
 	}
 	return ret
 }
+
 // 所有玩家和机器人都初始化完成以后, 再将玩家和机器人的ID排除掉
 func (self *accountMgr) CollatingIDAssign() {
 	mCheckID := make(map[uint32]bool)
@@ -47,9 +48,9 @@ func (self *accountMgr) CollatingIDAssign() {
 		mCheckID[nID] = true
 	}
 
-	// 初始化帐号ID; 从100000--199999; 并将已使用的ID排除掉
+	// 初始化帐号ID; 从100000--999999; 并将已使用的ID排除掉
 	var nID uint32 = 100000
-	for i := 0; i < 100000; i++ {
+	for i := 0; i < 1000000; i++ {
 		if _, isExist := mCheckID[nID]; isExist == false {
 			self.IDAssign = append(self.IDAssign, nID)
 		}
@@ -68,7 +69,7 @@ func (self *accountMgr) GetAllAccount() map[uint32]*Account {
 func (self *accountMgr) GetAccountByType(identifier string, loginType uint8) *Account {
 
 	switch loginType {
-	case types.LOGIN_TYPE_DEVICE.Value(),types.LOGIN_TYPE_OTHER.Value():
+	case types.LOGIN_TYPE_DEVICE.Value(), types.LOGIN_TYPE_OTHER.Value():
 		return self.accountbyUnDevice[identifier]
 	case types.LOGIN_TYPE_PHONE.Value():
 		return self.accountbyPhone[identifier]
@@ -96,15 +97,15 @@ func (self *accountMgr) GetAccountByIDAssert(id uint32) *Account {
 
 func (self *accountMgr) GetAccountBySessionIDAssert(session int64) *Account {
 	acc := self.accountbySessionID[session]
-	if acc == nil{
-		log.Panicf("找不到玩家:%v ",session)
+	if acc == nil {
+		log.Panicf("找不到玩家:%v ", session)
 		return nil
 	}
 	return acc
 }
 func (self *accountMgr) GetAccountBySessionID(session int64) *Account {
 	acc := self.accountbySessionID[session]
-	if acc == nil{
+	if acc == nil {
 		return nil
 	}
 	return acc
@@ -114,11 +115,10 @@ func (self *accountMgr) RemoveAccountBySessionID(session int64) {
 	delete(self.accountbySessionID, session)
 }
 
-
 func (self *accountMgr) ArchiveAll() {
 	count := 0
-	for _,acc := range self.AccountbyID{
-		if acc.Store && acc.Robot == 0{
+	for _, acc := range self.AccountbyID {
+		if acc.Store && acc.Robot == 0 {
 			acc.Save()
 			count++
 		}
@@ -169,24 +169,24 @@ func (self *accountMgr) LoadAllAccount(all_data []*protomsg.AccountStorageData) 
 // 广播消息, 给所有在线玩家
 // t类型1, 所有在大厅玩家接收
 // t类型2, 所有在大厅和在房间的玩家接收
-func (self *accountMgr) SendBroadcast(msgID uint16,pb proto.Message, t uint8) {
+func (self *accountMgr) SendBroadcast(msgID uint16, pb proto.Message, t uint8) {
 	if t == 1 {
 		for _, acc := range self.AccountbyID {
 			if acc.IsOnline() && acc.Robot == 0 && acc.RoomID == 0 {
-				send_tools.Send2Account(msgID,pb, acc.SessionId)
+				send_tools.Send2Account(msgID, pb, acc.SessionId)
 			}
 		}
 	} else {
 		for _, acc := range self.AccountbyID {
 			if acc.IsOnline() && acc.Robot == 0 {
-				send_tools.Send2Account(msgID,pb, acc.SessionId)
+				send_tools.Send2Account(msgID, pb, acc.SessionId)
 			}
 		}
 	}
 }
 
 // 创建账号
-func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChannelID uint16, strName string,strHeadURL string, nOSType uint8, strClientIP string, session int64, nRobot uint32,money uint64) *Account {
+func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, strName string, strHeadURL string, nOSType uint8, strClientIP string, session int64, nRobot uint32, money uint64) *Account {
 	strNowTime := utils.DateString()
 	var nNewAccountID uint32
 	nLen := len(self.IDAssign)
@@ -199,7 +199,7 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChanne
 
 	tNewAccount := NewAccount(&protomsg.AccountStorageData{})
 	switch nLoginType {
-	case types.LOGIN_TYPE_DEVICE.Value(),types.LOGIN_TYPE_OTHER.Value():
+	case types.LOGIN_TYPE_DEVICE.Value(), types.LOGIN_TYPE_OTHER.Value():
 		tNewAccount.UnDevice = uniqueID
 		tNewAccount.Phone = ""
 		tNewAccount.WeiXin = ""
@@ -227,27 +227,27 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, nChanne
 	tNewAccount.OSType = uint32(nOSType)
 
 	self.AccountbyID[nNewAccountID] = tNewAccount
-	tNewAccount.AddMoney(config.GetPublicConfig_Int64(3),common.EOperateType_INIT)
+	tNewAccount.AddMoney(config.GetPublicConfig_Int64(3), common.EOperateType_INIT)
 
 	if nRobot == 0 {
 		self.accountbySessionID[session] = tNewAccount
-		tNewAccount.Save() 		// 新建账号，存数据库
+		tNewAccount.Save() // 新建账号，存数据库
 	}
 
 	// 登陆成功
 	loginRet := &protomsg.LOGIN_HALL_RES{
-		Ret:0,
-		Account:tNewAccount.AccountStorageData,
-		AccountData:tNewAccount.AccountGameData,
+		Ret:         0,
+		Account:     tNewAccount.AccountStorageData,
+		AccountData: tNewAccount.AccountGameData,
 	}
-	send_tools.Send2Account(protomsg.MSG_SC_LOGIN_HALL_RES.UInt16(),loginRet, session)
+	send_tools.Send2Account(protomsg.MSG_SC_LOGIN_HALL_RES.UInt16(), loginRet, session)
 
 	return tNewAccount
 }
 
 func (self *accountMgr) LoginAccount(acc *Account, nLoginType uint8, IP string, session int64) {
 	if acc.SessionId > 0 && acc.SessionId != session {
-		send_tools.Send2Account(protomsg.MSG_SC_KICK_OUT_HALL.UInt16(),&protomsg.KICK_OUT_HALL{Ret:2}, acc.SessionId)
+		send_tools.Send2Account(protomsg.MSG_SC_KICK_OUT_HALL.UInt16(), &protomsg.KICK_OUT_HALL{Ret: 2}, acc.SessionId)
 		// 取消之前的SessionID的关联
 		delete(self.accountbySessionID, acc.SessionId)
 	}
@@ -281,12 +281,12 @@ func (self *accountMgr) LoginAccount(acc *Account, nLoginType uint8, IP string, 
 
 			// 登陆成功
 			loginRet := &protomsg.LOGIN_HALL_RES{
-				Ret:0,
-				Account:acc.AccountStorageData,
-				AccountData:acc.AccountGameData,
+				Ret:         0,
+				Account:     acc.AccountStorageData,
+				AccountData: acc.AccountGameData,
 			}
-			send_tools.Send2Account(protomsg.MSG_SC_LOGIN_HALL_RES.UInt16(),loginRet, session)
-			log.Infof("login Player:%v, unique:%v, Money:%v, 登录类型:%v,IP:%v Session:%v", acc.AccountId,acc.UnDevice, acc.Money, types.ELoginType(nLoginType),IP, session)
+			send_tools.Send2Account(protomsg.MSG_SC_LOGIN_HALL_RES.UInt16(), loginRet, session)
+			log.Infof("login Player:%v, unique:%v, Money:%v, 登录类型:%v,IP:%v Session:%v", acc.AccountId, acc.UnDevice, acc.Money, types.ELoginType(nLoginType), IP, session)
 		})
 	}
 }

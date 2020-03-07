@@ -53,7 +53,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 				log.Infof("登录白名单已开, 禁止登录; unique:%v, LoginType:%v, ClientIP:%v", Unique, LoginType, strClientIP)
 				return
 			}
-			acc = account.AccountMgr.CreateAccount(Unique, uint8(loginMSG.GetLoginType()), 0, Name, "", uint8(loginMSG.GetOSType()), strClientIP, session, 0, uint64(Gold))
+			acc = account.AccountMgr.CreateAccount(Unique, uint8(loginMSG.GetLoginType()), Name, "", uint8(loginMSG.GetOSType()), strClientIP, session, 0, uint64(Gold))
 		} else { // 登陆账号
 			if openWhiteList == 1 {
 				WHITE_LOGIN_LIST := config.GetPublicConfig_String(2)

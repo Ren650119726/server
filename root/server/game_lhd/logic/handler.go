@@ -47,5 +47,6 @@ func (self *lhd) LHDMSG_CS_ENTER_GAME_LHD_REQ(actor int32, data []byte, session 
 	}
 
 	acc.RoomID = enterPB.GetRoomID()
+	log.Infof("玩家%v 请求进入房间:%v", enterPB.GetAccountID(), acc.RoomID)
 	return int32(enterPB.GetRoomID())
 }
