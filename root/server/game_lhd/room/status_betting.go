@@ -44,7 +44,7 @@ func (self *betting) Enter(now int64) {
 		}
 		self.GameCards = algorithm.GetRandom_Card(self.RoomCards, num)
 		self.history = self.history[:0]
-		self.SendBroadcast(protomsg.LHDMSG_SC_CLEAN_HISTORY_BROADCAST_LHD.UInt16())
+		self.SendBroadcast(protomsg.LHDMSG_SC_CLEAN_HISTORY_BROADCAST_LHD.UInt16(), nil)
 	} else {
 		self.GameCards = self.GameCards[2:]
 	}
