@@ -128,7 +128,7 @@ func (self *stop) kill(betVal map[int32]int64) {
 	for i := 0; i < len(arr); i++ {
 		if arr[i].syswinVal < 0 {
 			if i == 0 {
-				log.Errorf("计算不出吃大赔小的情况，请检查 初始随机牌组:%v 押注：%v roomid:%v ", self.GameCards, betVal, self.roomId)
+				log.Errorf("无论哪边赢，系统都会亏钱，检查是否赔率太高了 初始随机牌组:%v 押注：%v roomid:%v ", self.GameCards, betVal, self.roomId)
 				break
 			}
 			// 去掉所有系统亏钱的情况
