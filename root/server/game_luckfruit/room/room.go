@@ -33,6 +33,7 @@ type (
 		freeWheel       []*wheelNode
 		LUCKFRUITWheel  []*wheelNode
 		bonus_pattern   map[int]int
+		addr_url        string
 	}
 )
 

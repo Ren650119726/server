@@ -28,11 +28,13 @@ type (
 		Conf_JackpotBet      int64
 		Conf_Bet_Probability int64
 
-		bets            []uint64
+		bets []uint64
+
 		mapPictureNodes map[int32]*protomsg.ENTER_GAME_DFDC_RES_DfdcRatio
 		mainWheel       []*wheelNode
 		freeWheel       []*wheelNode
 		bonus_pattern   map[int]int
+		addr_url        string
 	}
 )
 

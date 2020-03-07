@@ -1,7 +1,7 @@
 package config
 
 const (
-	RMB_BILI       = 100         // RMB缩小比例
+	RMB_BILI = 100 // RMB缩小比例
 
 	JH_MAX_PLAYER     = 6     // 金币房间最大人数
 	CX_MAX_PLAYER     = 8     // 扯旋房间最大人数
@@ -18,6 +18,5 @@ const (
 	PDK_HN_MAX_PLAYER = 2     // 跑得快湖南版房间最大人数
 	SG_MAX_PLAYER     = 8     // 三公房间最大人数
 
-	GETUSERINFO_URL = "http://47.244.119.129:1000/user/userInfo"
 	ALTERUSERGOLD_URL = "http://47.244.119.129:1000/user/updateGold"
 )

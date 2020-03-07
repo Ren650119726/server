@@ -5,30 +5,29 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"root/common/config"
 	"root/core"
 	"root/core/log"
 	"strconv"
 	"time"
 )
 
-func asyn_addMoney(unique string,num int64,roomID int32, desc string,back func(backunique string,backmoney int64),errback func())  {
+func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string, back func(backunique string, backmoney int64), errback func()) {
 	go func() {
 		send := url.Values{"channelId": {"DDHYLC"},
 			"gameId": {"game_jpm"},
 			"userId": {unique},
-			"num": {strconv.Itoa(int(num))},
-			"desc": {desc},
+			"num":    {strconv.Itoa(int(num))},
+			"desc":   {desc},
 		}
-		resp, err := http.PostForm(config.ALTERUSERGOLD_URL,
+		resp, err := http.PostForm(addr_url,
 			send)
-		log.Infof("金瓶梅请求下注:%v",send)
+		log.Infof("金瓶梅请求下注:%v", send)
 
 		if err != nil {
 			log.Errorf("三方平台，http 请求错误:%v", err.Error())
-			for i := 0;i < 10;i++{
-				time.Sleep(1*time.Second)
-				resp, err = http.PostForm(config.ALTERUSERGOLD_URL,
+			for i := 0; i < 10; i++ {
+				time.Sleep(1 * time.Second)
+				resp, err = http.PostForm(addr_url,
 					send)
 				if err == nil {
 					break
@@ -38,7 +37,7 @@ func asyn_addMoney(unique string,num int64,roomID int32, desc string,back func(b
 			// 10次请求以后，如果还有错，就直接返回了
 			if err != nil {
 				if errback != nil {
-					core.LocalCoreSend(0,roomID, func() {
+					core.LocalCoreSend(0, roomID, func() {
 						errback()
 					})
 				}
@@ -52,22 +51,22 @@ func asyn_addMoney(unique string,num int64,roomID int32, desc string,back func(b
 			log.Errorf("三方平台，read 错误:%v", err.Error())
 			return
 		}
-		log.Infof("金瓶梅请求下注，平台返回:%v",string(body))
+		log.Infof("金瓶梅请求下注，平台返回:%v", string(body))
 		var jsonstr map[string]interface{}
-		e := json.Unmarshal(body,&jsonstr)
+		e := json.Unmarshal(body, &jsonstr)
 		if e != nil {
-			log.Errorf("json 解析错误:%v ",e.Error())
+			log.Errorf("json 解析错误:%v ", e.Error())
 			return
 		}
-		if err,e := jsonstr["status"];e && int(err.(float64)) != 0{
-			log.Errorf("平台返回错误码:%v ",int(err.(float64)))
+		if err, e := jsonstr["status"]; e && int(err.(float64)) != 0 {
+			log.Errorf("平台返回错误码:%v ", int(err.(float64)))
 			return
-		}else{
+		} else {
 			data := jsonstr["data"].(map[string]interface{})
 			gold := data["gold"].(float64)
 			if back != nil {
-				core.LocalCoreSend(0,roomID, func() {
-					back(unique,int64(gold))
+				core.LocalCoreSend(0, roomID, func() {
+					back(unique, int64(gold))
 				})
 			}
 		}

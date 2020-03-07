@@ -35,6 +35,7 @@ type (
 		maryWheel       []*wheelNode
 		weight_ratio    [][]int32
 		bonus_pattern   map[int]int
+		addr_url        string
 	}
 )
 

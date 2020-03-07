@@ -16,28 +16,28 @@ import (
 
 // 玩家进入游戏
 func (self *Room) JPMMSG_CS_ENTER_GAME_JPM_REQ(actor int32, msg []byte, session int64) {
-	enterPB := packet.PBUnmarshal(msg,&protomsg.ENTER_GAME_JPM_REQ{}).(*protomsg.ENTER_GAME_JPM_REQ)
+	enterPB := packet.PBUnmarshal(msg, &protomsg.ENTER_GAME_JPM_REQ{}).(*protomsg.ENTER_GAME_JPM_REQ)
 	self.enterRoom(enterPB.GetAccountID())
 }
 
 // 玩家离开
 func (self *Room) JPMMSG_CS_LEAVE_GAME_JPM_REQ(actor int32, msg []byte, session int64) {
-	enterPB := packet.PBUnmarshal(msg,&protomsg.LEAVE_GAME_JPM_REQ{}).(*protomsg.LEAVE_GAME_JPM_REQ)
+	enterPB := packet.PBUnmarshal(msg, &protomsg.LEAVE_GAME_JPM_REQ{}).(*protomsg.LEAVE_GAME_JPM_REQ)
 	ret := uint32(1)
-	if self.canleave(enterPB.GetAccountID()){
+	if self.canleave(enterPB.GetAccountID()) {
 		ret = 0
 	}
-	send_tools.Send2Account(protomsg.JPMMSG_SC_LEAVE_GAME_JPM_RES.UInt16(),&protomsg.LEAVE_GAME_JPM_RES{
-		Ret:ret,
-		RoomID:    self.roomId,
-	},session)
+	send_tools.Send2Account(protomsg.JPMMSG_SC_LEAVE_GAME_JPM_RES.UInt16(), &protomsg.LEAVE_GAME_JPM_RES{
+		Ret:    ret,
+		RoomID: self.roomId,
+	}, session)
 }
 
 // 玩家请求开始游戏
 func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64) {
-	start := packet.PBUnmarshal(msg,&protomsg.START_JPM_REQ{}).(*protomsg.START_JPM_REQ)
+	start := packet.PBUnmarshal(msg, &protomsg.START_JPM_REQ{}).(*protomsg.START_JPM_REQ)
 	msgBetNum := start.GetBet()
-	BetNum :=msgBetNum*9
+	BetNum := msgBetNum * 9
 	acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
 
 	freeCount := acc.FeeCount
@@ -51,7 +51,7 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 			}
 		}
 		if !isFind {
-			log.Warnf("没有该档次%v",msgBetNum)
+			log.Warnf("没有该档次%v", msgBetNum)
 			return
 		}
 
@@ -63,7 +63,7 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 		isFree = true
 		BetNum = acc.LastBet
 		if BetNum < 1 {
-			BetNum = self.bets[0]*9
+			BetNum = self.bets[0] * 9
 		}
 	}
 	acc.LastBet = BetNum
@@ -75,7 +75,7 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 		reward := int64(0)
 		var feepos []*protomsg.JPMPosition
 
-		sumKillP := int32( config.Get_configInt("jpm_room",int(self.roomId),"KillPersent")) + acc.GetKill()
+		sumKillP := int32(config.Get_configInt("jpm_room", int(self.roomId), "KillPersent")) + acc.GetKill()
 		//log.Debugf("玩家的 杀数为: %d", sumKillP)
 		rNum := rand.Int31n(10000) + 1
 		isKill := false
@@ -86,9 +86,9 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 		}
 		for i := 0; i < maxLoop; i++ {
 			if freeCount > 0 {
-				resluts, pArr, gainFreeCount, _,sumOdds, reward = self.selectWheel(self.freeWheel, int64(BetNum), isKill,false)
+				resluts, pArr, gainFreeCount, _, sumOdds, reward = self.selectWheel(self.freeWheel, int64(BetNum), isKill, false)
 			} else {
-				resluts, pArr, gainFreeCount, _,sumOdds, reward = self.selectWheel(self.mainWheel, int64(BetNum), isKill,false)
+				resluts, pArr, gainFreeCount, _, sumOdds, reward = self.selectWheel(self.mainWheel, int64(BetNum), isKill, false)
 			}
 			if maxLoop > 1 && sumOdds > 0 && i < (maxLoop-1) {
 				continue
@@ -96,23 +96,23 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 				break
 			}
 		}
-		if msgBetNum < uint64(self.jackLimit){
+		if msgBetNum < uint64(self.jackLimit) {
 			reward = 0
 		}
 
-		val := reward+(sumOdds*int64(BetNum)/9)
+		val := reward + (sumOdds * int64(BetNum) / 9)
 		acc.AddMoney(val, common.EOperateType_JPM_WIN)
-		if acc.GetOSType() == 4{
-			asyn_addMoney(acc.UnDevice,val,int32(self.roomId), "小玛利游戏1 中奖",nil,nil) //中奖
+		if acc.GetOSType() == 4 {
+			asyn_addMoney(self.addr_url, acc.UnDevice, val, int32(self.roomId), "小玛利游戏1 中奖", nil, nil) //中奖
 		}
 
 		//log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 总赔率:%v 获得奖金：%v",
 		//	acc.GetAccountId(),acc.GetMoney(),resluts, pArr, gainFreeCount,sumOdds, reward)
 
 		sub := self.bonus - reward
-		if sub < 0{
+		if sub < 0 {
 			self.bonus = 0
-		}else{
+		} else {
 			self.bonus = sub
 		}
 
@@ -126,52 +126,52 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 		}
 
 		resultMsg := &protomsg.START_JPM_RES{
-			Ret:0,
-			SumOdds:sumOdds,
-			Results:resluts,
-			PictureList:pArr,
-			Bonus:reward,
-			Money:int64(acc.GetMoney()),
-			FreeCount:int64(acc.FeeCount),
-			FeePositions:feepos,
+			Ret:          0,
+			SumOdds:      sumOdds,
+			Results:      resluts,
+			PictureList:  pArr,
+			Bonus:        reward,
+			Money:        int64(acc.GetMoney()),
+			FreeCount:    int64(acc.FeeCount),
+			FeePositions: feepos,
 		}
-		send_tools.Send2Account(protomsg.JPMMSG_SC_START_JPM_RES.UInt16(),resultMsg,session)
+		send_tools.Send2Account(protomsg.JPMMSG_SC_START_JPM_RES.UInt16(), resultMsg, session)
 
-		for _,acc := range self.accounts {
-			send_tools.Send2Account(protomsg.JPMMSG_SC_UPDATE_JPM_BONUS.UInt16(),&protomsg.UPDATE_JPM_BONUS{Bonus:self.bonus},acc.SessionId)
+		for _, acc := range self.accounts {
+			send_tools.Send2Account(protomsg.JPMMSG_SC_UPDATE_JPM_BONUS.UInt16(), &protomsg.UPDATE_JPM_BONUS{Bonus: self.bonus}, acc.SessionId)
 		}
 
 		// 回存水池
-		send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(),&inner.ROOM_BONUS_SAVE{Value:strconv.Itoa(int(self.bonus)),RoomID:self.roomId})
+		send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_SAVE.UInt16(), &inner.ROOM_BONUS_SAVE{Value: strconv.Itoa(int(self.bonus)), RoomID: self.roomId})
 	}
 
 	//抽水的分加进水池
 	if !isFree {
 		back := func(backunique string, backmoney int64) { // 押注
-			a := BetNum * self.jackpotRate/10000
+			a := BetNum * self.jackpotRate / 10000
 			self.bonus += int64(a)
-			if acc.GetMoney() - BetNum != uint64(backmoney){
-				log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v",acc.GetUnDevice(),acc.GetMoney(),BetNum,backmoney)
-				acc.AddMoney(backmoney - int64(acc.GetMoney()),common.EOperateType_INIT)
-			}else{
+			if acc.GetMoney()-BetNum != uint64(backmoney) {
+				log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v", acc.GetUnDevice(), acc.GetMoney(), BetNum, backmoney)
+				acc.AddMoney(backmoney-int64(acc.GetMoney()), common.EOperateType_INIT)
+			} else {
 				acc.AddMoney(int64(-(BetNum)), common.EOperateType_JPM_BET)
 			}
 			gameFun()
 		}
-		if acc.GetOSType() == 4{
+		if acc.GetOSType() == 4 {
 			// 错误返回
 			errback := func() {
 				log.Warnf("http请求报错")
 				resultMsg := &protomsg.START_JPM_RES{
-					Ret:1,
+					Ret: 1,
 				}
-				send_tools.Send2Account(protomsg.JPMMSG_SC_START_JPM_RES.UInt16(),resultMsg,session)
+				send_tools.Send2Account(protomsg.JPMMSG_SC_START_JPM_RES.UInt16(), resultMsg, session)
 			}
-			asyn_addMoney(acc.UnDevice,-int64(BetNum),int32(self.roomId),fmt.Sprintf("金瓶梅请求下注:%v",BetNum),back,errback)
-		}else{
-			back("",int64(acc.GetMoney() - BetNum))
+			asyn_addMoney(self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId), fmt.Sprintf("金瓶梅请求下注:%v", BetNum), back, errback)
+		} else {
+			back("", int64(acc.GetMoney()-BetNum))
 		}
-	}else{
+	} else {
 		gameFun()
 	}
 }
@@ -181,23 +181,23 @@ func (self *Room) JPMMSG_CS_PLAYERS_JPM_LIST_REQ(actor int32, msg []byte, sessio
 	account.AccountMgr.GetAccountBySessionIDAssert(session)
 
 	ret := &protomsg.PLAYERS_JPM_LIST_RES{}
-	ret.Players = make([]*protomsg.AccountStorageData,0)
-	for _,p := range self.accounts{
-		ret.Players = append(ret.Players,p.AccountStorageData)
+	ret.Players = make([]*protomsg.AccountStorageData, 0)
+	for _, p := range self.accounts {
+		ret.Players = append(ret.Players, p.AccountStorageData)
 	}
-	send_tools.Send2Account(protomsg.JPMMSG_SC_PLAYERS_JPM_LIST_RES.UInt16(),ret,session)
+	send_tools.Send2Account(protomsg.JPMMSG_SC_PLAYERS_JPM_LIST_RES.UInt16(), ret, session)
 }
 
 // 大厅返回水池金额
 func (self *Room) SERVERMSG_HG_ROOM_BONUS_RES(actor int32, msg []byte, session int64) {
-	data := packet.PBUnmarshal(msg,&inner.ROOM_BONUS_RES{}).(*inner.ROOM_BONUS_RES)
-	log.Infof("大厅返回房间:[%v] 水池金额:[%v]",self.roomId,data.GetValue())
-	if data.GetValue() == ""{
+	data := packet.PBUnmarshal(msg, &inner.ROOM_BONUS_RES{}).(*inner.ROOM_BONUS_RES)
+	log.Infof("大厅返回房间:[%v] 水池金额:[%v]", self.roomId, data.GetValue())
+	if data.GetValue() == "" {
 		self.bonus = 0
-	}else{
-		v,e := strconv.Atoi(data.GetValue())
+	} else {
+		v, e := strconv.Atoi(data.GetValue())
 		if e != nil {
-			log.Errorf("解析错误%v",e.Error())
+			log.Errorf("解析错误%v", e.Error())
 		}
 		self.bonus = int64(v)
 	}
@@ -205,19 +205,19 @@ func (self *Room) SERVERMSG_HG_ROOM_BONUS_RES(actor int32, msg []byte, session i
 
 // 大厅请求修改玩家数据
 func (self *Room) SERVERMSG_HG_NOTIFY_ALTER_DATE(actor int32, msg []byte, session int64) {
-	if session != 0{
-		log.Warnf("此消息只能大厅发送 %v",session)
+	if session != 0 {
+		log.Warnf("此消息只能大厅发送 %v", session)
 		return
 	}
-	data := packet.PBUnmarshal(msg,&inner.NOTIFY_ALTER_DATE{}).(*inner.NOTIFY_ALTER_DATE)
+	data := packet.PBUnmarshal(msg, &inner.NOTIFY_ALTER_DATE{}).(*inner.NOTIFY_ALTER_DATE)
 	acc := account.AccountMgr.GetAccountByIDAssert(data.GetAccountID())
-	if data.GetType() == 1{ // 修改金币
+	if data.GetType() == 1 { // 修改金币
 		changeValue := int(data.GetAlterValue())
-		if changeValue < 0 && -changeValue > int(acc.GetMoney()){
+		if changeValue < 0 && -changeValue > int(acc.GetMoney()) {
 			changeValue = int(-acc.GetMoney())
 		}
-		acc.AddMoney(int64(changeValue),common.EOperateType(data.GetOperateType()))
-	}else if data.GetType() == 2{ // 修改杀数
+		acc.AddMoney(int64(changeValue), common.EOperateType(data.GetOperateType()))
+	} else if data.GetType() == 2 { // 修改杀数
 		acc.Kill = int32(data.GetAlterValue())
 	}
 }

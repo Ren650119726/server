@@ -37,6 +37,7 @@ type (
 		betlimit        int64                                       //
 		GameCards       []*protomsg.Card                            // 本局随机牌组 0-2 红方   3-5 黑方
 		logStack        []string                                    // 房间日志堆栈
+		addr_url        string
 	}
 )
 

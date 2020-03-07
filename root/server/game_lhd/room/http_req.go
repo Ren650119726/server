@@ -5,14 +5,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"root/common/config"
 	"root/core"
 	"root/core/log"
 	"strconv"
 	"time"
 )
 
-func asyn_addMoney(unique string, num int64, roomID int32, desc string, back func(backunique string, backmoney int64), errback func()) {
+func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string, back func(backunique string, backmoney int64), errback func()) {
 	go func() {
 		send := url.Values{"channelId": {"DDHYLC"},
 			"gameId": {"game_r2b"},
@@ -20,7 +19,7 @@ func asyn_addMoney(unique string, num int64, roomID int32, desc string, back fun
 			"num":    {strconv.Itoa(int(num))},
 			"desc":   {desc},
 		}
-		resp, err := http.PostForm(config.ALTERUSERGOLD_URL,
+		resp, err := http.PostForm(addr_url,
 			send)
 		log.Infof("龙虎斗请求下注:%v", send)
 
@@ -28,7 +27,7 @@ func asyn_addMoney(unique string, num int64, roomID int32, desc string, back fun
 			log.Errorf("三方平台，http 请求错误:%v", err.Error())
 			for i := 0; i < 10; i++ {
 				time.Sleep(1 * time.Second)
-				resp, err = http.PostForm(config.ALTERUSERGOLD_URL,
+				resp, err = http.PostForm(addr_url,
 					send)
 				if err == nil {
 					break

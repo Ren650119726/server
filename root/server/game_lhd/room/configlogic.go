@@ -78,6 +78,7 @@ func (self *Room) LoadConfig() {
 		cards = append(cards, v)
 	}
 	self.RoomCards = cards
+	self.addr_url = config.GetPublicConfig_String(5)
 
 	self.odds_conf[protomsg.LHDAREA_LHD_AREA_DRAGON] = int64(config.Get_configInt("lhd_room", int(self.roomId), "Dragon"))
 	self.odds_conf[protomsg.LHDAREA_LHD_AREA_TIGER] = int64(config.Get_configInt("lhd_room", int(self.roomId), "Tiger"))
