@@ -224,7 +224,6 @@ func (self *Session) doread() {
 				}
 			*/
 			self.callback.handle_input(self.id, content)
-			log.Infof("处理数据:%v l:%v", content, len(content))
 		}
 	}
 }
