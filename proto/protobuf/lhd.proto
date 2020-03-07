@@ -7,21 +7,22 @@ import "protobuf/data.proto";
 ////////////////////////////////////////////////////// 网络消息 /////////////////////////////////////////////////////////////
 enum LHDMSG {
 	UNKNOW_LHD = 0;
-	CS_ENTER_GAME_LHD_REQ = 70001; // 玩家请求进入房间
-	SC_ENTER_GAME_LHD_RES = 70002;
-	CS_LEAVE_GAME_LHD_REQ = 70003; // 玩家请求退出房间
-	SC_LEAVE_GAME_LHD_RES = 70004;
+	CS_ENTER_GAME_LHD_REQ = 17001; // 玩家请求进入房间
+	SC_ENTER_GAME_LHD_RES = 17002;
+	CS_LEAVE_GAME_LHD_REQ = 17003; // 玩家请求退出房间
+	SC_LEAVE_GAME_LHD_RES = 17004;
 	
-	CS_BET_LHD_REQ        = 70008; // 请求下注
-	SC_BET_LHD_RES        = 70009;
-    CS_CLEAN_BET_LHD_REQ  = 70010; // 请求清除下注
-    SC_CLEAN_BET_LHD_RES  = 70011;
+	CS_BET_LHD_REQ        = 17008; // 请求下注
+	SC_BET_LHD_RES        = 17009;
+    CS_CLEAN_BET_LHD_REQ  = 17010; // 请求清除下注
+    SC_CLEAN_BET_LHD_RES  = 17011;
 
 
-	CS_PLAYERS_LHD_LIST_REQ = 70015;// 请求在线玩家列表
-	SC_PLAYERS_LHD_LIST_RES = 70016;
+	CS_PLAYERS_LHD_LIST_REQ = 17015;// 请求在线玩家列表
+	SC_PLAYERS_LHD_LIST_RES = 17016;
 	
-	SC_SWITCH_GAME_STATUS_BROADCAST_LHD = 70020; // 服务器主动广播，切换状态消息
+	SC_SWITCH_GAME_STATUS_BROADCAST_LHD = 17020; // 服务器主动广播，切换状态消息
+	SC_CLEAN_HISTORY_BROADCAST_LHD      = 17021; // 服务器主动广播，清除历史记录
 }
 
 ////////////////////////////////////////////////////// 游戏枚举 /////////////////////////////////////////////////////////////

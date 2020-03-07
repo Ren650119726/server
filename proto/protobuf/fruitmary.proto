@@ -7,23 +7,23 @@ import "protobuf/data.proto";
 // 网络消息
 enum FRUITMARYMSG {
 	UNKNOW_FRUITMARY = 0;
-	CS_ENTER_GAME_FRUITMARY_REQ = 20001; // 玩家请求进入房间
-	SC_ENTER_GAME_FRUITMARY_RES = 20002;
-	CS_LEAVE_GAME_FRUITMARY_REQ = 20003; // 玩家请求退出房间
-	SC_LEAVE_GAME_FRUITMARY_RES = 20004;
+	CS_ENTER_GAME_FRUITMARY_REQ = 12001; // 玩家请求进入房间
+	SC_ENTER_GAME_FRUITMARY_RES = 12002;
+	CS_LEAVE_GAME_FRUITMARY_REQ = 12003; // 玩家请求退出房间
+	SC_LEAVE_GAME_FRUITMARY_RES = 12004;
 	
-	CS_START_MARY_REQ           = 20008;// 请求开始游戏1
-	SC_START_MARY_RES           = 20009;
+	CS_START_MARY_REQ           = 12008;// 请求开始游戏1
+	SC_START_MARY_RES           = 12009;
 	
-	SC_UPDATE_MARY_BONUS        = 20010;// 通知更新奖金池
+	SC_UPDATE_MARY_BONUS        = 12010;// 通知更新奖金池
 	
-	CS_START_MARY2_REQ           = 20011;// 请求开始游戏2
-	SC_START_MARY2_RES           = 20012;
+	CS_START_MARY2_REQ           = 12011;// 请求开始游戏2
+	SC_START_MARY2_RES           = 12012;
 	
-	CS_NEXT_MARY_RESULT          = 20013; // 客户通知服务器播放下一个结果
+	CS_NEXT_MARY_RESULT          = 12013; // 客户通知服务器播放下一个结果
 
-	CS_PLAYERS_LIST_REQ          = 20015; // 请求在线玩家列表
-	SC_PLAYERS_LIST_RES          = 20016;
+	CS_PLAYERS_LIST_REQ          = 12015; // 请求在线玩家列表
+	SC_PLAYERS_LIST_RES          = 12016;
 }
 
 // 游戏1 图案枚举

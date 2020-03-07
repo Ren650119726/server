@@ -7,18 +7,18 @@ import "protobuf/data.proto";
 // 网络消息
 enum JPMMSG {
 	UNKNOW_JPM = 0;
-	CS_ENTER_GAME_JPM_REQ = 40001; // 玩家请求进入房间
-	SC_ENTER_GAME_JPM_RES = 40002;
-	CS_LEAVE_GAME_JPM_REQ = 40003; // 玩家请求退出房间
-	SC_LEAVE_GAME_JPM_RES = 40004;
+	CS_ENTER_GAME_JPM_REQ = 14001; // 玩家请求进入房间
+	SC_ENTER_GAME_JPM_RES = 14002;
+	CS_LEAVE_GAME_JPM_REQ = 14003; // 玩家请求退出房间
+	SC_LEAVE_GAME_JPM_RES = 14004;
 	
-	CS_START_JPM_REQ      = 40008;// 请求开始游戏1
-	SC_START_JPM_RES      = 40009;
+	CS_START_JPM_REQ      = 14008;// 请求开始游戏1
+	SC_START_JPM_RES      = 14009;
 	
-	SC_UPDATE_JPM_BONUS   = 40010;// 通知更新奖金池
+	SC_UPDATE_JPM_BONUS   = 14010;// 通知更新奖金池
 
-	CS_PLAYERS_JPM_LIST_REQ          = 40015; // 请求在线玩家列表
-	SC_PLAYERS_JPM_LIST_RES          = 40016;
+	CS_PLAYERS_JPM_LIST_REQ          = 14015; // 请求在线玩家列表
+	SC_PLAYERS_JPM_LIST_RES          = 14016;
 }
 
 // 游戏 图案枚举

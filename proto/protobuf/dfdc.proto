@@ -7,18 +7,18 @@ import "protobuf/data.proto";
 // 网络消息
 enum DFDCMSG {
 	UNKNOW_DFDC = 0;
-	CS_ENTER_GAME_DFDC_REQ = 30001; // 玩家请求进入房间
-	SC_ENTER_GAME_DFDC_RES = 30002;
-	CS_LEAVE_GAME_DFDC_REQ = 30003; // 玩家请求退出房间
-	SC_LEAVE_GAME_DFDC_RES = 30004;
+	CS_ENTER_GAME_DFDC_REQ = 13001; // 玩家请求进入房间
+	SC_ENTER_GAME_DFDC_RES = 13002;
+	CS_LEAVE_GAME_DFDC_REQ = 13003; // 玩家请求退出房间
+	SC_LEAVE_GAME_DFDC_RES = 13004;
 	
-	CS_START_DFDC_REQ           = 30008;// 请求开始游戏1
-	SC_START_DFDC_RES           = 30009;
+	CS_START_DFDC_REQ           = 13008;// 请求开始游戏1
+	SC_START_DFDC_RES           = 13009;
 	
-	SC_UPDATE_DFDC_BONUS        = 30010;// 通知更新奖金池
+	SC_UPDATE_DFDC_BONUS        = 13010;// 通知更新奖金池
 
-	CS_PLAYERS_DFDC_LIST_REQ    = 30015; // 请求在线玩家列表
-	SC_PLAYERS_DFDC_LIST_RES    = 30016;
+	CS_PLAYERS_DFDC_LIST_REQ    = 13015; // 请求在线玩家列表
+	SC_PLAYERS_DFDC_LIST_RES    = 13016;
 }
 
 // 游戏1 图案枚举

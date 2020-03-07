@@ -7,21 +7,21 @@ import "protobuf/data.proto";
 ////////////////////////////////////////////////////// 网络消息 /////////////////////////////////////////////////////////////
 enum RED2BLACKMSG {
 	UNKNOW_RED2BLACK = 0;
-	CS_ENTER_GAME_RED2BLACK_REQ = 60001; // 玩家请求进入房间
-	SC_ENTER_GAME_RED2BLACK_RES = 60002;
-	CS_LEAVE_GAME_RED2BLACK_REQ = 60003; // 玩家请求退出房间
-	SC_LEAVE_GAME_RED2BLACK_RES = 60004;
+	CS_ENTER_GAME_RED2BLACK_REQ = 16001; // 玩家请求进入房间
+	SC_ENTER_GAME_RED2BLACK_RES = 16002;
+	CS_LEAVE_GAME_RED2BLACK_REQ = 16003; // 玩家请求退出房间
+	SC_LEAVE_GAME_RED2BLACK_RES = 16004;
 	
-	CS_BET_RED2BLACK_REQ      	= 60008; // 请求下注
-	SC_BET_RED2BLACK_RES      	= 60009;
-    CS_CLEAN_BET_RED2BLACK_REQ  = 60010; // 请求清除下注
-    SC_CLEAN_BET_RED2BLACK_RES  = 60011;
+	CS_BET_RED2BLACK_REQ      	= 16008; // 请求下注
+	SC_BET_RED2BLACK_RES      	= 16009;
+    CS_CLEAN_BET_RED2BLACK_REQ  = 16010; // 请求清除下注
+    SC_CLEAN_BET_RED2BLACK_RES  = 16011;
 
 
-	CS_PLAYERS_RED2BLACK_LIST_REQ = 60015;// 请求在线玩家列表
-	SC_PLAYERS_RED2BLACK_LIST_RES = 60016;
+	CS_PLAYERS_RED2BLACK_LIST_REQ = 16015;// 请求在线玩家列表
+	SC_PLAYERS_RED2BLACK_LIST_RES = 16016;
 	
-	SC_SWITCH_GAME_STATUS_BROADCAST = 60020; // 服务器主动广播，切换状态消息
+	SC_SWITCH_GAME_STATUS_BROADCAST = 16020; // 服务器主动广播，切换状态消息
 }
 
 ////////////////////////////////////////////////////// 游戏枚举 /////////////////////////////////////////////////////////////
