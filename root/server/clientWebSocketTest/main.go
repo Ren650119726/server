@@ -7,12 +7,13 @@ import (
 	"net/url"
 	"root/common"
 	"root/core"
+	"root/core/log"
 )
 
 type Client struct {
 	Host string
 	Path string
-	ws net.Conn
+	ws   net.Conn
 	quit chan bool
 }
 
@@ -25,12 +26,13 @@ func NewWebsocketClient(host, path string) *Client {
 }
 
 func (this *Client) SendMessage(body []byte) error {
-	_, err := this.ws.Write(body)
+	n, err := this.ws.Write(body)
 	if err != nil {
 		beego.Error(err)
 		return err
 	}
 
+	log.Info("写入:", n)
 	return nil
 }
 func (this *Client) connect() error {
@@ -45,7 +47,7 @@ func (this *Client) connect() error {
 	return nil
 }
 
-func main()  {
+func main() {
 	// 创建server
 	lo := NewLogic()
 	msgchan := make(chan core.IMessage, 10000)

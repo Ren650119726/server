@@ -146,7 +146,7 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 		log.Warnf("acc:%v room:%v 钱不够下注 身上钱:%v 低于bet_limit 请求下注失败:%v ", acc.AccountId, self.roomId, acc.GetMoney(), betdata.GetBet())
 		return
 	}
-	if last := self.cd[acc.GetAccountId()]; now-last < self.interval_conf {
+	if last := self.cd[acc.GetAccountId()]; now-last < self.interval_conf && betdata.BetType == 0 {
 		return
 	}
 	if now-acc.CLeanTime < 3000 {

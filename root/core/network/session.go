@@ -2,13 +2,13 @@ package network
 
 import (
 	"bytes"
+	"crypto/rc4"
+	"net"
 	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
 	"root/core/utils"
-	"crypto/rc4"
-	"net"
 	"syscall"
 	"time"
 )
@@ -40,8 +40,8 @@ type Session struct {
 	sendchan  chan []byte // 发送缓冲区(包含协议头)
 	offchan   chan int64  // 离线的channel(离线上通知上层)
 	httpchan  chan bool
-	iskick    bool        // 离线标记
-	exit_chan chan bool   // 读退出
+	iskick    bool      // 离线标记
+	exit_chan chan bool // 读退出
 
 	callback NetCallBackIF // 上层回调
 	rdelay   time.Duration // 读超时时间
@@ -140,7 +140,7 @@ func (self *Session) SyncSend(data []byte) bool {
 		return true
 	default:
 		// TODO:缓冲区满
-		log.Warn("syncSend logcache full session:%v ", len(self.sendchan),self.id)
+		log.Warn("syncSend logcache full session:%v ", len(self.sendchan), self.id)
 		return false
 	}
 	return true
@@ -196,6 +196,7 @@ func (self *Session) doread() {
 
 		// 从网络层读取数据
 		n, err := self.conn.Read(readbuffer)
+
 		if err != nil || n == 0 {
 			if operr, ok := err.(*net.OpError); ok && operr != nil { // TODO:好像没必要，需要验证
 				if operr.Err == syscall.EAGAIN || operr.Err == syscall.EWOULDBLOCK { // 异步操作(没数据了)
@@ -207,7 +208,6 @@ func (self *Session) doread() {
 
 		// 将数据串起来,方便处理粘包
 		buffer.Write(readbuffer[:n])
-
 		// 处理粘包
 		for {
 			// 处理消息
@@ -224,6 +224,7 @@ func (self *Session) doread() {
 				}
 			*/
 			self.callback.handle_input(self.id, content)
+			log.Infof("处理数据:%v l:%v", content, len(content))
 		}
 	}
 }
