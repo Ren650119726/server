@@ -32,12 +32,16 @@ func (self *Hall) SERVERMSG_GH_ROOM_INFO(actor int32, msg []byte, session int64)
 			}
 		}
 
+		// 机器人入场
+		RobotMgr.UpdateRobot(id, 0)
+
 		profit, e := GameMgr.room_profit[id]
 		if e {
 			send_tools.Send2Game(inner.SERVERMSG_HG_ROOM_WATER_PROFIT.UInt16(), &inner.SAVE_WATER_LINE{
 				RoomID:    id,
 				WaterLine: profit,
 			}, session)
+
 		}
 	}
 	log.Infof("收到 游戏 房间信息 sid:%v rooms:%v ", roomInfos.GetServerID(), roomInfos.GetRoomsID())
