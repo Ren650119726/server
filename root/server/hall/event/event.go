@@ -19,4 +19,11 @@ type (
 		AccountID uint32
 		RMB       int64
 	}
+
+	// 房间更新
+	RoomUpdate struct {
+		RoomID      uint32
+		PlayerCount uint32
+		RobotCount  uint32
+	}
 )

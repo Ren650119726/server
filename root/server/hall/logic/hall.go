@@ -32,6 +32,7 @@ func (self *Hall) Init(actor *core.Actor) bool {
 		core.InitScript(core.ScriptDir)
 	}
 	self.owner = actor
+	RobotMgr.Load()
 	// 连接DB
 	connectDB_actor := network.NewTCPClient(self.owner, func() string {
 		return core.CoreAppConfString("connectDB")
@@ -47,6 +48,7 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	self.owner.AddTimer(utils.MILLISECONDS_OF_HOUR, -1, OneHourUpdate)
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND, -1, SecondUpdate)
 	self.owner.AddEverydayTimer("23:59:59", ZeroUpdate)
+	self.owner.AddEverydayTimer("00:00:01", NewDayUpdate)
 	core.Cmd.Regist("help", CMD_Help, true)
 	core.Cmd.Regist("reload", self.CMD_LoadConfig, true)
 	core.Cmd.Regist("player", CMD_Player, true)

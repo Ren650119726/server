@@ -55,3 +55,8 @@ func ZeroUpdate(dt int64) {
 	}
 	send_tools.SQLLog(fmt.Sprintf("INSERT INTO log_money_daily(log_RMB, log_SafeRMB, log_Time) VALUES (%v, %v, '%v')", nTotalRMB, nTotalSafeRMB, strNowTime))
 }
+
+// 每日0点更新更新
+func NewDayUpdate(dt int64) {
+	RobotMgr.Load()
+}

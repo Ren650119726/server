@@ -6,6 +6,7 @@ import (
 	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/hall/account"
+	"root/server/hall/event"
 	"root/server/hall/send_tools"
 )
 
@@ -75,6 +76,12 @@ func (self *Hall) SERVERMSG_GH_PLAYER_ENTER_ROOM(actor int32, msg []byte, sessio
 	}
 	room.PlayerCount = pbMsg.GetPlayerCount()
 	room.RobotCount = pbMsg.GetRobotCount()
+	event.Dispatcher.Dispatch(&event.RoomUpdate{
+		RoomID:      room.roomID,
+		PlayerCount: room.PlayerCount,
+		RobotCount:  room.RobotCount,
+	}, event.EventType_RoomUpdate)
+
 	log.Infof("玩家%v 进入房间:%v 当前玩家数量:%v 当前机器人数量:%v", acc.GetAccountId(), pbMsg.GetRoomID(), pbMsg.GetPlayerCount(), pbMsg.GetRobotCount())
 }
 
@@ -92,7 +99,13 @@ func (self *Hall) SERVERMSG_GH_PLAYER_LEAVE_ROOM(actor int32, msg []byte, sessio
 		log.Warnf("找不到大厅房间信息:%v ", acc.RoomID)
 		return
 	}
+	event.Dispatcher.Dispatch(&event.RoomUpdate{
+		RoomID:      room.roomID,
+		PlayerCount: room.PlayerCount,
+		RobotCount:  room.RobotCount,
+	}, event.EventType_RoomUpdate)
 	room.PlayerCount = pbMsg.GetPlayerCount()
 	room.RobotCount = pbMsg.GetRobotCount()
 	acc.RoomID = 0
+
 }

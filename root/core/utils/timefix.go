@@ -19,6 +19,7 @@ var (
 
 const (
 	STD_TIMEFORMAT         = "2006-01-02 15:04:05"
+	STD_TIMEFORMAT2        = "2006-01-02"
 	STD_DAY_FORMAT         = "20060102"
 	STD_NUMBER_FORMAT      = "20060102150405"
 	ZEROCLOCK              = "00:00:00"
@@ -120,6 +121,11 @@ func OtherWeek(beforeTime, afterTime time.Time) bool {
 	year1, week1 := beforeTime.UTC().ISOWeek()
 	year2, week2 := afterTime.UTC().ISOWeek()
 	return year1 == year2 && week1 == week2
+}
+
+// 获得当前日期
+func Week() time.Weekday {
+	return time.Now().Weekday()
 }
 
 // 判断两个时间是否是同一天(t1,t2为秒)
