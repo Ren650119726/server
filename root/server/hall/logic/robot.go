@@ -1,10 +1,13 @@
 package logic
 
 import (
+	"github.com/golang/protobuf/proto"
+	"root/common"
 	"root/common/config"
 	"root/core"
 	"root/core/log"
 	"root/core/utils"
+	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/hall/account"
 	"root/server/hall/event"
@@ -61,6 +64,12 @@ func (self *robotMgr) Load() {
 	}
 }
 
+func (self *robotMgr) update() {
+	for _, room := range GameMgr.rooms {
+		self.UpdateRobot(room.roomID, room.RobotCount)
+	}
+}
+
 func (self *robotMgr) FreeRobot() *account.Account {
 	var acc *account.Account
 	for _, robot := range account.AccountMgr.AccountbyID {
@@ -103,6 +112,31 @@ func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
 					Reback:      true,
 				}
 				send_tools.Send2Game(inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(), sendPB, node.session)
+				roomidMSG := uint16(0)
+				var pbMessage proto.Message
+				switch common.EGameType(node.gameType) {
+				case common.EGameTypeFRUITMARY:
+					roomidMSG = protomsg.FRUITMARYMSG_CS_ENTER_GAME_FRUITMARY_REQ.UInt16()
+					pbMessage = &protomsg.ENTER_GAME_FRUITMARY_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
+				case common.EGameTypeDFDC:
+					roomidMSG = protomsg.DFDCMSG_CS_ENTER_GAME_DFDC_REQ.UInt16()
+					pbMessage = &protomsg.ENTER_GAME_DFDC_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
+				case common.EGameTypeJPM:
+					roomidMSG = protomsg.JPMMSG_CS_ENTER_GAME_JPM_REQ.UInt16()
+					pbMessage = &protomsg.ENTER_GAME_JPM_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
+				case common.EGameTypeLUCKFRUIT:
+					roomidMSG = protomsg.LUCKFRUITMSG_CS_ENTER_GAME_LUCKFRUIT_REQ.UInt16()
+					pbMessage = &protomsg.ENTER_GAME_LUCKFRUIT_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
+				case common.EGameTypeRED2BLACK:
+					roomidMSG = protomsg.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ.UInt16()
+					pbMessage = &protomsg.ENTER_GAME_RED2BLACK_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
+				case common.EGameTypeLHD:
+					roomidMSG = protomsg.LHDMSG_CS_ENTER_GAME_LHD_REQ.UInt16()
+					pbMessage = &protomsg.ENTER_GAME_LHD_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
+				default:
+
+				}
+				send_tools.Send2Game(roomidMSG, pbMessage, node.session)
 				log.Infof("机器人:[%v] 请求进入房间:%v 给游戏:%v 发送数据 ", acc.GetAccountId(), roomID, room.serverID)
 				robotCount++
 			}
@@ -113,10 +147,10 @@ func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
 func (self *robotMgr) OnEvent(ev core.Event, evt core.EventType) {
 	switch evt {
 	case event.EventType_RoomUpdate:
-		tWrapEv := ev.(core.WrapEvent)
-		roomUpdate := tWrapEv.Event.(event.RoomUpdate)
-		log.Infof("处理房间更新人数事件:%+v ", roomUpdate)
-		self.UpdateRobot(roomUpdate.RoomID, roomUpdate.RobotCount)
+		//tWrapEv := ev.(core.WrapEvent)
+		//roomUpdate := tWrapEv.Event.(event.RoomUpdate)
+		//log.Infof("处理房间更新人数事件:%+v ", roomUpdate)
+		//self.UpdateRobot(roomUpdate.RoomID, roomUpdate.RobotCount)
 	default:
 		log.Warnf("事件:%v 未处理", evt)
 	}

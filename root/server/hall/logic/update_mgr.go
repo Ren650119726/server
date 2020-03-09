@@ -41,6 +41,11 @@ func SecondUpdate(dt int64) {
 
 }
 
+// 每10秒更新
+func TenSecondUpdate(dt int64) {
+	RobotMgr.update()
+}
+
 // 每日0点更新更新
 func ZeroUpdate(dt int64) {
 	strNowTime := utils.DateString()

@@ -47,6 +47,7 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	self.owner.AddTimer(utils.MILLISECONDS_OF_MINUTE*5, -1, FiveMinuteUpdate)
 	self.owner.AddTimer(utils.MILLISECONDS_OF_HOUR, -1, OneHourUpdate)
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND, -1, SecondUpdate)
+	self.owner.AddTimer(15*utils.MILLISECONDS_OF_SECOND, -1, TenSecondUpdate)
 	self.owner.AddEverydayTimer("23:59:59", ZeroUpdate)
 	self.owner.AddEverydayTimer("00:00:01", NewDayUpdate)
 	core.Cmd.Regist("help", CMD_Help, true)
