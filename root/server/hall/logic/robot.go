@@ -61,9 +61,10 @@ func (self *robotMgr) Load() {
 
 func (self *robotMgr) NewRobot() *account.Account {
 	acc := account.NewAccount(&protomsg.AccountStorageData{
-		Name:  "robot" + utils.DateString(),
-		Robot: 1,
-		Money: uint64(utils.Randx_y(1000, 500000)),
+		Name:      "robot" + utils.DateString(),
+		Robot:     1,
+		AccountId: 0,
+		Money:     uint64(utils.Randx_y(1000, 500000)),
 	})
 	return acc
 }
@@ -105,7 +106,7 @@ func (self *robotMgr) OnEvent(ev core.Event, evt core.EventType) {
 		tWrapEv := ev.(core.WrapEvent)
 		roomUpdate := tWrapEv.Event.(event.RoomUpdate)
 		log.Infof("处理房间更新人数事件:%+v ", roomUpdate)
-		self.UpdateRobot(roomUpdate.RoomID, roomUpdate.RobotCount)
+		//self.UpdateRobot(roomUpdate.RoomID, roomUpdate.RobotCount)
 	default:
 		log.Warnf("事件:%v 未处理", evt)
 	}

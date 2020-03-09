@@ -185,17 +185,23 @@ func (self *accountMgr) SendBroadcast(msgID uint16, pb proto.Message, t uint8) {
 	}
 }
 
+func (self *accountMgr) AssignID() uint32 {
+	// 随机分配一个id
+	var id uint32
+	self.IDAssign, id = utils.RandomSliceAndRemoveReturn(self.IDAssign)
+	return id
+}
+
 // 创建账号
 func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, strName string, strHeadURL string, nOSType uint8, strClientIP string, session int64, nRobot uint32, money uint64) *Account {
 	strNowTime := utils.DateString()
-	var nNewAccountID uint32
+	var AccountID uint32
 	nLen := len(self.IDAssign)
 	if nLen <= 0 {
 		log.Fatalf("帐号ID已分配完 len:%v", nLen)
 		return nil
 	}
-	// 随机分配一个id
-	self.IDAssign, nNewAccountID = utils.RandomSliceAndRemoveReturn(self.IDAssign)
+	AccountID = self.AssignID()
 
 	tNewAccount := NewAccount(&protomsg.AccountStorageData{})
 	switch nLoginType {
@@ -216,7 +222,7 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, strName
 		self.accountbyWeiXin[uniqueID] = tNewAccount
 	}
 
-	tNewAccount.AccountId = nNewAccountID
+	tNewAccount.AccountId = AccountID
 	tNewAccount.Name = strName
 	tNewAccount.HeadURL = strHeadURL
 	tNewAccount.Money = money
@@ -226,7 +232,7 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, strName
 	tNewAccount.ActiveTime = strNowTime
 	tNewAccount.OSType = uint32(nOSType)
 
-	self.AccountbyID[nNewAccountID] = tNewAccount
+	self.AccountbyID[AccountID] = tNewAccount
 	tNewAccount.AddMoney(config.GetPublicConfig_Int64(3), common.EOperateType_INIT)
 
 	if nRobot == 0 {

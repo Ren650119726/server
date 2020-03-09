@@ -7,6 +7,7 @@ import (
 	"root/core/packet"
 	"root/protomsg/inner"
 	"root/server/hall/account"
+	"root/server/hall/event"
 	"root/server/hall/logcache"
 	"root/server/hall/send_tools"
 )
@@ -33,7 +34,11 @@ func (self *Hall) SERVERMSG_GH_ROOM_INFO(actor int32, msg []byte, session int64)
 		}
 
 		// 机器人入场
-		RobotMgr.UpdateRobot(id, 0)
+		event.Dispatcher.Dispatch(&event.RoomUpdate{
+			RoomID:      id,
+			PlayerCount: 0,
+			RobotCount:  0,
+		}, event.EventType_RoomUpdate)
 
 		profit, e := GameMgr.room_profit[id]
 		if e {

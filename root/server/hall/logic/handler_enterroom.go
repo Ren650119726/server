@@ -107,5 +107,4 @@ func (self *Hall) SERVERMSG_GH_PLAYER_LEAVE_ROOM(actor int32, msg []byte, sessio
 	room.PlayerCount = pbMsg.GetPlayerCount()
 	room.RobotCount = pbMsg.GetRobotCount()
 	acc.RoomID = 0
-
 }
