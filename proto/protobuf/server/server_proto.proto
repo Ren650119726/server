@@ -146,14 +146,18 @@ message PLAYER_DATA_RES {
 
 // 游戏通知大厅，玩家进入房间
 message PLAYER_ENTER_ROOM {
-	uint32 AccountID = 2;
-	uint32 RoomID    = 3;
+	uint32 AccountID = 1;
+	uint32 RoomID    = 2;
+	uint32 PlayerCount = 3;
+	uint32 RobotCount = 4;
 }
 
 // 游戏通知大厅，玩家退出房间
 message PLAYER_LEAVE_ROOM {
-	uint32 AccountID = 2;
-	uint32 RoomID    = 3;
+	uint32 AccountID = 1;
+	uint32 RoomID    = 2;
+	uint32 PlayerCount = 3;
+	uint32 RobotCount  = 4;
 }
 
 // 请求房间水池金额 185

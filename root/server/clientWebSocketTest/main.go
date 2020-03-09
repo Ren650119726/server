@@ -32,7 +32,6 @@ func (this *Client) SendMessage(body []byte) error {
 		return err
 	}
 
-	log.Info("写入:", n)
 	return nil
 }
 func (this *Client) connect() error {

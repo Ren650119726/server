@@ -25,7 +25,8 @@ type (
 	roomInfo struct {
 		roomID      uint32 // 房间ID
 		serverID    uint32 // 服务器ID
-		PlayerCount int    // 房间人数
+		PlayerCount uint32 // 房间玩家人数
+		RobotCount  uint32 // 房间机器人人数
 	}
 
 	gameMgr struct {

@@ -159,10 +159,13 @@ func (self *Room) enterRoom(accountId uint32) {
 		FeeCount: acc.FeeCount,
 	}, acc.SessionId)
 
+	pc, rc := self.countStatis()
 	// 通知大厅 玩家进入房间
-	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_ENTER_ROOM.UInt16(), &inner.PLAYER_ENTER_ROOM{
-		AccountID: acc.GetAccountId(),
-		RoomID:    self.roomId,
+	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_ENTER_ROOM.UInt16(), &inner.PLAYER_ENTER_ROOM{ // dfdc
+		AccountID:   acc.GetAccountId(),
+		RoomID:      self.roomId,
+		PlayerCount: uint32(pc),
+		RobotCount:  uint32(rc),
 	})
 	return
 }
@@ -199,10 +202,13 @@ func (self *Room) leaveRoom(accountId uint32) {
 		account.AccountMgr.DisconnectAccount(acc)
 	})
 
+	pc, rc := self.countStatis()
 	// 通知大厅 玩家离开房间
 	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_LEAVE_ROOM.UInt16(), &inner.PLAYER_LEAVE_ROOM{
-		AccountID: acc.GetAccountId(),
-		RoomID:    self.roomId,
+		AccountID:   acc.GetAccountId(),
+		RoomID:      self.roomId,
+		PlayerCount: uint32(pc),
+		RobotCount:  uint32(rc),
 	})
 }
 
@@ -210,6 +216,21 @@ func (self *Room) leaveRoom(accountId uint32) {
 func (self *Room) count() int {
 	return len(self.accounts)
 }
+
+// 房间总人数 玩家人数，机器人人数
+func (self *Room) countStatis() (playerc int, robotc int) {
+	pc := 0
+	rc := 0
+	for _, acc := range self.accounts {
+		if acc.Robot == 0 {
+			pc++
+		} else {
+			rc++
+		}
+	}
+	return pc, rc
+}
+
 func (self *Room) SendBroadcast(msgID uint16, pb proto.Message) {
 	for _, acc := range self.accounts {
 		if acc.Robot == 0 && acc.SessionId > 0 {

@@ -5,9 +5,12 @@ import (
 	"root/core"
 	"root/core/db"
 	"root/server/hall/logic"
+	"time"
 )
 
 func main() {
+	ss := time.Now().Format("2006-01-02")
+	println(ss)
 	// 创建server
 	hall := logic.NewHall()
 
