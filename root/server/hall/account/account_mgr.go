@@ -207,19 +207,15 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, strName
 	switch nLoginType {
 	case types.LOGIN_TYPE_DEVICE.Value(), types.LOGIN_TYPE_OTHER.Value():
 		tNewAccount.UnDevice = uniqueID
-		tNewAccount.Phone = ""
-		tNewAccount.WeiXin = ""
 		self.accountbyUnDevice[uniqueID] = tNewAccount
 	case types.LOGIN_TYPE_PHONE.Value():
-		tNewAccount.UnDevice = ""
 		tNewAccount.Phone = uniqueID
-		tNewAccount.WeiXin = ""
 		self.accountbyPhone[uniqueID] = tNewAccount
 	case types.LOGIN_TYPE_WEIXIN.Value():
-		tNewAccount.UnDevice = ""
-		tNewAccount.Phone = ""
 		tNewAccount.WeiXin = uniqueID
 		self.accountbyWeiXin[uniqueID] = tNewAccount
+	case types.LOGIN_TYPE_ROBOT.Value():
+
 	}
 
 	tNewAccount.AccountId = AccountID

@@ -15,31 +15,34 @@ type (
 	Account struct {
 		*protomsg.AccountStorageData
 		*protomsg.AccountGameData
-		SessionId  int64
-		Store 	   bool
+		SessionId int64
+		Store     bool
 	}
 )
 
 func NewAccount(storageData *protomsg.AccountStorageData) *Account {
 	return &Account{
 		AccountStorageData: storageData,
-		AccountGameData:&protomsg.AccountGameData{},
+		AccountGameData:    &protomsg.AccountGameData{},
 		SessionId:          0,
-		Store:			false,
+		Store:              false,
 	}
 }
 
 // 参数: 是否忽略IsChangeData条件;
 // 传true表示无条件回存  传false表示要满足有数据改变才回存
 func (self *Account) Save() {
-	self.Store = false
-	log.Infof(colorized.White("回存玩家:%v money:%v safemoney:%v"), self.AccountId,self.Money,self.SafeMoney)
-	send_tools.Send2DB(inner.SERVERMSG_HD_SAVE_ACCOUNT.UInt16(), &inner.SAVE_ACCOUNT{AccData: self.AccountStorageData})
+	if self.Robot == 0 {
+		self.Store = false
+		log.Infof(colorized.White("回存玩家:%v money:%v safemoney:%v"), self.AccountId, self.Money, self.SafeMoney)
+		send_tools.Send2DB(inner.SERVERMSG_HD_SAVE_ACCOUNT.UInt16(), &inner.SAVE_ACCOUNT{AccData: self.AccountStorageData})
+	}
 }
 
 func (self *Account) IsOnline() bool {
-	return self.LoginTime - self.LogoutTime > 0
+	return self.LoginTime-self.LogoutTime > 0
 }
+
 // 操作保险箱
 func (self *Account) AddSafeMoney(iValue int64, operate common.EOperateType) {
 	if iValue == 0 {
@@ -92,13 +95,13 @@ func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 			Time:        strTime,
 			RoomID:      0,
 		}
-		logcache.LogCache.AddMoneyChangeLog(logpb)// 金币改变
+		logcache.LogCache.AddMoneyChangeLog(logpb) // 金币改变
 		//db.HSet(rediskey.PlayerId(uint32(self.AccountId)), "Money", self.Money)
 	}
 	self.Money = uint64(money)
 	self.Store = true
 
-	send_tools.Send2Account(protomsg.MSG_SC_UPDATE_MONEY.UInt16(),&protomsg.UPDATE_MONEY{
+	send_tools.Send2Account(protomsg.MSG_SC_UPDATE_MONEY.UInt16(), &protomsg.UPDATE_MONEY{
 		Operate: int32(operate),
 		Money:   self.Money,
 	}, self.SessionId)

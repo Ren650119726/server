@@ -5,11 +5,11 @@ import (
 	"root/core"
 	"root/core/log"
 	"root/core/utils"
-	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/hall/account"
 	"root/server/hall/event"
 	"root/server/hall/send_tools"
+	"root/server/hall/types"
 	"time"
 )
 
@@ -60,12 +60,8 @@ func (self *robotMgr) Load() {
 }
 
 func (self *robotMgr) NewRobot() *account.Account {
-	acc := account.NewAccount(&protomsg.AccountStorageData{
-		Name:      "robot" + utils.DateString(),
-		Robot:     1,
-		AccountId: 0,
-		Money:     uint64(utils.Randx_y(1000, 500000)),
-	})
+	money := uint64(utils.Randx_y(1000, 100000))
+	acc := account.AccountMgr.CreateAccount("robot", types.LOGIN_TYPE_ROBOT.Value(), "robot", "", 1, "", 0, 1, money)
 	return acc
 }
 func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
@@ -106,7 +102,7 @@ func (self *robotMgr) OnEvent(ev core.Event, evt core.EventType) {
 		tWrapEv := ev.(core.WrapEvent)
 		roomUpdate := tWrapEv.Event.(event.RoomUpdate)
 		log.Infof("处理房间更新人数事件:%+v ", roomUpdate)
-		//self.UpdateRobot(roomUpdate.RoomID, roomUpdate.RobotCount)
+		self.UpdateRobot(roomUpdate.RoomID, roomUpdate.RobotCount)
 	default:
 		log.Warnf("事件:%v 未处理", evt)
 	}
