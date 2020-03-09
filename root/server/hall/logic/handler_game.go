@@ -34,7 +34,7 @@ func (self *Hall) SERVERMSG_GH_ROOM_INFO(actor int32, msg []byte, session int64)
 		}
 
 		// 机器人入场
-		event.Dispatcher.Dispatch(&event.RoomUpdate{
+		event.Dispatcher.Dispatch(event.RoomUpdate{
 			RoomID:      id,
 			PlayerCount: 0,
 			RobotCount:  0,

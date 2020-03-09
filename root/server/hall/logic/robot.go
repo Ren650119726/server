@@ -29,7 +29,9 @@ type (
 )
 
 func NewRobotMgr() *robotMgr {
-	return &robotMgr{}
+	obj := &robotMgr{}
+	event.Dispatcher.AddEventListener(event.EventType_RoomUpdate, obj)
+	return obj
 }
 
 // 加载配置
@@ -59,9 +61,18 @@ func (self *robotMgr) Load() {
 	}
 }
 
-func (self *robotMgr) NewRobot() *account.Account {
-	money := uint64(utils.Randx_y(1000, 100000))
-	acc := account.AccountMgr.CreateAccount("robot", types.LOGIN_TYPE_ROBOT.Value(), "robot", "", 1, "", 0, 1, money)
+func (self *robotMgr) FreeRobot() *account.Account {
+	var acc *account.Account
+	for _, robot := range account.AccountMgr.AccountbyID {
+		if robot.Robot != 0 && robot.RoomID == 0 {
+			acc = robot
+			break
+		}
+	}
+	if acc == nil {
+		money := uint64(utils.Randx_y(1000, 100000))
+		acc = account.AccountMgr.CreateAccount("robot", types.LOGIN_TYPE_ROBOT.Value(), "robot", "", 1, "", 0, 1, money)
+	}
 	return acc
 }
 func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
@@ -71,8 +82,7 @@ func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
 	for _, frame := range frames {
 		if frame.StartTime <= now && now <= frame.EndTime && frame.Week[nowWeek] {
 			// 命中时间范围判断人数是否需要加机器人
-			acc := self.NewRobot()
-			if robotCount < frame.Num {
+			for robotCount < frame.Num {
 				log.Infof("房间:%v 机器人数:%v 小于时段机器人数:%v ", roomID, robotCount, frame.Num)
 				room := GameMgr.rooms[roomID]
 				if room == nil {
@@ -81,9 +91,11 @@ func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
 				}
 				node := GameMgr.nodes[room.serverID]
 				if node == nil {
-					log.Warnf("找不到服务器节点 accID:%v roomID:%v, serverID:%v ", acc.GetAccountId(), roomID, room.serverID)
+					log.Warnf("找不到服务器节点 roomID:%v, serverID:%v ", roomID, room.serverID)
 					return
 				}
+				acc := self.FreeRobot()
+				acc.RoomID = roomID
 				sendPB := &inner.PLAYER_DATA_REQ{
 					Account:     acc.AccountStorageData,
 					AccountData: acc.AccountGameData,
@@ -92,7 +104,9 @@ func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
 				}
 				send_tools.Send2Game(inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(), sendPB, node.session)
 				log.Infof("机器人:[%v] 请求进入房间:%v 给游戏:%v 发送数据 ", acc.GetAccountId(), roomID, room.serverID)
+				robotCount++
 			}
+			break
 		}
 	}
 }

@@ -26,7 +26,7 @@ func (self *red2black) SERVERMSG_HG_PLAYER_DATA_REQ(actor int32, msg []byte, ses
 			AccountID: accPB.GetAccount().GetAccountId(),
 			RoomID:    accPB.GetRoomID(),
 		})
-		log.Infof("大厅发送玩家数据:%v", accPB.GetAccount().GetAccountId())
+		log.Infof("大厅发送玩家数据:%v robot:%v ", accPB.GetAccount().GetAccountId(), accPB.Account.Robot)
 	} else {
 		log.Infof("大厅发送玩家数据:%v 想进入的房间:%v", accPB.GetAccount().GetAccountId(), accPB.GetRoomID())
 	}

@@ -49,12 +49,10 @@ func (self *accountMgr) CollatingIDAssign() {
 	}
 
 	// 初始化帐号ID; 从100000--999999; 并将已使用的ID排除掉
-	var nID uint32 = 100000
-	for i := 0; i < 1000000; i++ {
-		if _, isExist := mCheckID[nID]; isExist == false {
-			self.IDAssign = append(self.IDAssign, nID)
+	for i := 100000; i < 999999; i++ {
+		if _, isExist := mCheckID[uint32(i)]; isExist == false {
+			self.IDAssign = append(self.IDAssign, uint32(i))
 		}
-		nID++
 	}
 
 	// 此时还没创建机器人, 帐号表里都是玩家
@@ -203,48 +201,49 @@ func (self *accountMgr) CreateAccount(uniqueID string, nLoginType uint8, strName
 	}
 	AccountID = self.AssignID()
 
-	tNewAccount := NewAccount(&protomsg.AccountStorageData{})
+	NewAccount := NewAccount(&protomsg.AccountStorageData{})
 	switch nLoginType {
 	case types.LOGIN_TYPE_DEVICE.Value(), types.LOGIN_TYPE_OTHER.Value():
-		tNewAccount.UnDevice = uniqueID
-		self.accountbyUnDevice[uniqueID] = tNewAccount
+		NewAccount.UnDevice = uniqueID
+		self.accountbyUnDevice[uniqueID] = NewAccount
 	case types.LOGIN_TYPE_PHONE.Value():
-		tNewAccount.Phone = uniqueID
-		self.accountbyPhone[uniqueID] = tNewAccount
+		NewAccount.Phone = uniqueID
+		self.accountbyPhone[uniqueID] = NewAccount
 	case types.LOGIN_TYPE_WEIXIN.Value():
-		tNewAccount.WeiXin = uniqueID
-		self.accountbyWeiXin[uniqueID] = tNewAccount
+		NewAccount.WeiXin = uniqueID
+		self.accountbyWeiXin[uniqueID] = NewAccount
 	case types.LOGIN_TYPE_ROBOT.Value():
 
 	}
 
-	tNewAccount.AccountId = AccountID
-	tNewAccount.Name = strName
-	tNewAccount.HeadURL = strHeadURL
-	tNewAccount.Money = money
-	tNewAccount.SessionId = session
-	tNewAccount.Robot = nRobot
-	tNewAccount.ActiveIP = strClientIP
-	tNewAccount.ActiveTime = strNowTime
-	tNewAccount.OSType = uint32(nOSType)
+	NewAccount.AccountId = AccountID
+	NewAccount.Name = strName
+	NewAccount.HeadURL = strHeadURL
+	NewAccount.Money = money
+	NewAccount.SessionId = session
+	NewAccount.Robot = nRobot
+	NewAccount.ActiveIP = strClientIP
+	NewAccount.ActiveTime = strNowTime
+	NewAccount.OSType = uint32(nOSType)
 
-	self.AccountbyID[AccountID] = tNewAccount
-	tNewAccount.AddMoney(config.GetPublicConfig_Int64(3), common.EOperateType_INIT)
+	self.AccountbyID[AccountID] = NewAccount
+	NewAccount.AddMoney(config.GetPublicConfig_Int64(3), common.EOperateType_INIT)
 
 	if nRobot == 0 {
-		self.accountbySessionID[session] = tNewAccount
-		tNewAccount.Save() // 新建账号，存数据库
+		self.accountbySessionID[session] = NewAccount
+		NewAccount.Save() // 新建账号，存数据库
 	}
 
 	// 登陆成功
 	loginRet := &protomsg.LOGIN_HALL_RES{
 		Ret:         0,
-		Account:     tNewAccount.AccountStorageData,
-		AccountData: tNewAccount.AccountGameData,
+		Account:     NewAccount.AccountStorageData,
+		AccountData: NewAccount.AccountGameData,
 	}
 	send_tools.Send2Account(protomsg.MSG_SC_LOGIN_HALL_RES.UInt16(), loginRet, session)
 
-	return tNewAccount
+	NewAccount.LoginTime = utils.SecondTimeSince1970()
+	return NewAccount
 }
 
 func (self *accountMgr) LoginAccount(acc *Account, nLoginType uint8, IP string, session int64) {

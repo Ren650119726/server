@@ -78,10 +78,11 @@ func CMD_On(sParam []string) {
 	nCount := 0
 	var nTotalRMB uint64
 	var nTotalSafeRMB uint64
+	now := utils.MilliSecondTimeSince1970()
 	for _, tAccount := range account.AccountMgr.AccountbyID {
 		if tAccount.Robot == 0 {
 			if tAccount.IsOnline() == true {
-				online := tAccount.LoginTime - tAccount.LogoutTime
+				online := now - tAccount.LoginTime
 				sec := online - (online/60)*60
 				min := online / 60
 				hour := min / 60
