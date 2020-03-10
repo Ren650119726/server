@@ -13,7 +13,9 @@ func (self *Room) updateRobot(dt int64) {
 				val := uint64(0)
 				var randbetindex int
 				randbetindex = utils.Randx_y(0, len(self.bets)/2)
-
+				if acc.GetMoney() < self.bets[randbetindex] {
+					continue
+				}
 				val += self.bets[randbetindex]
 				if utils.Probability(50) {
 					acc.AddMoney(-int64(val), common.EOperateType_DFDC_BET)

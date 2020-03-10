@@ -13,6 +13,9 @@ func (self *Room) updateRobot(dt int64) {
 				val := uint64(0)
 				var randbetindex int
 				randbetindex = utils.Randx_y(0, len(self.bets)/2)
+				if acc.GetMoney() < self.bets[randbetindex]*9 {
+					continue
+				}
 
 				val += self.bets[randbetindex]
 				if utils.Probability(50) {
