@@ -26,7 +26,8 @@ func (self *betting) robotbet(now int64) {
 				Bet:       bet,
 			}
 			data, _ := proto.Marshal(betmsg)
-			pack := packet.NewPacket(data)
+			pack := packet.NewPacket(nil)
+			pack.WriteBytes(data)
 			pack.SetMsgID(protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16())
 
 			self.owner.AddTimer(int64(utils.Randx_y(5, 30)*100), 1, func(dt int64) {
