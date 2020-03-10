@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"root/common"
-	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
@@ -71,6 +70,7 @@ func (self *betting) Enter(now int64) {
 	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg})
 
 	self.interval_broadcast_timer = self.owner.AddTimer(500, -1, self.updateBetPlayers)
+	self.owner.AddTimer(500, -1, self.robotbet)
 }
 
 func (self *betting) updateBetPlayers(now int64) {
@@ -92,23 +92,6 @@ func (self *betting) Tick(now int64) {
 		return
 	}
 
-	for _, acc := range self.accounts {
-		if acc.Robot != 0 {
-			betWeight := [][]int32{{0, 60}, {1, 20}, {2, 10}, {3, 8}, {4, 2}}
-			i := utils.RandomWeight32(betWeight, 1)
-			bet := betWeight[i][0]
-
-			betmsg := &protomsg.BET_RED2BLACK_REQ{
-				AccountID: acc.GetAccountId(),
-				Area:      protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED,
-				Bet:       uint64(self.bets_conf[uint64(bet)]),
-			}
-			data, _ := proto.Marshal(betmsg)
-			pack := packet.NewPacket(data)
-			pack.SetMsgID(protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16())
-			core.CoreSend(0, int32(self.roomId), pack.GetData(), 0)
-		}
-	}
 }
 
 func (self *betting) leave(accid uint32) bool {
