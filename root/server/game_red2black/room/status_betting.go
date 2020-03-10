@@ -70,7 +70,7 @@ func (self *betting) Enter(now int64) {
 	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg})
 
 	self.interval_broadcast_timer = self.owner.AddTimer(500, -1, self.updateBetPlayers)
-	self.owner.AddTimer(500, -1, self.robotbet)
+	self.owner.AddTimer(1000, -1, self.robotbet)
 }
 
 func (self *betting) updateBetPlayers(now int64) {
