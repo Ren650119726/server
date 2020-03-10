@@ -3,6 +3,7 @@ package room
 import (
 	"github.com/golang/protobuf/proto"
 	"root/core"
+	"root/core/log"
 	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
@@ -14,6 +15,7 @@ func (self *betting) robotbet(now int64) {
 			betWeight := [][]int32{{0, 60}, {1, 20}, {2, 10}, {3, 8}, {4, 2}}
 			i := utils.RandomWeight32(betWeight, 1)
 			bet := uint64(self.bets_conf[uint64(betWeight[i][0])])
+			log.Debugf("机器人:%v 请求押注:%v ", acc.GetAccountId(), bet)
 			if acc.GetMoney() < bet {
 				continue
 			}
