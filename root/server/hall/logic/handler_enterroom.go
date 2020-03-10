@@ -82,7 +82,7 @@ func (self *Hall) SERVERMSG_GH_PLAYER_ENTER_ROOM(actor int32, msg []byte, sessio
 		RobotCount:  room.RobotCount,
 	}, event.EventType_RoomUpdate)
 
-	log.Infof("玩家%v 进入房间:%v 当前玩家数量:%v 当前机器人数量:%v", acc.GetAccountId(), pbMsg.GetRoomID(), pbMsg.GetPlayerCount(), pbMsg.GetRobotCount())
+	log.Infof("玩家%v robot:%v 进入房间:%v 当前玩家数量:%v 当前机器人数量:%v", acc.GetAccountId(), acc.GetRobot(), pbMsg.GetRoomID(), pbMsg.GetPlayerCount(), pbMsg.GetRobotCount())
 }
 
 // 游戏通知大厅，玩家退出房间
@@ -93,7 +93,7 @@ func (self *Hall) SERVERMSG_GH_PLAYER_LEAVE_ROOM(actor int32, msg []byte, sessio
 		log.Warnf("房间:%v 通知大厅玩家:%v 退出房间，但是玩家不在任何房间内！！！需要排查异常情况", pbMsg.GetRoomID(), acc.GetAccountId())
 		return
 	}
-	log.Infof("玩家%v 离开房间:%v 当前玩家数量:%v 当前机器人数量:%v", acc.GetAccountId(), pbMsg.GetRoomID(), pbMsg.GetPlayerCount(), pbMsg.GetRobotCount())
+	log.Infof("玩家%v robot:%v 离开房间:%v 当前玩家数量:%v 当前机器人数量:%v", acc.GetAccountId(), acc.GetRobot(), pbMsg.GetRoomID(), pbMsg.GetPlayerCount(), pbMsg.GetRobotCount())
 	room := GameMgr.rooms[acc.RoomID]
 	if room == nil {
 		log.Warnf("找不到大厅房间信息:%v ", acc.RoomID)

@@ -53,6 +53,7 @@ func (self *Room) Init(actor *core.Actor) bool {
 	self.switchStatus(0, ERoomStatus_GAME)
 	// 200ms 更新一次
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*0.2, -1, self.update)
+	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*3, -1, self.updateRobot)
 
 	self.LoadConfig()
 	self.bonus = 0

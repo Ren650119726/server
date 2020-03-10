@@ -80,6 +80,7 @@ func (self *robotMgr) FreeRobot() *account.Account {
 	}
 	if acc == nil {
 		money := uint64(utils.Randx_y(1000, 100000))
+
 		acc = account.AccountMgr.CreateAccount("robot", types.LOGIN_TYPE_ROBOT.Value(), "robot", "", 1, "", 0, 1, money)
 	}
 	return acc
