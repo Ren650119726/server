@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"root/common"
+	"root/core"
 	"root/core/log"
 	"root/core/log/colorized"
 	"root/core/packet"
@@ -89,6 +90,24 @@ func (self *betting) Tick(now int64) {
 		self.updateBetPlayers(now) // 把剩余的发给客户端
 		self.switchStatus(now, ERoomStatus_STOP_BETTING)
 		return
+	}
+
+	for _, acc := range self.accounts {
+		if acc.Robot != 0 {
+			betWeight := [][]int32{{0, 60}, {1, 20}, {2, 10}, {3, 8}, {4, 2}}
+			i := utils.RandomWeight32(betWeight, 1)
+			bet := betWeight[i][0]
+
+			betmsg := &protomsg.BET_RED2BLACK_REQ{
+				AccountID: acc.GetAccountId(),
+				Area:      protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED,
+				Bet:       uint64(self.bets_conf[uint64(bet)]),
+			}
+			data, _ := proto.Marshal(betmsg)
+			pack := packet.NewPacket(data)
+			pack.SetMsgID(protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16())
+			core.CoreSend(0, int32(self.roomId), pack.GetData(), 0)
+		}
 	}
 }
 
