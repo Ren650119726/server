@@ -21,6 +21,7 @@ type (
 		end_timestamp            int64
 		enterMsg                 *protomsg.StatusMsgLHD
 		interval_broadcast_timer int64 // 间隔广播下注缓存
+		betTimer                 int64
 
 		bets_cache      []*protomsg.BET_LHD_RES_BetPlayer // 下注缓存
 		cd              map[uint32]int64                  // 玩家最后一次下注时间戳
@@ -79,6 +80,7 @@ func (self *betting) Enter(now int64) {
 	self.SendBroadcast(protomsg.LHDMSG_SC_SWITCH_GAME_STATUS_BROADCAST_LHD.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST_LHD{self.enterMsg})
 
 	self.interval_broadcast_timer = self.owner.AddTimer(500, -1, self.updateBetPlayers)
+	self.betTimer = self.owner.AddTimer(1000, -1, self.robotbet)
 }
 
 func (self *betting) updateBetPlayers(now int64) {
@@ -118,6 +120,7 @@ func (self *betting) enterData(accountId uint32) *protomsg.StatusMsgLHD {
 }
 
 func (self *betting) Leave(now int64) {
+	self.owner.CancelTimer(self.betTimer)
 	self.log(colorized.Yellow("betting leave\n"))
 	self.log(colorized.Blue(""))
 }
