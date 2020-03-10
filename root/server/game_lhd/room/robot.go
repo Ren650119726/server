@@ -18,6 +18,9 @@ func (self *betting) robotbet(now int64) {
 				bet := uint64(self.bets_conf[uint64(betWeight[i][0])])
 				log.Debugf("机器人:%v 请求押注:%v ", acc.GetAccountId(), bet)
 				if acc.GetMoney() < bet {
+					if utils.Probability(10) {
+						self.leaveRoom(acc.GetAccountId())
+					}
 					continue
 				}
 
