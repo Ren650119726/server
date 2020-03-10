@@ -25,6 +25,7 @@ type (
 		bets_cache      []*protomsg.BET_RED2BLACK_RES_BetPlayer // 下注缓存
 		cd              map[uint32]int64                        // 玩家最后一次下注时间戳
 		forbidBetplayer map[uint32]bool                         // 禁止下注的玩家
+		betTimer        int64
 	}
 )
 
@@ -70,7 +71,7 @@ func (self *betting) Enter(now int64) {
 	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg})
 
 	self.interval_broadcast_timer = self.owner.AddTimer(500, -1, self.updateBetPlayers)
-	self.owner.AddTimer(1000, -1, self.robotbet)
+	self.betTimer = self.owner.AddTimer(1000, -1, self.robotbet)
 }
 
 func (self *betting) updateBetPlayers(now int64) {
@@ -111,6 +112,7 @@ func (self *betting) enterData(accountId uint32) *protomsg.StatusMsg {
 }
 
 func (self *betting) Leave(now int64) {
+	self.owner.CancelTimer(self.betTimer)
 	self.log(colorized.Yellow("betting leave\n"))
 	self.log(colorized.Blue(""))
 }
