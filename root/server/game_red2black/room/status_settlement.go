@@ -141,6 +141,7 @@ func (self *settlement) Enter(now int64) {
 		RoomID: self.roomId,
 		Value:  strconv.Itoa(int(self.profit)),
 	})
+	self.robotQuit()
 	self.log("win:%v 红方牌:%v  黑方牌:%v 房间盈利:%v", win, tred, tblack, self.profit)
 }
 

@@ -45,3 +45,13 @@ func (self *betting) robotbet(now int64) {
 		}
 	}
 }
+
+func (self *Room) robotQuit() {
+	for _, robot := range self.accounts {
+		if robot.Robot != 0 && robot.GetMoney() < uint64(self.bets_conf[0]) {
+			self.owner.AddTimer(int64(utils.Randx_y(100, 500)*10), 1, func(dt int64) {
+				self.leaveRoom(robot.GetAccountId())
+			})
+		}
+	}
+}

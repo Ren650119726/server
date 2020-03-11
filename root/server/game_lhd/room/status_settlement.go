@@ -111,6 +111,8 @@ func (self *settlement) Enter(now int64) {
 		RoomID: self.roomId,
 		Value:  strconv.Itoa(int(self.profit)),
 	})
+
+	self.robotQuit()
 	self.log("win:%v 龙牌:%v  虎牌:%v 房间盈利:%v", win, self.GameCards[0], self.GameCards[1], self.profit)
 }
 
@@ -120,6 +122,7 @@ func (self *settlement) Tick(now int64) {
 		return
 	}
 }
+
 func (self *settlement) leave(accid uint32) bool {
 	return true
 }

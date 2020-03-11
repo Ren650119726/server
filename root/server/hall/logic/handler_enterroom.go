@@ -1,8 +1,10 @@
 package logic
 
 import (
+	"root/common"
 	"root/core/log"
 	"root/core/packet"
+	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/hall/account"
@@ -107,4 +109,9 @@ func (self *Hall) SERVERMSG_GH_PLAYER_LEAVE_ROOM(actor int32, msg []byte, sessio
 	room.PlayerCount = pbMsg.GetPlayerCount()
 	room.RobotCount = pbMsg.GetRobotCount()
 	acc.RoomID = 0
+
+	// 退出房间的机器人，如果钱不够，就补钱
+	if acc.Robot != 0 && acc.GetMoney() <= 1000 {
+		acc.AddMoney(int64(utils.Randx_y(10, 100)*100), common.EOperateType_INIT)
+	}
 }
