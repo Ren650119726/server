@@ -203,11 +203,10 @@ func (self *betting) LHDMSG_CS_BET_LHD_REQ(actor int32, msg []byte, session int6
 	}
 
 	acc.Betcount++
+	log.Infof("收到消息 acc：%v robot:%v OSType:%v 开始请求下注 金额:%v 区域:%v ", acc.GetAccountId(), acc.Robot, acc.GetOSType(), betdata.GetBet(), betdata.GetArea())
 	if acc.Robot == 0 || acc.GetOSType() != 4 {
-		log.Infof("收到消息 acc：%v 开始请求下注", acc.GetAccountId())
 		back(acc.UnDevice, int64(acc.GetMoney()-betdata.GetBet()))
 	} else {
-
 		// 错误返回
 		errback := func() {
 			log.Panicf("http请求报错 玩家:%v roomID:%v  下注:%v 失败", acc.GetAccountId(), self.roomId, betdata.GetBet())
