@@ -37,7 +37,7 @@ type NetConnIF interface {
 /* 网络session */
 type Session struct {
 	id        int64       // SessionID
-	conn      NetConnIF   // *net.TCPConn
+	conn      net.Conn    // *net.TCPConn
 	sendchan  chan []byte // 发送缓冲区(包含协议头)
 	offchan   chan int64  // 离线的channel(离线上通知上层)
 	httpchan  chan bool
@@ -55,7 +55,7 @@ type Session struct {
 }
 
 /* 创建一个session */
-func NewSession(sessionid int64, conn NetConnIF, offchan chan int64, callback NetCallBackIF, readdelay,
+func NewSession(sessionid int64, conn net.Conn, offchan chan int64, callback NetCallBackIF, readdelay,
 	writedelay time.Duration) *Session {
 	sess := Session{}
 	sess.id = sessionid
@@ -92,7 +92,7 @@ func NewClientSession(sessionid int64, offchan chan int64, callback NetCallBackI
 }
 
 // connector专用函数
-func (self *Session) SetConn(conn NetConnIF) {
+func (self *Session) SetConn(conn net.Conn) {
 	self.conn = conn
 	self.iskick = false
 }
