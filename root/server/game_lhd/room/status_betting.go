@@ -204,7 +204,7 @@ func (self *betting) LHDMSG_CS_BET_LHD_REQ(actor int32, msg []byte, session int6
 
 	acc.Betcount++
 	if acc.Robot == 0 || acc.GetOSType() != 4 {
-		log.Infof("收到消息 开始请求下注")
+		log.Infof("收到消息 acc：%v 开始请求下注", acc.GetAccountId())
 		back(acc.UnDevice, int64(acc.GetMoney()-betdata.GetBet()))
 	} else {
 
