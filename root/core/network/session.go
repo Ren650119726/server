@@ -25,6 +25,7 @@ type NetConnIF interface {
 	SetWriteDeadline(t time.Time) error
 	Write(b []byte) (n int, err error)
 	RemoteAddr() net.Addr
+	LocalAddr() net.Addr
 	Read(p []byte) (n int, err error)
 }
 
@@ -121,7 +122,7 @@ func (self *Session) SetCipher(encodekey, decodekey []byte) error {
 
 /* 远端的链接地址IP信息 */
 func (self *Session) RemoteIP() string {
-	addr := self.conn.RemoteAddr().String()
+	addr := self.conn.LocalAddr().String()
 	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
 		host = addr
