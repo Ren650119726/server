@@ -3,7 +3,6 @@ package room
 import (
 	"github.com/golang/protobuf/proto"
 	"root/core"
-	"root/core/log"
 	"root/core/packet"
 	"root/core/utils"
 	"root/protomsg"
@@ -16,7 +15,6 @@ func (self *betting) robotbet(now int64) {
 				betWeight := [][]int32{{0, 60}, {1, 20}, {2, 10}, {3, 8}, {4, 2}}
 				i := utils.RandomWeight32(betWeight, 1)
 				bet := uint64(self.bets_conf[uint64(betWeight[i][0])])
-				log.Debugf("机器人:%v 请求押注:%v ", acc.GetAccountId(), bet)
 				if acc.GetMoney() < bet {
 					if utils.Probability(10) {
 						self.leaveRoom(acc.GetAccountId())
@@ -48,7 +46,7 @@ func (self *betting) robotbet(now int64) {
 
 func (self *Room) robotQuit() {
 	for _, robot := range self.accounts {
-		if robot.Robot != 0 && robot.GetMoney() < uint64(self.bets_conf[0]) {
+		if robot.Robot != 0 && robot.GetMoney() < uint64(self.betlimit) {
 			self.owner.AddTimer(int64(utils.Randx_y(100, 500)*10), 1, func(dt int64) {
 				self.leaveRoom(robot.GetAccountId())
 			})
