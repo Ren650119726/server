@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"root/common"
 	"root/core"
-	"root/core/log"
 )
 
 type Client struct {
@@ -26,7 +25,7 @@ func NewWebsocketClient(host, path string) *Client {
 }
 
 func (this *Client) SendMessage(body []byte) error {
-	n, err := this.ws.Write(body)
+	_, err := this.ws.Write(body)
 	if err != nil {
 		beego.Error(err)
 		return err

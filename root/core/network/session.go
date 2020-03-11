@@ -126,7 +126,7 @@ func (self *Session) RemoteIP() string {
 	if err != nil {
 		host = addr
 	}
-	return net.ParseIP(host).String()
+	return host
 }
 
 // 发送数据
