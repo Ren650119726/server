@@ -99,6 +99,11 @@ func (self *Acceptor) DoListen() {
 }
 
 func (self *Acceptor) DoListenHttp(httpAddr string) {
+	core.Gwg.Add(1)
+	defer func() {
+		core.Gwg.Done()
+	}()
+
 	self.httpser = &http.Server{Addr: httpAddr}
 
 	http.Handle("/connect", websocket.Handler(func(ws *websocket.Conn) {

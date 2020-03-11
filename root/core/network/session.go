@@ -3,6 +3,7 @@ package network
 import (
 	"bytes"
 	"crypto/rc4"
+	"golang.org/x/net/websocket"
 	"net"
 	"root/core"
 	"root/core/log"
@@ -122,8 +123,12 @@ func (self *Session) SetCipher(encodekey, decodekey []byte) error {
 
 /* 远端的链接地址IP信息 */
 func (self *Session) RemoteIP() string {
-	addr := self.conn.RemoteAddr().String()
-	return addr
+	switch c := self.conn.(type) {
+	case *websocket.Conn:
+		return c.Request().RemoteAddr
+	default:
+		return c.RemoteAddr().String()
+	}
 }
 
 // 发送数据
