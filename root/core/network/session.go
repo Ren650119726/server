@@ -122,12 +122,8 @@ func (self *Session) SetCipher(encodekey, decodekey []byte) error {
 
 /* 远端的链接地址IP信息 */
 func (self *Session) RemoteIP() string {
-	addr := self.conn.LocalAddr().String()
-	host, _, err := net.SplitHostPort(addr)
-	if err != nil {
-		host = addr
-	}
-	return host
+	addr := self.conn.RemoteAddr().String()
+	return addr
 }
 
 // 发送数据
