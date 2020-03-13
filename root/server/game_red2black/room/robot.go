@@ -47,21 +47,23 @@ func (self *betting) robotbet(now int64) {
 			continue
 		}
 
-		betmsg := &protomsg.BET_RED2BLACK_REQ{
-			AccountID: acc.GetAccountId(),
-			Area:      robot.area,
-			Bet:       robot.bet,
+		if robot.areacount > 0 {
+			betmsg := &protomsg.BET_RED2BLACK_REQ{
+				AccountID: acc.GetAccountId(),
+				Area:      robot.area,
+				Bet:       robot.bet,
+			}
+			data, _ := proto.Marshal(betmsg)
+			pack := packet.NewPacket(nil)
+			pack.WriteBytes(data)
+			pack.SetMsgID(protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16())
+			core.CoreSend(0, int32(self.roomId), pack.GetData(), 0)
+			robot.areacount--
 		}
-		data, _ := proto.Marshal(betmsg)
-		pack := packet.NewPacket(nil)
-		pack.WriteBytes(data)
-		pack.SetMsgID(protomsg.RED2BLACKMSG_CS_BET_RED2BLACK_REQ.UInt16())
-		core.CoreSend(0, int32(self.roomId), pack.GetData(), 0)
-		robot.areacount--
 
 		// 区域押注押完次数后判断是否幸运一击
 		if robot.areacount == 0 && robot.luck {
-			betmsg = &protomsg.BET_RED2BLACK_REQ{
+			betmsg := &protomsg.BET_RED2BLACK_REQ{
 				AccountID: acc.GetAccountId(),
 				Area:      protomsg.RED2BLACKAREA_RED2BLACK_AREA_LUCK,
 				Bet:       robot.bet,
