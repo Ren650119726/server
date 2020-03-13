@@ -102,6 +102,8 @@ func (self *betting) initRobotBehavior(acc *account.Account) {
 		area = protomsg.RED2BLACKAREA(self.robot_conf.RedBlackWeight[areai][0])
 		if area == protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED {
 			areacount = int32(utils.Randx_y(int(self.robot_conf.RedRandCount[0]), int(self.robot_conf.RedRandCount[1])))
+		} else if area == protomsg.RED2BLACKAREA_RED2BLACK_AREA_BLACK {
+			areacount = int32(utils.Randx_y(int(self.robot_conf.BlackRandCount[0]), int(self.robot_conf.BlackRandCount[1])))
 		}
 		luck = utils.Probability10000(self.robot_conf.LuckRatio)
 		if luck {
