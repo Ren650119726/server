@@ -21,6 +21,7 @@ var RobotMgr = NewRobotMgr()
 type (
 	robotMgr struct {
 		Room_NumOfRobot_Limit map[uint32][]*time_frame // key roomid
+		NameTableIndex        int
 	}
 	// 时段结构
 	time_frame struct {
@@ -28,6 +29,8 @@ type (
 		EndTime   int64
 		Week      [7]bool
 		Num       uint32
+		MoneyMin  int
+		MoneyMax  int
 	}
 )
 
@@ -60,6 +63,10 @@ func (self *robotMgr) Load() {
 		if self.Room_NumOfRobot_Limit[uint32(roomid)] == nil {
 			self.Room_NumOfRobot_Limit[uint32(roomid)] = make([]*time_frame, 0)
 		}
+		moneystr := config.Get_JsonDataString(timeFrame, id, "Gold")
+		str_arr := utils.SplitConf2ArrInt32(moneystr, ",")
+		frame.MoneyMin = int(str_arr[0])
+		frame.MoneyMax = int(str_arr[1])
 		self.Room_NumOfRobot_Limit[uint32(roomid)] = append(self.Room_NumOfRobot_Limit[uint32(roomid)], frame)
 	}
 }
@@ -80,8 +87,9 @@ func (self *robotMgr) FreeRobot() *account.Account {
 	}
 	if acc == nil {
 		money := uint64(utils.Randx_y(1000, 100000))
-
-		acc = account.AccountMgr.CreateAccount("robot", types.LOGIN_TYPE_ROBOT.Value(), "robot", "", 1, "", 0, 1, money)
+		self.NameTableIndex++
+		name := config.Get_configString("robot_name", self.NameTableIndex, "Name")
+		acc = account.AccountMgr.CreateAccount(name, types.LOGIN_TYPE_ROBOT.Value(), name, "", 1, "", 0, 1, money)
 	}
 	return acc
 }
@@ -106,6 +114,8 @@ func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
 				}
 				acc := self.FreeRobot()
 				acc.RoomID = roomID
+				m := int64(utils.Randx_y(frame.MoneyMin, frame.MoneyMax)) - int64(acc.GetMoney())
+				acc.AddMoney(m, common.EOperateType_INIT)
 				sendPB := &inner.PLAYER_DATA_REQ{
 					Account:     acc.AccountStorageData,
 					AccountData: acc.AccountGameData,

@@ -26,6 +26,7 @@ type (
 		cd              map[uint32]int64                        // 玩家最后一次下注时间戳
 		forbidBetplayer map[uint32]bool                         // 禁止下注的玩家
 		betTimer        int64
+		robots          map[uint32]*behavior
 	}
 )
 
@@ -37,6 +38,7 @@ func (self *betting) Enter(now int64) {
 
 	self.cd = make(map[uint32]int64)
 	self.forbidBetplayer = make(map[uint32]bool)
+	self.robots = make(map[uint32]*behavior)
 	// 随机获得6张牌
 	self.GameCards = algorithm.GetRandom_Card(self.RoomCards, 6)
 	self.log("开始下注显示:%v 张 本局牌:%+v ", self.showNum, self.GameCards)
@@ -56,6 +58,7 @@ func (self *betting) Enter(now int64) {
 		if acc.GetMoney() < uint64(self.betlimit) {
 			self.forbidBetplayer[acc.AccountId] = true
 		}
+		self.initRobotBehavior(acc)
 	}
 
 	self.enterMsg = &protomsg.StatusMsg{
@@ -70,8 +73,9 @@ func (self *betting) Enter(now int64) {
 	}
 	self.SendBroadcast(protomsg.RED2BLACKMSG_SC_SWITCH_GAME_STATUS_BROADCAST.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST{self.enterMsg})
 
-	self.interval_broadcast_timer = self.owner.AddTimer(500, -1, self.updateBetPlayers)
-	self.betTimer = self.owner.AddTimer(1000, -1, self.robotbet)
+	self.interval_broadcast_timer = self.owner.AddTimer(200, -1, self.updateBetPlayers)
+	self.betTimer = self.owner.AddTimer(100, -1, self.robotbet)
+
 }
 
 func (self *betting) updateBetPlayers(now int64) {
@@ -82,6 +86,37 @@ func (self *betting) updateBetPlayers(now int64) {
 			AreaBetVal: betval,
 		})
 		self.bets_cache = self.bets_cache[:0]
+	}
+}
+func (self *betting) initRobotBehavior(acc *account.Account) {
+	// 初始化机器人行为表
+	if acc.Robot != 0 {
+		var (
+			area      protomsg.RED2BLACKAREA
+			areacount int32
+			luck      bool
+			luckcount int32
+		)
+		beti := utils.RandomWeight32(self.robot_conf.BetWeight, 1)
+		areai := utils.RandomWeight32(self.robot_conf.RedBlackWeight, 1)
+		area = protomsg.RED2BLACKAREA(self.robot_conf.RedBlackWeight[areai][0])
+		if area == protomsg.RED2BLACKAREA_RED2BLACK_AREA_RED {
+			areacount = int32(utils.Randx_y(int(self.robot_conf.RedRandCount[0]), int(self.robot_conf.RedRandCount[1])))
+		}
+		luck = utils.Probability10000(self.robot_conf.LuckRatio)
+		if luck {
+			luckcount = int32(utils.Randx_y(int(self.robot_conf.LuckCount[0]), int(self.robot_conf.LuckCount[1])))
+		}
+
+		self.robots[acc.AccountId] = &behavior{
+			bet:         uint64(self.bets_conf[uint64(self.robot_conf.BetWeight[beti][0])]),
+			area:        area,
+			areacount:   areacount,
+			luck:        luck,
+			luckcount:   luckcount,
+			nextBetTime: utils.MilliSecondTimeSince1970() + int64(utils.Randx_y(int(self.robot_conf.BetFrequencies[0]), int(self.robot_conf.BetFrequencies[1]))),
+		}
+		log.Infof("初始化机器人行为 %v %+v:", acc.AccountId, self.robots[acc.AccountId])
 	}
 }
 

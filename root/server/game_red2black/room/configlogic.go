@@ -85,5 +85,16 @@ func (self *Room) LoadConfig() {
 	self.status_duration[ERoomStatus_SETTLEMENT] = int64(config.Get_configInt("red2black_room", int(self.roomId), "End_Time"))
 	self.status_duration[ERoomStatus_SETTLEMENT] += int64(config.Get_configInt("red2black_room", int(self.roomId), "Wait_Time"))
 
+	// 机器人相关
+	self.robot_conf = &robot_config{
+		BetWeight:      utils.SplitConf2Arr_ArrInt32(config.Get_configString("red2black_robot_config", int(1), "Chips")),
+		RedBlackWeight: utils.SplitConf2Arr_ArrInt32(config.Get_configString("red2black_robot_config", int(1), "Area")),
+		RedRandCount:   utils.SplitConf2ArrInt32(config.Get_configString("red2black_robot_config", int(1), "Red_Count"), ","),
+		BlackRandCount: utils.SplitConf2ArrInt32(config.Get_configString("red2black_robot_config", int(1), "Black_Count"), ","),
+		LuckRatio:      config.Get_configInt("red2black_robot_config", int(1), "Luck"),
+		LuckCount:      utils.SplitConf2ArrInt32(config.Get_configString("red2black_robot_config", int(1), "Luck_Count"), ","),
+		BetFrequencies: utils.SplitConf2ArrInt32(config.Get_configString("red2black_robot_config", int(1), "Bet_CD"), ","),
+	}
+
 	log.Infof("房间:%v 配置加载完成", self.roomId)
 }

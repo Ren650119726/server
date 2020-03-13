@@ -1,10 +1,8 @@
 package logic
 
 import (
-	"root/common"
 	"root/core/log"
 	"root/core/packet"
-	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/hall/account"
@@ -84,7 +82,7 @@ func (self *Hall) SERVERMSG_GH_PLAYER_ENTER_ROOM(actor int32, msg []byte, sessio
 		RobotCount:  room.RobotCount,
 	}, event.EventType_RoomUpdate)
 
-	log.Infof("玩家%v robot:%v 进入房间:%v 当前玩家数量:%v 当前机器人数量:%v", acc.GetAccountId(), acc.GetRobot(), pbMsg.GetRoomID(), pbMsg.GetPlayerCount(), pbMsg.GetRobotCount())
+	log.Infof("玩家%v %v robot:%v 进入房间:%v 当前玩家数量:%v 当前机器人数量:%v", acc.GetAccountId(), acc.GetName(), acc.GetRobot(), pbMsg.GetRoomID(), pbMsg.GetPlayerCount(), pbMsg.GetRobotCount())
 }
 
 // 游戏通知大厅，玩家退出房间
@@ -109,9 +107,4 @@ func (self *Hall) SERVERMSG_GH_PLAYER_LEAVE_ROOM(actor int32, msg []byte, sessio
 	room.PlayerCount = pbMsg.GetPlayerCount()
 	room.RobotCount = pbMsg.GetRobotCount()
 	acc.RoomID = 0
-
-	// 退出房间的机器人，如果钱不够，就补钱
-	if acc.Robot != 0 && acc.GetMoney() <= 1000 {
-		acc.AddMoney(int64(utils.Randx_y(10, 100)*100), common.EOperateType_INIT)
-	}
 }
