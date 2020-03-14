@@ -26,6 +26,7 @@ type (
 		bets_cache      []*protomsg.BET_LHD_RES_BetPlayer // 下注缓存
 		cd              map[uint32]int64                  // 玩家最后一次下注时间戳
 		forbidBetplayer map[uint32]bool                   // 禁止下注的玩家
+		robots          map[uint32]*behavior
 	}
 )
 
@@ -37,6 +38,7 @@ func (self *betting) Enter(now int64) {
 
 	self.cd = make(map[uint32]int64)
 	self.forbidBetplayer = make(map[uint32]bool)
+	self.robots = make(map[uint32]*behavior)
 	// 如果没有牌靴了，就随机一组牌靴
 	if len(self.GameCards) <= 2 {
 		num := utils.Randx_y(100, 350)
@@ -67,6 +69,7 @@ func (self *betting) Enter(now int64) {
 		if acc.GetMoney() < uint64(self.betlimit_conf) {
 			self.forbidBetplayer[acc.AccountId] = true
 		}
+		self.initRobotBehavior(acc)
 	}
 
 	self.enterMsg = &protomsg.StatusMsgLHD{
@@ -80,7 +83,7 @@ func (self *betting) Enter(now int64) {
 	self.SendBroadcast(protomsg.LHDMSG_SC_SWITCH_GAME_STATUS_BROADCAST_LHD.UInt16(), &protomsg.SWITCH_GAME_STATUS_BROADCAST_LHD{self.enterMsg})
 
 	self.interval_broadcast_timer = self.owner.AddTimer(500, -1, self.updateBetPlayers)
-	self.betTimer = self.owner.AddTimer(1000, -1, self.robotbet)
+	self.betTimer = self.owner.AddTimer(100, -1, self.robotbet)
 }
 
 func (self *betting) updateBetPlayers(now int64) {
@@ -93,7 +96,39 @@ func (self *betting) updateBetPlayers(now int64) {
 		self.bets_cache = self.bets_cache[:0]
 	}
 }
+func (self *betting) initRobotBehavior(acc *account.Account) {
+	// 初始化机器人行为表
+	if acc.Robot != 0 {
+		var (
+			area       protomsg.LHDAREA
+			areacount  int32
+			peace      bool
+			peacecount int32
+		)
+		beti := utils.RandomWeight32(self.robot_conf.BetWeight, 1)
+		areai := utils.RandomWeight32(self.robot_conf.AreaWeight, 1)
+		area = protomsg.LHDAREA(self.robot_conf.AreaWeight[areai][0])
+		if area == protomsg.LHDAREA_LHD_AREA_DRAGON {
+			areacount = int32(utils.Randx_y(int(self.robot_conf.DragonRandCount[0]), int(self.robot_conf.DragonRandCount[1])))
+		} else if area == protomsg.LHDAREA_LHD_AREA_TIGER {
+			areacount = int32(utils.Randx_y(int(self.robot_conf.TigerRandCount[0]), int(self.robot_conf.TigerRandCount[1])))
+		}
+		peace = utils.Probability10000(self.robot_conf.PeaceRatio)
+		if peace {
+			peacecount = int32(utils.Randx_y(int(self.robot_conf.PeaceCount[0]), int(self.robot_conf.PeaceCount[1])))
+		}
 
+		self.robots[acc.AccountId] = &behavior{
+			bet:         uint64(self.bets_conf[uint64(self.robot_conf.BetWeight[beti][0])]),
+			area:        area,
+			areacount:   areacount,
+			peace:       peace,
+			peacecount:  peacecount,
+			nextBetTime: utils.MilliSecondTimeSince1970() + int64(utils.Randx_y(int(self.robot_conf.BetFrequencies[0]), int(self.robot_conf.BetFrequencies[1]))),
+		}
+		log.Infof("初始化机器人行为 %v %+v:", acc.AccountId, self.robots[acc.AccountId])
+	}
+}
 func (self *betting) Tick(now int64) {
 	if now >= self.end_timestamp {
 		self.owner.CancelTimer(self.interval_broadcast_timer)
