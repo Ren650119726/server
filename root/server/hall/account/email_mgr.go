@@ -24,15 +24,15 @@ type (
 	PersonMap map[uint32]EmailMap
 
 	emailMgr struct {
-		Emails       PersonMap
-		EmailMAXID   uint32
+		Emails     PersonMap
+		EmailMAXID uint32
 	}
 )
 
 func newEmailMgr() *emailMgr {
 	ret := &emailMgr{
-		EmailMAXID:   0,
-		Emails:       make(PersonMap),
+		EmailMAXID: 0,
+		Emails:     make(PersonMap),
 	}
 	return ret
 }
@@ -138,7 +138,7 @@ func (self *emailMgr) RemoveMail(accountId, emailId uint32) uint8 {
 
 	if email.Money > 0 {
 		eOperate := email.GetEmailType()
-		acc.AddMoney(int64(email.Money), common.EOperateType(eOperate))
+		acc.AddMoney(int64(email.Money), common.EOperateType(eOperate), 0)
 		email.Money = 0
 		event.Dispatcher.Dispatch(event.UpdateCharge{AccountID: accountId, RMB: int64(email.Money)}, event.EventType_UpdateCharge)
 		log.Infof("Remove EmailID:%v, RecvID:%v, EmailType:%v, Content:%v, nRMB:%v", emailId, accountId, email.EmailType, email.Content, email.Money)
@@ -150,7 +150,7 @@ func (self *emailMgr) RemoveMail(accountId, emailId uint32) uint8 {
 }
 
 // 领取邮件
-func (self *emailMgr) GetMailReward(accountID, emailId uint32) uint8{
+func (self *emailMgr) GetMailReward(accountID, emailId uint32) uint8 {
 	acc := AccountMgr.GetAccountByIDAssert(accountID)
 	personal := self.Emails[accountID]
 	if personal == nil {
@@ -159,14 +159,14 @@ func (self *emailMgr) GetMailReward(accountID, emailId uint32) uint8{
 
 	email := personal[emailId]
 	if email == nil {
-		log.Panicf("GetMailReward email == nil :%v emailid:%v", accountID,emailId)
+		log.Panicf("GetMailReward email == nil :%v emailid:%v", accountID, emailId)
 	}
 	email.IsRead = 1
 	if email.Money <= 0 {
 		log.Warnf("GetMailReward email.Money <= 0 email.Money:%v", email.Money)
 		return 1
 	}
-	acc.AddMoney(int64(email.Money), common.EOperateType(email.GetEmailType()))
+	acc.AddMoney(int64(email.Money), common.EOperateType(email.GetEmailType()), 0)
 	email.Money = 0
 	event.Dispatcher.Dispatch(event.UpdateCharge{AccountID: accountID, RMB: int64(email.Money)}, event.EventType_UpdateCharge)
 	log.Infof("GetMailReward EmailID:%v, RecvID:%v, EmailType:%v, Content:%v, nRMB:%v", emailId, accountID, email.EmailType, email.Content, email.Money)
@@ -206,18 +206,19 @@ func (self *emailMgr) GetPlayerUnReadEmailNum(accountID uint32) int {
 	return count
 }
 
-func (self *emailMgr)GetAllEmailofPerson(accountID uint32) []*protomsg.Email {
-	emails := make([]*protomsg.Email,0)
+func (self *emailMgr) GetAllEmailofPerson(accountID uint32) []*protomsg.Email {
+	emails := make([]*protomsg.Email, 0)
 	person := self.Emails[accountID]
 	if person == nil {
 		return emails
 	}
 
-	for _,e := range person {
+	for _, e := range person {
 		emails = append(emails, e)
 	}
 	return emails
 }
+
 // 通知在线玩家有新邮件
 func (self *emailMgr) SendEmailToClient(accountID uint32, session int64, emailId uint32) {
 	personal := self.Emails[accountID]
@@ -228,7 +229,7 @@ func (self *emailMgr) SendEmailToClient(accountID uint32, session int64, emailId
 	if email == nil {
 		return
 	}
-	send_tools.Send2Account(protomsg.MSG_SC_EMAIL_NEW.UInt16(), &protomsg.EMAIL_NEW{New:email}, session)
+	send_tools.Send2Account(protomsg.MSG_SC_EMAIL_NEW.UInt16(), &protomsg.EMAIL_NEW{New: email}, session)
 }
 
 func (self *emailMgr) PrintEmail(nAccountID uint32) {

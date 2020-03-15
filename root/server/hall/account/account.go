@@ -62,19 +62,19 @@ func (self *Account) AddSafeMoney(iValue int64, operate common.EOperateType) {
 	if iValue < 0 {
 		// 从保险箱取钱; 日志从AddMoney函数记录
 		self.SafeMoney = uint64(iSafeRMB)
-		self.AddMoney(-iValue, common.EOperateType_SAFE_MONEY_GET)
+		self.AddMoney(-iValue, common.EOperateType_SAFE_MONEY_GET,0)
 		log.Infof("玩家ID:%v 从保险箱取出金额:%v  操作后身上:%v  保险箱剩余:%v", self.AccountId, -iValue, self.Money, self.SafeMoney)
 	} else {
 		// 存钱到保险箱; 日志从AddMoney函数记录
 		self.SafeMoney = uint64(iSafeRMB)
-		self.AddMoney(-iValue, common.EOperateType_SAFE_MONEY_SAVE)
+		self.AddMoney(-iValue, common.EOperateType_SAFE_MONEY_SAVE,0)
 		log.Infof("玩家ID:%v 存入保险箱金额:%v  操作后身上:%v  保险箱剩余:%v", self.AccountId, iValue, self.Money, self.SafeMoney)
 	}
 
 	//db.HSet(rediskey.PlayerId(uint32(self.AccountId)), "SafeMoney", self.SafeMoney)
 }
 
-func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
+func (self *Account) AddMoney(iValue int64, operate common.EOperateType, roomid uint32) {
 	if iValue == 0 {
 		return
 	}
@@ -93,7 +93,7 @@ func (self *Account) AddMoney(iValue int64, operate common.EOperateType) {
 			Value:       money,
 			Operate:     uint32(operate),
 			Time:        strTime,
-			RoomID:      0,
+			RoomID:      roomid,
 		}
 		logcache.LogCache.AddMoneyChangeLog(logpb) // 金币改变
 		//db.HSet(rediskey.PlayerId(uint32(self.AccountId)), "Money", self.Money)

@@ -64,9 +64,8 @@ func (self *Hall) SERVERMSG_GH_SERVERFEE_LOG(actor int32, msg []byte, session in
 // 游戏金币改变
 func (self *Hall) SERVERMSG_GH_MONEYCHANGE(actor int32, msg []byte, session int64) {
 	data := packet.PBUnmarshal(msg, &inner.MONEYCHANGE{}).(*inner.MONEYCHANGE)
-	logcache.LogCache.AddMoneyChangeLog(data) // 游戏通知回存金币改变日志
 	acc := account.AccountMgr.GetAccountByIDAssert(data.GetAccountID())
-	acc.AddMoney(data.GetChangeValue(), common.EOperateType(data.GetOperate()))
+	acc.AddMoney(data.GetChangeValue(), common.EOperateType(data.GetOperate()), data.RoomID)
 }
 
 // 游戏请求水池金额

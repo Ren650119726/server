@@ -115,7 +115,7 @@ func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
 				acc := self.FreeRobot()
 				acc.RoomID = roomID
 				m := int64(utils.Randx_y(frame.MoneyMin, frame.MoneyMax)) - int64(acc.GetMoney())
-				acc.AddMoney(m, common.EOperateType_INIT)
+				acc.AddMoney(m, common.EOperateType_INIT, 0)
 				sendPB := &inner.PLAYER_DATA_REQ{
 					Account:     acc.AccountStorageData,
 					AccountData: acc.AccountGameData,
