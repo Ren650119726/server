@@ -223,7 +223,7 @@ func CMD_Add_Money(sParam []string) {
 		if changeValue < 0 && -changeValue > int(acc.GetMoney()) {
 			changeValue = int(-acc.GetMoney())
 		}
-		acc.AddMoney(int64(changeValue), common.EOperateType_CMD,0)
+		acc.AddMoney(int64(changeValue), common.EOperateType_CMD, 0)
 		fmt.Printf("====== 命令执行成功 玩家:%v 金币:%v+(%v)=%v ======\r\n", acc.GetAccountId(), m, changeValue, acc.GetMoney())
 	} else {
 		GameMgr.Send2Game(inner.SERVERMSG_HG_NOTIFY_ALTER_DATE.UInt16(), &inner.NOTIFY_ALTER_DATE{
