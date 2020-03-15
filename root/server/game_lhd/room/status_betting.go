@@ -275,6 +275,10 @@ func (self *betting) LHDMSG_CS_CLEAN_BET_LHD_REQ(actor int32, msg []byte, sessio
 		log.Warnf("玩家:%v 下注 为0 区域下注为:%v 不需要清除", acc.GetAccountId(), totalBets)
 		return
 	}
+	// 不管是异步押注，还是直接押注，只要通过了押注校验，就现添加到betPlayers里，防止玩家退出游戏
+	if self.betPlayers[acc.AccountId] == nil {
+		self.betPlayers[acc.AccountId] = make(map[int32]int64)
+	}
 
 	acc.CLeanTime = now
 	self.cd[acc.GetAccountId()] = now

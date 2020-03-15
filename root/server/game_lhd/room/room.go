@@ -270,6 +270,10 @@ func (self *Room) areaBetVal(robot bool) map[int32]int64 {
 	} else {
 		for accid, bet := range self.betPlayers {
 			acc := self.accounts[accid]
+			if acc == nil {
+				log.Errorf("找不到玩家:%v 房间:%v ", accid, self.roomId)
+				continue
+			}
 			if acc.Robot == 0 {
 				for area, val := range bet {
 					ret[area] += val

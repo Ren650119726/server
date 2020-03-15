@@ -207,6 +207,11 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 		return
 	}
 
+	// 不管是异步押注，还是直接押注，只要通过了押注校验，就现添加到betPlayers里，防止玩家退出游戏
+	if self.betPlayers[acc.AccountId] == nil {
+		self.betPlayers[acc.AccountId] = make(map[int32]int64)
+	}
+
 	self.cd[acc.GetAccountId()] = now
 	back := func(backunique string, backmoney int64) {
 		if acc.GetMoney()-betdata.GetBet() != uint64(backmoney) {
