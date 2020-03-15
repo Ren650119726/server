@@ -78,14 +78,16 @@ func CMD_On(sParam []string) {
 	nCount := 0
 	var nTotalRMB uint64
 	var nTotalSafeRMB uint64
-	now := utils.MilliSecondTimeSince1970()
+	now := utils.SecondTimeSince1970()
 	for _, tAccount := range account.AccountMgr.AccountbyID {
 		if tAccount.Robot == 0 {
 			if tAccount.IsOnline() == true {
 				online := now - tAccount.LoginTime
-				sec := online - (online/60)*60
-				min := online / 60
-				hour := min / 60
+				totalminsec := (online / 60) * 60
+				sec := online - totalminsec
+				totalmin := totalminsec / 60
+				hour := totalmin / 60
+				min := totalmin % 60
 				str := fmt.Sprintf("%v时 %v分 %v秒", hour, min, sec)
 				fmt.Printf("在线玩家 %v %v 房间ID:%v 元宝:%v 保险箱:%v OSType:%v 在线时长:%v \r\n", tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, tAccount.OSType, str)
 				nCount++
