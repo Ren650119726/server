@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string, back func(backunique string, backmoney int64), errback func()) {
+func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string, back func(backunique string, backmoney int64, bwType int32), errback func()) {
 	go func() {
 		send := url.Values{"channelId": {"DDHYLC"},
 			"gameId": {"game_luckfruit"},
@@ -64,9 +64,10 @@ func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string
 		} else {
 			data := jsonstr["data"].(map[string]interface{})
 			gold := data["gold"].(float64)
+			bwType := data["bwType"].(float64)
 			if back != nil {
 				core.LocalCoreSend(0, roomID, func() {
-					back(unique, int64(gold))
+					back(unique, int64(gold), int32(bwType))
 				})
 			}
 		}

@@ -157,7 +157,18 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 
 	//抽水的分加进水池
 	if !isFree {
-		back := func(backunique string, backmoney int64) { // 押注
+		back := func(backunique string, backmoney int64, bwType int32) { // 押注
+			if bwType == 1 {
+				acc.Kill = int32(config.GetPublicConfig_Int64(4))
+				log.Infof("acc:%v 三方黑名单 杀数为:%v ", acc.GetAccountId(), acc.Kill)
+			} else if bwType == 2 {
+				acc.Kill = int32(config.GetPublicConfig_Int64(5))
+				log.Infof("acc:%v 三方白名单 杀数为:%v ", acc.GetAccountId(), acc.Kill)
+			} else if bwType == 0 {
+				acc.Kill = 0
+				log.Infof("acc:%v bwType:0 ", acc.GetAccountId())
+			}
+
 			a := BetNum * self.jackpotRate / 10000
 			self.bonus += int64(a)
 			if acc.GetMoney()-BetNum != uint64(backmoney) {
@@ -179,7 +190,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 			}
 			asyn_addMoney(self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId), fmt.Sprintf("水果小玛利请求下注:%v", BetNum), back, errback)
 		} else {
-			back("", int64(acc.GetMoney()-BetNum))
+			back("", int64(acc.GetMoney()-BetNum), 0)
 		}
 
 	} else {

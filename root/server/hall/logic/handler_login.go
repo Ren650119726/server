@@ -44,8 +44,8 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 
 	strClientIP := core.GetRemoteIP(session)
 
-	var loginFun func(Unique, Name string, LoginType uint8, Gold int64)
-	loginFun = func(Unique, Name string, LoginType uint8, Gold int64) {
+	var loginFun func(Unique, Name string, LoginType uint8, Gold int64, bwType int32)
+	loginFun = func(Unique, Name string, LoginType uint8, Gold int64, bwType int32) {
 		openWhiteList := config.GetPublicConfig_Int64(1)
 		acc := account.AccountMgr.GetAccountByType(Unique, LoginType)
 		if acc == nil { // 注册新账号
@@ -85,6 +85,17 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 			}
 			account.AccountMgr.LoginAccount(acc, LoginType, strClientIP, session)
 		}
+		if bwType == 1 {
+			acc.Kill = int32(config.GetPublicConfig_Int64(4))
+			log.Infof("acc:%v 三方黑名单 杀数为:%v ", acc.GetAccountId(), acc.Kill)
+		} else if bwType == 2 {
+			acc.Kill = int32(config.GetPublicConfig_Int64(5))
+			log.Infof("acc:%v 三方白名单 杀数为:%v ", acc.GetAccountId(), acc.Kill)
+		} else if bwType == 0 {
+			acc.Kill = 0
+			log.Infof("acc:%v bwType:0 ", acc.GetAccountId())
+		}
+
 		// 发送游戏房间信息
 		GameMgr.SendGameInfo(session)
 	}
@@ -143,7 +154,8 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 					userID := data["userId"].(float64)
 					name := data["nickName"].(string)
 					gold := data["gold"].(float64)
-					loginFun(strconv.Itoa(int(userID)), name, 4, int64(gold))
+					bwType := data["bwType"].(float64)
+					loginFun(strconv.Itoa(int(userID)), name, 4, int64(gold), int32(bwType))
 				})
 			}
 		}()
@@ -152,5 +164,5 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 		log.Panicf("不支持的登陆类型:%v", loginMSG.LoginType)
 	}
 
-	loginFun(loginMSG.GetUnique(), "", uint8(loginMSG.GetLoginType()), 0)
+	loginFun(loginMSG.GetUnique(), "", uint8(loginMSG.GetLoginType()), 0, 0)
 }

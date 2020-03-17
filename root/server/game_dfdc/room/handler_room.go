@@ -149,7 +149,18 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 
 	// 免费的直接开始，押注的先走一趟平台扣钱，扣钱成功后再开始
 	if !isFree {
-		back := func(backunique string, backmoney int64) { // 押注
+		back := func(backunique string, backmoney int64, bwType int32) { // 押注
+			if bwType == 1 {
+				acc.Kill = int32(config.GetPublicConfig_Int64(4))
+				log.Infof("acc:%v 三方黑名单 杀数为:%v ", acc.GetAccountId(), acc.Kill)
+			} else if bwType == 2 {
+				acc.Kill = int32(config.GetPublicConfig_Int64(5))
+				log.Infof("acc:%v 三方白名单 杀数为:%v ", acc.GetAccountId(), acc.Kill)
+			} else if bwType == 0 {
+				acc.Kill = 0
+				log.Infof("acc:%v bwType:0 ", acc.GetAccountId())
+			}
+
 			//log.Infof("玩家:%v 下注成功 扣除:%v ", acc.GetUnDevice(), BetNum)
 			if acc.GetMoney()-BetNum != uint64(backmoney) {
 				log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v", acc.GetUnDevice(), acc.GetMoney(), BetNum, backmoney)
@@ -178,7 +189,7 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 			}
 			asyn_addMoney(self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId), fmt.Sprintf("多福多财请求下注:%v", BetNum), back, errback)
 		} else {
-			back("", int64(acc.GetMoney()-BetNum))
+			back("", int64(acc.GetMoney()-BetNum), 0)
 		}
 
 	} else {
