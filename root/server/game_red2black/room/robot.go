@@ -42,7 +42,9 @@ func (self *betting) robotbet(now int64) {
 
 		if acc.GetMoney() < robot.bet {
 			if utils.Probability(10) {
-				self.leaveRoom(acc.GetAccountId())
+				if self.leave(acc.AccountId) {
+					self.leaveRoom(acc.GetAccountId())
+				}
 			}
 			continue
 		}
