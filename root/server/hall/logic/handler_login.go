@@ -3,6 +3,7 @@ package logic
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/astaxie/beego"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -102,7 +103,7 @@ func (self *Hall) MSG_LOGIN_HALL(actor int32, msg []byte, session int64) {
 			return
 		}
 	case uint32(types.LOGIN_TYPE_OTHER.Value()): // 其他平台登陆
-		getuserinfo_URL := config.GetPublicConfig_String(4)
+		getuserinfo_URL := beego.AppConfig.DefaultString("DEF::getuserinfo", "")
 		go func() {
 			log.Infof("请求平台登录userId:%v type:%v url:%v", loginMSG.Unique, loginMSG.LoginType, getuserinfo_URL)
 			resp, err := http.PostForm(getuserinfo_URL,

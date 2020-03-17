@@ -2,6 +2,7 @@ package room
 
 import (
 	"fmt"
+	"github.com/astaxie/beego"
 	"math/rand"
 	"root/common/config"
 	"root/core/log"
@@ -29,7 +30,7 @@ type (
 func (self *Room) LoadConfig() {
 	bets_conf := config.Get_configString("dfdc_room", int(self.roomId), "Bet")
 	self.bets = utils.SplitConf2ArrUInt64(bets_conf)
-	self.addr_url = config.GetPublicConfig_String(5)
+	self.addr_url = beego.AppConfig.DefaultString("DEF::setuserinfo", "")
 	self.Conf_JackpotBet = int64(config.Get_configInt("dfdc_room", int(self.roomId), "JackpotBet"))
 	self.Conf_Bet_Probability = int64(config.Get_configInt("dfdc_room", int(self.roomId), "Bet_Probability"))
 

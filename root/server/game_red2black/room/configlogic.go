@@ -1,6 +1,7 @@
 package room
 
 import (
+	"github.com/astaxie/beego"
 	"root/common"
 	"root/common/config"
 	"root/core/log"
@@ -74,7 +75,7 @@ func (self *Room) LoadConfig() {
 	self.pump_conf[protomsg.RED2BLACKAREA_RED2BLACK_AREA_LUCK] = int64(config.Get_configInt("red2black_room", int(self.roomId), "Luck_Pump"))
 
 	self.showNum = config.Get_configInt("red2black_room", int(self.roomId), "Show_Num")
-	self.addr_url = config.GetPublicConfig_String(5)
+	self.addr_url = beego.AppConfig.DefaultString("DEF::setuserinfo", "")
 	self.betlimit = int64(config.Get_configInt("red2black_room", int(self.roomId), "Bet_Limit"))
 	self.bets_conf = utils.SplitConf2ArrInt64(config.Get_configString("red2black_room", int(self.roomId), "Bet"))
 	self.interval_conf = int64(config.Get_configInt("red2black_room", int(self.roomId), "Bet_Cd"))
