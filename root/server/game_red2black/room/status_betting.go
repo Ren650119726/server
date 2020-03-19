@@ -236,7 +236,7 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 	}
 
 	acc.Betcount++
-	if acc.Robot == 0 || acc.GetOSType() != 4 {
+	if acc.Robot != 0 || acc.GetOSType() != 4 {
 		back(acc.UnDevice, int64(acc.GetMoney()-betdata.GetBet()))
 	} else {
 		// 错误返回

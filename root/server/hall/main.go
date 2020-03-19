@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "net/http/pprof"
 	"root/common"
 	"root/core"
 	"root/core/db"
