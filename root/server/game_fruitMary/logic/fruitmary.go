@@ -116,8 +116,6 @@ func (self *FruitMary) HandleMessage(actor int32, msg []byte, session int64) boo
 	case inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16(): // 大厅返回水池金额
 		data := packet.PBUnmarshal(pack.ReadBytes(), &inner.ROOM_BONUS_RES{}).(*inner.ROOM_BONUS_RES)
 		core.CoreSend(self.owner.Id, int32(data.GetRoomID()), msg, session)
-	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():
-		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到来自大厅的测试网络消息 SessionID:%v", session)

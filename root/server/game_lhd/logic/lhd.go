@@ -118,8 +118,6 @@ func (self *lhd) HandleMessage(actor int32, msg []byte, session int64) bool {
 	case protomsg.LHDMSG_CS_ENTER_GAME_LHD_REQ.UInt16(): // 请求进入房间
 		actor := self.LHDMSG_CS_ENTER_GAME_LHD_REQ(actor, pack.ReadBytes(), session)
 		core.CoreSend(self.owner.Id, actor, msg, session)
-	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():
-		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到来自大厅的测试网络消息 SessionID:%v", session)

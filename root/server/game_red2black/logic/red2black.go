@@ -112,14 +112,15 @@ func (self *red2black) HandleMessage(actor int32, msg []byte, session int64) boo
 		PB := packet.PBUnmarshal(pack.ReadBytes(), &inner.SAVE_WATER_LINE{}).(*inner.SAVE_WATER_LINE)
 		core.CoreSend(self.owner.Id, int32(PB.GetRoomID()), msg, session)
 	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16(): // 心跳
-		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
+		acc := account.AccountMgr.GetAccountBySessionID(session)
+		if acc != nil {
+			send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
+		}
 	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
 		self.SERVERMSG_HG_PLAYER_DATA_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ.UInt16(): // 请求进入小玛利房间
 		actor := self.RED2BLACKMSG_CS_ENTER_GAME_RED2BLACK_REQ(actor, pack.ReadBytes(), session)
 		core.CoreSend(self.owner.Id, actor, msg, session)
-	case protomsg.MSG_CLIENT_KEEPALIVE.UInt16():
-		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 
 	case inner.SERVERMSG_SS_TEST_NETWORK.UInt16():
 		log.Infof("收到来自大厅的测试网络消息 SessionID:%v", session)
