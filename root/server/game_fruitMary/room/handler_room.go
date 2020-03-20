@@ -212,6 +212,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY2_REQ(actor int32, msg []byte, sessi
 
 	rand.Seed(time.Now().UnixNano())
 	totalCount := 0
+	totalVal := int64(0)
 	for true {
 		// 先随机一个bingo水果图案
 		index := utils.RandomWeight32(self.weight_ratio, 1)
@@ -280,9 +281,10 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY2_REQ(actor int32, msg []byte, sessi
 		result.Profit1 = profit1
 		result.Profit2 = int32(profit2)
 		acc.AddMoney(int64(uint64(profit1)+profit2), common.EOperateType_FRUIT_MARY2_WIN)
-		asyn_addMoney(self.addr_url, acc.UnDevice, int64(uint64(profit1)+profit2), int32(self.roomId), "小玛利游戏2 中奖", nil, nil) //中奖
+		totalVal += int64(uint64(profit1) + profit2)
 		resultList.Result = append(resultList.Result, result)
 	}
+	asyn_addMoney(self.addr_url, acc.UnDevice, totalVal, int32(self.roomId), "小玛利游戏2 中奖", nil, nil) //中奖
 	acc.ResultList = resultList.Result
 	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY2_RES.UInt16(), resultList, session)
 }
