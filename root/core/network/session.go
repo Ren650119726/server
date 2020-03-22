@@ -220,11 +220,6 @@ func (self *Session) doread() {
 			if content == nil {
 				break // 没有包了
 			}
-			/*
-				if msgid == 10063 {
-					log.Debugf("pack.data:%v", content)
-				}
-			*/
 			self.callback.handle_input(self.id, content)
 		}
 	}

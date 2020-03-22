@@ -1,8 +1,8 @@
 package network
 
 import (
-	"root/core/log"
 	"net"
+	"root/core/log"
 )
 
 /* 连接器 */
@@ -40,7 +40,7 @@ func (self *Connector) Stop() {
 func (self *Connector) connect(remote string) {
 	addr, err := net.ResolveTCPAddr("tcp", remote)
 	if err != nil {
-		log.Error("connect error:%v ",err.Error())
+		log.Error("connect error:%v ", err.Error())
 		return
 	}
 

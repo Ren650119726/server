@@ -14,7 +14,7 @@ import (
 func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string, back func(backunique string, backmoney int64), errback func()) {
 	go func() {
 		send := url.Values{"channelId": {"DDHYLC"},
-			"gameId": {"game_r2b"},
+			"gameId": {"game_lhd"},
 			"userId": {unique},
 			"num":    {strconv.Itoa(int(num))},
 			"desc":   {desc},
