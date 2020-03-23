@@ -28,7 +28,7 @@ func OnThirtySecondsUpdate(dt int64) {
 // 每5分钟更新
 func FiveMinuteUpdate(dt int64) {
 	// 定时更新数据有变化的玩家, 将定时回存
-	account.AccountMgr.ArchiveAll()
+	account.AccountMgr.ArchiveAll(false)
 }
 
 // 每小时更新

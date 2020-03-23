@@ -282,7 +282,7 @@ func CMD_ToDB(s []string) {
 	send_tools.Send2DB(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(), nil)
 }
 func CMD_Save(s []string) {
-	account.AccountMgr.ArchiveAll()
+	account.AccountMgr.ArchiveAll(true)
 	GameMgr.Save()
 	send_tools.Send2DB(inner.SERVERMSG_HD_SAVE_ALL.UInt16(), nil)
 	log.Infof("====== 回存命令执行成功 ======")
@@ -306,6 +306,7 @@ func (self *Hall) CMD_Close(s []string) {
 	for _, acc := range account.AccountMgr.AccountbyID {
 		if acc.LoginTime > acc.LogoutTime {
 			acc.LogoutTime = utils.SecondTimeSince1970()
+			log.Infof("玩家:%v %v  设置下线时间", acc.AccountId, acc.UnDevice)
 		}
 	}
 	//CMD_Save(nil)

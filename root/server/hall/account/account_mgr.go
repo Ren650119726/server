@@ -113,10 +113,10 @@ func (self *accountMgr) RemoveAccountBySessionID(session int64) {
 	delete(self.accountbySessionID, session)
 }
 
-func (self *accountMgr) ArchiveAll() {
+func (self *accountMgr) ArchiveAll(force bool) {
 	count := 0
 	for _, acc := range self.AccountbyID {
-		if acc.Store && acc.Robot == 0 {
+		if (force || acc.Store) && acc.Robot == 0 {
 			acc.Save()
 			count++
 		}
