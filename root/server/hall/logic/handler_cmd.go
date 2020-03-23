@@ -6,7 +6,6 @@ import (
 	"root/common/config"
 	"root/core/log"
 	"root/core/utils"
-	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/hall/account"
 	"root/server/hall/send_tools"
@@ -304,7 +303,9 @@ func (self *Hall) CMD_Stop(s []string) {
 func (self *Hall) CMD_Close(s []string) {
 	self.ListenActor.Suspend()
 	for _, acc := range account.AccountMgr.AccountbyID {
-		send_tools.Send2Account(protomsg.MSG_SC_KICK_OUT_HALL.UInt16(), &protomsg.KICK_OUT_HALL{Ret: 1}, acc.SessionId)
+		if acc.LoginTime > acc.LogoutTime {
+			acc.LogoutTime = utils.SecondTimeSince1970()
+		}
 	}
 	//CMD_Save(nil)
 }
