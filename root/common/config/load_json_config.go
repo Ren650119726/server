@@ -48,7 +48,7 @@ func Load_Conf() {
 				cmap := make(Config_map)
 				error := json.Unmarshal(data, &cmap)
 				if error != nil {
-					log.Errorf(" error %v", error.Error())
+					log.Errorf(" error %v file:%v ", error.Error(), file.Name())
 					return
 				}
 				Config_Data[jsonname] = cmap
