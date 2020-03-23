@@ -302,6 +302,7 @@ func (self *Hall) CMD_Stop(s []string) {
 
 func (self *Hall) CMD_Close(s []string) {
 	self.ListenActor.Suspend()
+	// 无论什么情况，关服时，玩家都要下线
 	for _, acc := range account.AccountMgr.AccountbyID {
 		if acc.LoginTime > acc.LogoutTime {
 			acc.LogoutTime = utils.SecondTimeSince1970()
