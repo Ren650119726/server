@@ -103,7 +103,9 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 		val := reward + (sumOdds * int64(BetNum) / 9)
 		acc.AddMoney(val, common.EOperateType_JPM_WIN)
 		if acc.GetOSType() == 4 {
-			asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "金品梅 中奖", nil, nil) //中奖
+			self.owner.AddTimer(500, 1, func(dt int64) {
+				asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "金品梅 中奖", nil, nil) //中奖
+			})
 		}
 
 		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 总赔率:%v 获得奖金：%v",

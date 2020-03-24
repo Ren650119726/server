@@ -111,7 +111,9 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		val := reward + sumOdds*int64(BetNum/9)
 		acc.AddMoney(val, common.EOperateType_FRUIT_MARY_WIN)
 		if acc.GetOSType() == 4 {
-			asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "小玛利游戏1 中奖", nil, nil) //中奖
+			self.owner.AddTimer(500, 1, func(dt int64) {
+				asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "小玛利游戏1 中奖", nil, nil) //中奖
+			})
 		}
 
 		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 所有中奖线:%+v 一维数组:%v 获得免费次数:%v 触发小玛丽次数:%v 总赔率:%v 获得奖金：%v",

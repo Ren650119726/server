@@ -106,7 +106,9 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 		val := reward + (sumOdds * int64(BetNum) / 100)
 		acc.AddMoney(val, common.EOperateType_DFDC_WIN)
 		if acc.OSType == 4 {
-			asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "多福多财 中奖", nil, nil) //中奖
+			self.owner.AddTimer(500, 1, func(dt int64) {
+				asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "多福多财 中奖", nil, nil) //中奖
+			})
 		}
 
 		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 一维数组:%v 获得免费次数:%v 总赔率:%v 盈利:%v 获得奖金：%v",
