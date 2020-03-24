@@ -306,7 +306,6 @@ func (self *Hall) CMD_Close(s []string) {
 	for _, acc := range account.AccountMgr.AccountbyID {
 		if acc.LoginTime > acc.LogoutTime {
 			acc.LogoutTime = utils.SecondTimeSince1970()
-			log.Infof("玩家:%v %v  设置下线时间", acc.AccountId, acc.UnDevice)
 		}
 	}
 	//CMD_Save(nil)

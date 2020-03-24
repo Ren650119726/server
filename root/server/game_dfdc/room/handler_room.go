@@ -106,11 +106,11 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 		val := reward + (sumOdds * int64(BetNum) / 100)
 		acc.AddMoney(val, common.EOperateType_DFDC_WIN)
 		if acc.OSType == 4 {
-			asyn_addMoney(self.addr_url, acc.UnDevice, val, int32(self.roomId), "多福多财 中奖", nil, nil) //中奖
+			asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "多福多财 中奖", nil, nil) //中奖
 		}
 
-		//log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 一维数组:%v 获得免费次数:%v 总赔率:%v 盈利:%v 获得奖金：%v",
-		//acc.GetAccountId(),acc.GetMoney(), pArr, gainFreeCount,sumOdds, val,reward)
+		log.Debugf("玩家:%v 结果->>>>>>> 身上的金币:%v 一维数组:%v 获得免费次数:%v 总赔率:%v 盈利:%v 获得奖金：%v",
+			acc.GetAccountId(), acc.GetMoney(), pArr, gainFreeCount, sumOdds, val, reward)
 		//log.Debugf("中奖坐标:%v", showpos)
 
 		// 统计玩家本局获得金币
@@ -187,7 +187,7 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 				}
 				send_tools.Send2Account(protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16(), resultMsg, session)
 			}
-			asyn_addMoney(self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId), fmt.Sprintf("多福多财请求下注:%v", BetNum), back, errback)
+			asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId), fmt.Sprintf("多福多财请求下注:%v", BetNum), back, errback)
 		} else {
 			back("", int64(acc.GetMoney()-BetNum), 0)
 		}

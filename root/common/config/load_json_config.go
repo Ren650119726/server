@@ -26,7 +26,7 @@ func Load_Conf() {
 	lock.Lock()
 	defer lock.Unlock()
 
-	Config_Data = make(json_config)
+	newConfig_Data := make(json_config)
 	dir_list, e := ioutil.ReadDir(core.ConfigDir)
 	if e != nil {
 		fmt.Println("read dir error")
@@ -48,14 +48,15 @@ func Load_Conf() {
 				cmap := make(Config_map)
 				error := json.Unmarshal(data, &cmap)
 				if error != nil {
-					log.Errorf(" error %v file:%v ", error.Error(), file.Name())
+					log.Errorf(" error %v file:%v data:%v", error.Error(), file.Name(), data)
 					return
 				}
-				Config_Data[jsonname] = cmap
+				newConfig_Data[jsonname] = cmap
 				log.Infof("加载完成 %v", file.Name())
 			}
 		}
 	}
+	Config_Data = newConfig_Data
 	log.Infof("")
 }
 

@@ -11,7 +11,10 @@ import (
 	"time"
 )
 
-func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string, back func(backunique string, backmoney int64, bwType int32), errback func()) {
+func asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int32, desc string, back func(backunique string, backmoney int64, bwType int32), errback func()) {
+	if trycount == 0 {
+		return
+	}
 	go func() {
 		send := url.Values{"channelId": {"DDHYLC"},
 			"gameId": {"game_jpm"},
@@ -21,7 +24,7 @@ func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string
 		}
 		resp, err := http.PostForm(addr_url,
 			send)
-		log.Infof("金瓶梅请求下注:%v", send)
+		log.Infof("请求下注:%v addr:%v try:%v ", send, addr_url, trycount)
 
 		if err != nil {
 			log.Errorf("三方平台，http 请求错误:%v", err.Error())
@@ -60,6 +63,7 @@ func asyn_addMoney(addr_url, unique string, num int64, roomID int32, desc string
 		}
 		if err, e := jsonstr["status"]; e && int(err.(float64)) != 0 {
 			log.Errorf("平台返回错误码:%v ", int(err.(float64)))
+			asyn_addMoney(trycount-1, addr_url, unique, num, roomID, desc, back, errback)
 			return
 		} else {
 			data := jsonstr["data"].(map[string]interface{})
