@@ -1,3 +1,7 @@
 root/config/app.conf
 *.zip
 *.json
+.idea/
+bin/
+config/excel_interpreter.exe
+log/

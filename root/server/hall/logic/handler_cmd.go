@@ -89,7 +89,7 @@ func CMD_On(sParam []string) {
 				hour := totalmin / 60
 				min := totalmin % 60
 				str := fmt.Sprintf("%v时 %v分 %v秒", hour, min, sec)
-				fmt.Printf("在线玩家 %v %v 房间ID:%v 元宝:%v 保险箱:%v OSType:%v 在线时长:%v \r\n", tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, tAccount.OSType, str)
+				fmt.Printf("在线玩家 %v %-15v 房间ID:%-5v 元宝:%-10v 保险箱:%-5v OSType:%v 在线时长:%v \r\n", tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, tAccount.OSType, str)
 				nCount++
 			}
 			nTotalRMB += tAccount.Money
