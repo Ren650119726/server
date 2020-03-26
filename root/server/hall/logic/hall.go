@@ -52,21 +52,15 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	self.owner.AddEverydayTimer("00:00:01", NewDayUpdate)
 	core.Cmd.Regist("help", CMD_Help, true)
 	core.Cmd.Regist("reload", self.CMD_LoadConfig, true)
-	core.Cmd.Regist("player", CMD_Player, true)
 	core.Cmd.Regist("on", CMD_On, true)
-	core.Cmd.Regist("off", CMD_Off, true)
-	core.Cmd.Regist("print-sp", CMD_Print_Speaker, true)
-	core.Cmd.Regist("add-sp", CMD_Add_Speaker, true)
-	core.Cmd.Regist("del-sp", CMD_Del_Speaker, true)
-	core.Cmd.Regist("print-email", CMD_Print_Email, true)
-	core.Cmd.Regist("del-email", CMD_Del_Email, true)
 	core.Cmd.Regist("money", CMD_Add_Money, true)
 	core.Cmd.Regist("kill", CMD_Kill, true)
 	core.Cmd.Regist("todb", CMD_ToDB, true)
-	core.Cmd.Regist("save", CMD_Save, true)
+
 	core.Cmd.Regist("room", self.CMD_RoomInfo, true)
-	core.Cmd.Regist("stop", self.CMD_Stop, true)
-	core.Cmd.Regist("close", self.CMD_Close, true)
+	core.Cmd.Regist("stop", self.CMD_Stop, true)     	// 关服 第1步骤
+	core.Cmd.Regist("close", self.CMD_Close, true)	 	// 关服 第2步骤
+	core.Cmd.Regist("save", CMD_Save, true)			// 关服 第3步骤
 
 	return true
 }

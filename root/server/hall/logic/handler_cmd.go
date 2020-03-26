@@ -9,10 +9,7 @@ import (
 	"root/protomsg/inner"
 	"root/server/hall/account"
 	"root/server/hall/send_tools"
-	"root/server/hall/speaker"
-	"root/server/hall/types"
 	"strconv"
-	"unicode/utf8"
 )
 
 func CMD_Help(sParam []string) {
@@ -40,39 +37,6 @@ func (self *Hall) CMD_LoadConfig(sParam []string) {
 	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
-func CMD_Player(sParam []string) {
-	if len(sParam) <= 0 {
-		fmt.Printf("× 参数错误, 请输入玩家帐号ID\r\n")
-		return
-	}
-
-	nAccountID, err := strconv.Atoi(sParam[0])
-	if err != nil {
-		fmt.Printf("× 参数错误, 请输入正确的玩家帐号ID\r\n")
-		return
-	}
-
-	tAccount := account.AccountMgr.GetAccountByID(uint32(nAccountID))
-	if tAccount == nil {
-		fmt.Printf("× 找不到指定ID的玩家, 请输入正确的玩家帐号ID\r\n")
-		return
-	} else {
-		var strType string
-		if tAccount.IsOnline() == true {
-			strType = "在线"
-		} else {
-			strType = "离线"
-		}
-		if tAccount.Robot > 0 {
-			fmt.Printf("%v 机器人 %v %v 所在:%v 房间ID:%v 元宝:%v 保险箱:%v 特殊:%v \r\n", strType, tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, tAccount.Special)
-		} else {
-			fmt.Printf("%v 玩家 %v %v 所在:%v 房间ID:%v  元宝:%v 保险箱:%v 代理:%v 特殊:%v 系统:%v\r\n", strType, tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, types.ESalesmanType(tAccount.Salesman), tAccount.Special, tAccount.OSType)
-		}
-
-		fmt.Printf("%v 头像URL:%v\r\n", strType, tAccount.HeadURL)
-	}
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
 
 func CMD_On(sParam []string) {
 	nCount := 0
@@ -88,7 +52,7 @@ func CMD_On(sParam []string) {
 				totalmin := totalminsec / 60
 				hour := totalmin / 60
 				min := totalmin % 60
-				str := fmt.Sprintf("%v时 %v分 %v秒", hour, min, sec)
+				str := fmt.Sprintf("%-2v时 %-2v分 %-2v秒", hour, min, sec)
 				fmt.Printf("在线玩家 %v %-15v 房间ID:%-5v 元宝:%-10v 保险箱:%-5v OSType:%v 在线时长:%v \r\n", tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, tAccount.OSType, str)
 				nCount++
 			}
@@ -97,104 +61,6 @@ func CMD_On(sParam []string) {
 		}
 	}
 	fmt.Printf("%v 总在线:%v 全服玩家身上元宝:%v, 保险箱元宝:%v, 总计:%v\r\n", utils.DateString(), nCount, nTotalRMB, nTotalSafeRMB, (nTotalRMB + nTotalSafeRMB))
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
-func CMD_Off(sParam []string) {
-	nCount := 0
-	for _, tAccount := range account.AccountMgr.AccountbyID {
-		if tAccount.IsOnline() == false && tAccount.Robot == 0 {
-			fmt.Printf("离线玩家 %v %v 房间ID:%v  元宝:%v 保险箱:%v 代理:%v 特殊:%v 系统:%v\r\n", tAccount.AccountId, tAccount.Name, tAccount.RoomID, tAccount.Money, tAccount.SafeMoney, types.ESalesmanType(tAccount.Salesman), tAccount.Special, tAccount.OSType)
-			nCount++
-		}
-	}
-	fmt.Printf("离线玩家人数:%v\r\n", nCount)
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
-
-func CMD_Print_Speaker(sParam []string) {
-
-	speaker.SpeakerMgr.PrintAll()
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
-func CMD_Del_Speaker(sParam []string) {
-
-	speaker.SpeakerMgr.PrintAll()
-	speaker.SpeakerMgr.RemoveSpeaker(-1)
-	speaker.SpeakerMgr.PrintAll()
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
-
-func CMD_Add_Speaker(sParam []string) {
-
-	if len(sParam) <= 0 {
-		fmt.Printf("× 参数错误, 参数: 小喇叭内容, 字数100字以内\r\n")
-		return
-	}
-
-	strContent := sParam[0]
-	if utf8.RuneCountInString(strContent) > 100 {
-		fmt.Printf("× 参数错误, 参数: 小喇叭内容, 字数100字以内\r\n")
-		return
-	}
-
-	// 临时使用添加小喇叭功能, 为了简单. 只传小喇叭内容
-	nStartTime := utils.SecondTimeSince1970()
-	nDelTime := nStartTime + 86400
-	nIntervalTime := uint16(20)
-
-	speaker.SpeakerMgr.AddSpeaker(nStartTime, nDelTime, nIntervalTime, 2, strContent)
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
-
-func CMD_Print_Email(sParam []string) {
-
-	if len(sParam) < 1 {
-		fmt.Printf("× 参数错误, 参数: 玩家ID\r\n")
-		return
-	}
-
-	nAccountID, err := strconv.Atoi(sParam[0])
-	if err != nil {
-		fmt.Printf("× 参数错误, 请输入正确的玩家帐号ID\r\n")
-		return
-	}
-
-	tAccount := account.AccountMgr.GetAccountByID(uint32(nAccountID))
-	if tAccount == nil {
-		fmt.Printf("× 找不到指定ID的玩家, 请输入正确的玩家帐号ID\r\n")
-		return
-	}
-
-	account.EmailMgr.PrintEmail(uint32(nAccountID))
-	fmt.Printf("====== 命令执行成功 ======\r\n")
-}
-
-func CMD_Del_Email(sParam []string) {
-	if len(sParam) < 2 {
-		fmt.Printf("× 参数错误, 参数1:玩家ID; 参数2:邮件ID\r\n")
-		return
-	}
-	nAccountID, err := strconv.Atoi(sParam[0])
-	if err != nil {
-		fmt.Printf("× 参数错误, 参数1:玩家ID; 参数2:邮件ID\r\n")
-		return
-	}
-	nEmailID, err := strconv.Atoi(sParam[1])
-	if err != nil {
-		fmt.Printf("× 参数错误, 参数1:玩家ID; 参数2:邮件ID\r\n")
-		return
-	}
-	tAccount := account.AccountMgr.GetAccountByID(uint32(nAccountID))
-	if tAccount == nil {
-		fmt.Printf("× 找不到指定ID的玩家, 请输入正确的玩家帐号ID\r\n")
-		return
-	}
-	ret := account.EmailMgr.RemoveMail(uint32(nAccountID), uint32(nEmailID))
-	if ret == 0 {
-		fmt.Printf("====== 删除邮件成功 ======\r\n")
-	} else {
-		fmt.Printf("====== 删除邮件失败 ====== 错误码:%v\r\n", ret)
-	}
 	fmt.Printf("====== 命令执行成功 ======\r\n")
 }
 
@@ -281,15 +147,10 @@ func CMD_Kill(sParam []string) {
 func CMD_ToDB(s []string) {
 	send_tools.Send2DB(inner.SERVERMSG_SS_TEST_NETWORK.UInt16(), nil)
 }
-func CMD_Save(s []string) {
-	account.AccountMgr.ArchiveAll(true)
-	GameMgr.Save()
-	send_tools.Send2DB(inner.SERVERMSG_HD_SAVE_ALL.UInt16(), nil)
-	log.Infof("====== 回存命令执行成功 ======")
-}
+
 func (self *Hall) CMD_RoomInfo(s []string) {
-	for roomid, _ := range GameMgr.rooms {
-		log.Infof(" 房间:%v", roomid)
+	for roomid, room := range GameMgr.rooms {
+		log.Infof(" 房间:%v 房间信息:%+v ", roomid,room)
 	}
 }
 
@@ -309,4 +170,12 @@ func (self *Hall) CMD_Close(s []string) {
 		}
 	}
 	//CMD_Save(nil)
+}
+
+
+func CMD_Save(s []string) {
+	account.AccountMgr.ArchiveAll(true)
+	GameMgr.Save()
+	send_tools.Send2DB(inner.SERVERMSG_HD_SAVE_ALL.UInt16(), nil)
+	log.Infof("====== 回存命令执行成功 ======")
 }
