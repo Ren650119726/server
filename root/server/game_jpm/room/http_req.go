@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"root/core"
 	"root/core/log"
+	"root/core/utils"
 	"strconv"
 	"time"
 )
@@ -15,6 +16,7 @@ func asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 	if trycount == 0 {
 		return
 	}
+	desc += " 时间" + utils.DateString()
 	go func() {
 		send := url.Values{"channelId": {"DDHYLC"},
 			"gameId": {"game_jpm"},
