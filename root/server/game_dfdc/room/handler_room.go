@@ -183,7 +183,7 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 		if acc.OSType == 4 {
 			// 错误返回
 			errback := func() {
-				log.Warnf("http请求报错")
+				log.Warnf("accid:%v http请求报错！！！！！！！！！！！",acc.AccountId)
 				resultMsg := &protomsg.START_DFDC_RES{
 					Ret: 1,
 				}

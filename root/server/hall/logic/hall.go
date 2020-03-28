@@ -61,9 +61,9 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	core.Cmd.Regist("stop", self.CMD_Stop, true)     	// 关服 第1步骤
 	core.Cmd.Regist("close", self.CMD_Close, true)	 	// 关服 第2步骤
 	core.Cmd.Regist("save", CMD_Save, true)			// 关服 第3步骤
-
 	return true
 }
+
 
 func (self *Hall) registerDB() {
 	// 向db建立连接

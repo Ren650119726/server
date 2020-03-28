@@ -22,18 +22,23 @@ func asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 			"num":    {strconv.Itoa(int(num))},
 			"desc":   {desc},
 		}
+		log.Infof("请求下注:%v addr:%v try:%v ", send, addr_url, trycount)
 		resp, err := http.PostForm(addr_url,
 			send)
-		log.Infof("请求下注:%v addr:%v try:%v ", send, addr_url, trycount)
+		defer resp.Body.Close()
 
 		if err != nil {
-			log.Errorf("三方平台，http 请求错误:%v", err.Error())
+			resp.Body.Close()
+			log.Errorf("三方平台，http 0请求错误:%v   send：%v ", err.Error(),send)
 			for i := 0; i < 10; i++ {
 				time.Sleep(1 * time.Second)
 				resp, err = http.PostForm(addr_url,
 					send)
 				if err == nil {
 					break
+				}else{
+					resp.Body.Close()
+					log.Errorf("三方平台，http %v 请求错误:%v send:%v", i+1,err.Error(),send)
 				}
 			}
 
@@ -48,7 +53,7 @@ func asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 			}
 		}
 
-		defer resp.Body.Close()
+
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			log.Errorf("三方平台，read 错误:%v", err.Error())
