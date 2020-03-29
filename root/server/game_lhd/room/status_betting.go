@@ -283,7 +283,7 @@ func (self *betting) LHDMSG_CS_CLEAN_BET_LHD_REQ(actor int32, msg []byte, sessio
 
 	acc.CLeanTime = now
 	self.cd[acc.GetAccountId()] = now
-	back := func(backunique string, backmoney int64) {
+	back := func(backunique string, backmoney int64,bwType int32) {
 		if acc.GetMoney()+totalVal != uint64(backmoney) {
 			self.log("数据错误  ->>>>>> roomid:%v userID:%v money:%v Bet:%v gold:%v", self.roomId, acc.GetUnDevice(), acc.GetMoney(), totalVal, backmoney)
 			acc.AddMoney(backmoney-int64(acc.GetMoney()), common.EOperateType_INIT)
@@ -307,7 +307,7 @@ func (self *betting) LHDMSG_CS_CLEAN_BET_LHD_REQ(actor int32, msg []byte, sessio
 
 	log.Infof("玩家:%v  请求清除下注", acc.GetAccountId())
 	if acc.Robot == 0 || acc.OSType != 4 {
-		back(acc.UnDevice, int64(acc.GetMoney()+totalVal))
+		back(acc.UnDevice, int64(acc.GetMoney()+totalVal),0)
 	} else {
 		// 错误返回
 		errback := func() {
