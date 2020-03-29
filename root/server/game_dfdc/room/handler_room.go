@@ -12,6 +12,7 @@ import (
 	"root/protomsg/inner"
 	"root/server/game_dfdc/account"
 	"root/server/game_dfdc/send_tools"
+	"root/server/platform"
 )
 
 // 玩家进入游戏
@@ -107,7 +108,7 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 		acc.AddMoney(val, common.EOperateType_DFDC_WIN)
 		if acc.OSType == 4 {
 			self.owner.AddTimer(500, 1, func(dt int64) {
-				common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "game_dfdc","多福多财 中奖", nil, nil) //中奖
+				platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "game_dfdc","多福多财 中奖", nil, nil) //中奖
 			})
 		}
 
@@ -189,7 +190,7 @@ func (self *Room) DFDCMSG_CS_START_DFDC_REQ(actor int32, msg []byte, session int
 				}
 				send_tools.Send2Account(protomsg.DFDCMSG_SC_START_DFDC_RES.UInt16(), resultMsg, session)
 			}
-			common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId),"game_dfdc", fmt.Sprintf("多福多财请求下注:%v", BetNum), back, errback)
+			platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId),"game_dfdc", fmt.Sprintf("多福多财请求下注:%v", BetNum), back, errback)
 		} else {
 			back("", int64(acc.GetMoney()-BetNum), 0)
 		}

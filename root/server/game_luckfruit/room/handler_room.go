@@ -11,6 +11,7 @@ import (
 	"root/protomsg/inner"
 	"root/server/game_luckfruit/account"
 	"root/server/game_luckfruit/send_tools"
+	"root/server/platform"
 	"strconv"
 )
 
@@ -104,7 +105,7 @@ func (self *Room) LUCKFRUITMSG_CS_START_LUCKFRUIT_REQ(actor int32, msg []byte, s
 		acc.AddMoney(val, common.EOperateType_LUCKFRUIT_WIN)
 		if acc.GetOSType() == 4 {
 			self.owner.AddTimer(500, 1, func(dt int64) {
-				common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "game_luckfruit","小玛利游戏1 中奖", nil, nil) //中奖
+				platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "game_luckfruit","小玛利游戏1 中奖", nil, nil) //中奖
 			})
 		}
 
@@ -179,7 +180,7 @@ func (self *Room) LUCKFRUITMSG_CS_START_LUCKFRUIT_REQ(actor int32, msg []byte, s
 				}
 				send_tools.Send2Account(protomsg.LUCKFRUITMSG_SC_START_LUCKFRUIT_RES.UInt16(), resultMsg, session)
 			}
-			common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId),"game_luckfruit", fmt.Sprintf("金瓶梅请求下注:%v", BetNum), back, errback)
+			platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId),"game_luckfruit", fmt.Sprintf("金瓶梅请求下注:%v", BetNum), back, errback)
 		} else {
 			back("", int64(acc.GetMoney()-BetNum), 0)
 		}

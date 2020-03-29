@@ -11,6 +11,7 @@ import (
 	"root/protomsg"
 	"root/server/game_lhd/account"
 	"root/server/game_lhd/algorithm"
+	"root/server/platform"
 )
 
 type (
@@ -247,7 +248,7 @@ func (self *betting) LHDMSG_CS_BET_LHD_REQ(actor int32, msg []byte, session int6
 			log.Panicf("http请求报错 玩家:%v roomID:%v  下注:%v 失败", acc.GetAccountId(), self.roomId, betdata.GetBet())
 		}
 		self.log("acc:%v unique:%v 请求下注,下注区域:%v 金额:%v", acc.GetAccountId(), acc.UnDevice, betdata.Area, betdata.Bet)
-		common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(betdata.GetBet()), int32(self.roomId),"game_lhd", fmt.Sprintf("龙虎斗 请求下注:%v", betdata.GetBet()), back, errback)
+		platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(betdata.GetBet()), int32(self.roomId),"game_lhd", fmt.Sprintf("龙虎斗 请求下注:%v", betdata.GetBet()), back, errback)
 	}
 }
 func (self *betting) LHDMSG_CS_CLEAN_BET_LHD_REQ(actor int32, msg []byte, session int64) {
