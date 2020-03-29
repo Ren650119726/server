@@ -313,6 +313,6 @@ func (self *betting) LHDMSG_CS_CLEAN_BET_LHD_REQ(actor int32, msg []byte, sessio
 		errback := func() {
 			log.Panicf("http请求报错 玩家:%v roomID:%v  下注:%v 失败", acc.GetAccountId(), self.roomId, totalVal)
 		}
-		asyn_addMoney(5, self.addr_url, acc.UnDevice, int64(totalVal), int32(self.roomId), fmt.Sprintf("龙虎斗请求清除下注:%v ", totalVal), back, errback)
+		platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, int64(totalVal), int32(self.roomId),"game_lhd", fmt.Sprintf("龙虎斗请求清除下注:%v ", totalVal), back, errback)
 	}
 }
