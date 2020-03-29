@@ -112,7 +112,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 		acc.AddMoney(val, common.EOperateType_FRUIT_MARY_WIN)
 		if acc.GetOSType() == 4 {
 			self.owner.AddTimer(500, 1, func(dt int64) {
-				asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "小玛利游戏1 中奖", nil, nil) //中奖
+				common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId),"game_fruitMary", "小玛利游戏1 中奖", nil, nil) //中奖
 			})
 		}
 
@@ -190,7 +190,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY_REQ(actor int32, msg []byte, sessio
 				}
 				send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY_RES.UInt16(), resultMsg, session)
 			}
-			asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId), fmt.Sprintf("水果小玛利请求下注:%v", BetNum), back, errback)
+			common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId),"game_fruitMary", fmt.Sprintf("水果小玛利请求下注:%v", BetNum), back, errback)
 		} else {
 			back("", int64(acc.GetMoney()-BetNum), 0)
 		}
@@ -286,7 +286,7 @@ func (self *Room) FRUITMARYMSG_CS_START_MARY2_REQ(actor int32, msg []byte, sessi
 		totalVal += int64(uint64(profit1) + profit2)
 		resultList.Result = append(resultList.Result, result)
 	}
-	asyn_addMoney(5, self.addr_url, acc.UnDevice, totalVal, int32(self.roomId), "小玛利游戏2 中奖", nil, nil) //中奖
+	common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, totalVal, int32(self.roomId),"game_fruitMary", "小玛利游戏2 中奖", nil, nil) //中奖
 	acc.ResultList = resultList.Result
 	send_tools.Send2Account(protomsg.FRUITMARYMSG_SC_START_MARY2_RES.UInt16(), resultList, session)
 }

@@ -104,7 +104,7 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 		acc.AddMoney(val, common.EOperateType_JPM_WIN)
 		if acc.GetOSType() == 4 {
 			self.owner.AddTimer(500, 1, func(dt int64) {
-				asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "金品梅 中奖", nil, nil) //中奖
+				common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "game_jpm","金品梅 中奖", nil, nil) //中奖
 			})
 		}
 
@@ -179,7 +179,7 @@ func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64
 				}
 				send_tools.Send2Account(protomsg.JPMMSG_SC_START_JPM_RES.UInt16(), resultMsg, session)
 			}
-			asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId), fmt.Sprintf("金瓶梅请求下注:%v", BetNum), back, errback)
+			common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(BetNum), int32(self.roomId),"game_jpm", fmt.Sprintf("金瓶梅请求下注:%v", BetNum), back, errback)
 		} else {
 			back("", int64(acc.GetMoney()-BetNum), 0)
 		}

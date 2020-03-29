@@ -65,7 +65,7 @@ func (self *settlement) Enter(now int64) {
 		val := winArea_profit + principal_val
 		acc.AddMoney(val, common.EOperateType_LHD_WIN)
 		if acc.Robot == 0 && acc.OSType == 4 {
-			asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "龙虎斗盈利", nil, nil) //中奖
+			common.Asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "game_lhd","龙虎斗盈利", nil, nil) //中奖
 		}
 		allprofit[int32(accid)] = winArea_profit
 		if acc.Robot == 0 {

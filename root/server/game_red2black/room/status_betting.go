@@ -213,7 +213,7 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 	}
 
 	self.cd[acc.GetAccountId()] = now
-	back := func(backunique string, backmoney int64) {
+	back := func(backunique string, backmoney int64,bwType int32) {
 		if acc.GetMoney()-betdata.GetBet() != uint64(backmoney) {
 			log.Warnf("数据错误  ->>>>>> userID:%v money:%v Bet:%v gold:%v", acc.GetUnDevice(), acc.GetMoney(), betdata.GetBet(), backmoney)
 			acc.AddMoney(backmoney-int64(acc.GetMoney()), common.EOperateType_INIT)
@@ -237,14 +237,14 @@ func (self *betting) RED2BLACKMSG_CS_BET_RED2BLACK_REQ(actor int32, msg []byte, 
 
 	acc.Betcount++
 	if acc.Robot != 0 || acc.GetOSType() != 4 {
-		back(acc.UnDevice, int64(acc.GetMoney()-betdata.GetBet()))
+		back(acc.UnDevice, int64(acc.GetMoney()-betdata.GetBet()),0)
 	} else {
 		// 错误返回
 		errback := func() {
 			log.Panicf("http请求报错 玩家:%v roomID:%v  下注:%v 失败", acc.GetAccountId(), self.roomId, betdata.GetBet())
 		}
 		self.log("acc:%v unique:%v 请求下注,下注区域:%v 金额:%v", acc.GetAccountId(), acc.UnDevice, betdata.Area, betdata.Bet)
-		asyn_addMoney(4, self.addr_url, acc.UnDevice, -int64(betdata.GetBet()), int32(self.roomId), fmt.Sprintf("红黑大战请求下注:%v", betdata.GetBet()), back, errback)
+		common.Asyn_addMoney(4, self.addr_url, acc.UnDevice, -int64(betdata.GetBet()), int32(self.roomId), "game_r2b",fmt.Sprintf("红黑大战请求下注:%v", betdata.GetBet()), back, errback)
 	}
 }
 func (self *betting) RED2BLACKMSG_CS_CLEAN_BET_RED2BLACK_REQ(actor int32, msg []byte, session int64) {
