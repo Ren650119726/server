@@ -12,6 +12,7 @@ import (
 	"root/protomsg/inner"
 	"root/server/game_red2black/algorithm"
 	"root/server/game_red2black/send_tools"
+	"root/server/platform"
 	"sort"
 	"strconv"
 )
@@ -88,7 +89,7 @@ func (self *settlement) Enter(now int64) {
 		val := winArea_profit + specialArea_profit + principal_val
 		acc.AddMoney(val, common.EOperateType_RED2BLACK_WIN)
 		if acc.Robot == 0 && acc.OSType == 4 {
-			asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "红黑大战盈利", nil, nil) //中奖
+			platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, val, int32(self.roomId), "game_r2b","红黑大战盈利", nil, nil) //中奖
 		}
 		allprofit[int32(accid)] = winArea_profit + specialArea_profit
 		if acc.Robot == 0 {
