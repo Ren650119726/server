@@ -16,7 +16,7 @@ func Asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 	if trycount == 0 {
 		return
 	}
-	desc += " 时间" + utils.DateString()
+	desc += " time:" + utils.DateString()
 	go func() {
 		utils.Try(func() {
 			send := url.Values{"channelId": {"DDHYLC"},
