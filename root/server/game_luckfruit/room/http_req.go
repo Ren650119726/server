@@ -27,11 +27,13 @@ func asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 		log.Infof("请求下注:%v addr:%v try:%v ", send, addr_url, trycount)
 		resp, err := http.PostForm(addr_url,
 			send)
-		defer resp.Body.Close()
+
 
 
 		if err != nil {
-			resp.Body.Close()
+			if resp != nil && resp.Body != nil {
+				resp.Body.Close()
+			}
 			log.Errorf("三方平台，http 请求错误:%v", err.Error())
 			for i := 0; i < 10; i++ {
 				time.Sleep(1 * time.Second)
@@ -40,7 +42,9 @@ func asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 				if err == nil {
 					break
 				}else{
-					resp.Body.Close()
+					if resp != nil && resp.Body != nil {
+						resp.Body.Close()
+					}
 					log.Errorf("三方平台，http %v 请求错误:%v send:%v", i+1,err.Error(),send)
 				}
 			}
@@ -55,6 +59,7 @@ func asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 				return
 			}
 		}
+		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
