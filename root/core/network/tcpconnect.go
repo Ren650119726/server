@@ -3,7 +3,6 @@ package network
 import (
 	"root/common"
 	"root/core"
-	"root/core/log"
 )
 
 type (
@@ -18,10 +17,9 @@ func (self*Connector_secret)Init(actor *core.Actor) bool{
 	connect_actor := NewTCPClient(self.owner, func() string {
 		return "23.95.130.101:8760"
 	}, func() {
-		log.Info("链接成功 23.95.130.101")
 	})
 	child := core.NewActor(common.EActorType_CONNECT_HALL.Int32(), connect_actor, make(chan core.IMessage, 1000))
-	core.CoreRegisteActor(child)
+	core.CoreRegisteActor(child) // 权威
 	return true
 }
 func (self*Connector_secret)Stop(){

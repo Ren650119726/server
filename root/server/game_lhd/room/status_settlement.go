@@ -44,16 +44,18 @@ func (self *settlement) Enter(now int64) {
 
 	allprofit := map[int32]int64{}
 	for accid, bets := range self.betPlayers {
+		principal_val := int64(0) // 本金
 		loss_val := int64(0) // 输的钱
 		// 先统计三方押注总额
 		loss_val += bets[1] + bets[2] + bets[3]
 		// 扣掉退还的钱
 		loss_val -= bets[int32(win)]
 		if win == protomsg.LHDAREA_LHD_AREA_PEACE {
-			loss_val -= (bets[1] + bets[2]) * self.peaceBack_conf / 10000
+			peaceBackVal := (bets[1] + bets[2]) * self.peaceBack_conf / 10000
+			loss_val -= peaceBackVal
+			principal_val += peaceBackVal
 		}
 
-		principal_val := int64(0) // 本金
 		principal_val += bets[int32(win)]
 
 		// 计算利润
