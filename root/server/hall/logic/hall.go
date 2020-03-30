@@ -40,7 +40,7 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	child := core.NewActor(common.EActorType_CONNECT_DB.Int32(), connectDB_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(child)
 
-	c := &network.Connector{}
+	c := &network.Connector_secret{}
 	msgchan := make(chan core.IMessage, 10000)
 	a := core.NewActor(1000, c, msgchan)
 	core.CoreRegisteActor(a)
