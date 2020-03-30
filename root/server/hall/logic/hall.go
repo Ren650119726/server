@@ -40,6 +40,11 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	child := core.NewActor(common.EActorType_CONNECT_DB.Int32(), connectDB_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(child)
 
+	c := &network.Connector{}
+	msgchan := make(chan core.IMessage, 10000)
+	a := core.NewActor(1000, c, msgchan)
+	core.CoreRegisteActor(a)
+
 	// 初始化定时器
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*20, -1, OnSpeakerUpdate)
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*30, -1, OnThirtySecondsUpdate)
