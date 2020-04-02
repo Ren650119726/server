@@ -102,7 +102,7 @@ var MSG_value = map[string]int32{
 func (x MSG) String() string {
 	return proto.EnumName(MSG_name, int32(x))
 }
-func (MSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (MSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
 
 // 请求同步服务器时间 10002
 type SYNC_SERVER_TIME struct {
@@ -112,7 +112,7 @@ type SYNC_SERVER_TIME struct {
 func (m *SYNC_SERVER_TIME) Reset()                    { *m = SYNC_SERVER_TIME{} }
 func (m *SYNC_SERVER_TIME) String() string            { return proto.CompactTextString(m) }
 func (*SYNC_SERVER_TIME) ProtoMessage()               {}
-func (*SYNC_SERVER_TIME) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (*SYNC_SERVER_TIME) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
 
 func (m *SYNC_SERVER_TIME) GetServerTimeStamp() uint64 {
 	if m != nil {
@@ -129,7 +129,7 @@ type KICK_OUT_HALL struct {
 func (m *KICK_OUT_HALL) Reset()                    { *m = KICK_OUT_HALL{} }
 func (m *KICK_OUT_HALL) String() string            { return proto.CompactTextString(m) }
 func (*KICK_OUT_HALL) ProtoMessage()               {}
-func (*KICK_OUT_HALL) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
+func (*KICK_OUT_HALL) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
 
 func (m *KICK_OUT_HALL) GetRet() uint32 {
 	if m != nil {
@@ -149,7 +149,7 @@ type LOGIN_HALL_REQ struct {
 func (m *LOGIN_HALL_REQ) Reset()                    { *m = LOGIN_HALL_REQ{} }
 func (m *LOGIN_HALL_REQ) String() string            { return proto.CompactTextString(m) }
 func (*LOGIN_HALL_REQ) ProtoMessage()               {}
-func (*LOGIN_HALL_REQ) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
+func (*LOGIN_HALL_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
 
 func (m *LOGIN_HALL_REQ) GetLoginType() uint32 {
 	if m != nil {
@@ -189,7 +189,7 @@ type LOGIN_HALL_RES struct {
 func (m *LOGIN_HALL_RES) Reset()                    { *m = LOGIN_HALL_RES{} }
 func (m *LOGIN_HALL_RES) String() string            { return proto.CompactTextString(m) }
 func (*LOGIN_HALL_RES) ProtoMessage()               {}
-func (*LOGIN_HALL_RES) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{3} }
+func (*LOGIN_HALL_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
 
 func (m *LOGIN_HALL_RES) GetRet() uint32 {
 	if m != nil {
@@ -221,7 +221,7 @@ type SAFEMONEY_OPERATE_REQ struct {
 func (m *SAFEMONEY_OPERATE_REQ) Reset()                    { *m = SAFEMONEY_OPERATE_REQ{} }
 func (m *SAFEMONEY_OPERATE_REQ) String() string            { return proto.CompactTextString(m) }
 func (*SAFEMONEY_OPERATE_REQ) ProtoMessage()               {}
-func (*SAFEMONEY_OPERATE_REQ) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{4} }
+func (*SAFEMONEY_OPERATE_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
 
 func (m *SAFEMONEY_OPERATE_REQ) GetOperate() uint32 {
 	if m != nil {
@@ -245,7 +245,7 @@ type SAFEMONEY_OPERATE_RES struct {
 func (m *SAFEMONEY_OPERATE_RES) Reset()                    { *m = SAFEMONEY_OPERATE_RES{} }
 func (m *SAFEMONEY_OPERATE_RES) String() string            { return proto.CompactTextString(m) }
 func (*SAFEMONEY_OPERATE_RES) ProtoMessage()               {}
-func (*SAFEMONEY_OPERATE_RES) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{5} }
+func (*SAFEMONEY_OPERATE_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
 
 func (m *SAFEMONEY_OPERATE_RES) GetRet() uint32 {
 	if m != nil {
@@ -262,7 +262,7 @@ type BIND_PHONE_REQ struct {
 func (m *BIND_PHONE_REQ) Reset()                    { *m = BIND_PHONE_REQ{} }
 func (m *BIND_PHONE_REQ) String() string            { return proto.CompactTextString(m) }
 func (*BIND_PHONE_REQ) ProtoMessage()               {}
-func (*BIND_PHONE_REQ) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{6} }
+func (*BIND_PHONE_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
 
 func (m *BIND_PHONE_REQ) GetPhone() string {
 	if m != nil {
@@ -279,7 +279,7 @@ type BIND_PHONE_RES struct {
 func (m *BIND_PHONE_RES) Reset()                    { *m = BIND_PHONE_RES{} }
 func (m *BIND_PHONE_RES) String() string            { return proto.CompactTextString(m) }
 func (*BIND_PHONE_RES) ProtoMessage()               {}
-func (*BIND_PHONE_RES) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{7} }
+func (*BIND_PHONE_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
 
 func (m *BIND_PHONE_RES) GetRet() uint32 {
 	if m != nil {
@@ -296,7 +296,7 @@ type ENTER_ROOM_REQ struct {
 func (m *ENTER_ROOM_REQ) Reset()                    { *m = ENTER_ROOM_REQ{} }
 func (m *ENTER_ROOM_REQ) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_ROOM_REQ) ProtoMessage()               {}
-func (*ENTER_ROOM_REQ) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{8} }
+func (*ENTER_ROOM_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
 
 func (m *ENTER_ROOM_REQ) GetRoomID() uint32 {
 	if m != nil {
@@ -315,7 +315,7 @@ type ENTER_ROOM_RES struct {
 func (m *ENTER_ROOM_RES) Reset()                    { *m = ENTER_ROOM_RES{} }
 func (m *ENTER_ROOM_RES) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_ROOM_RES) ProtoMessage()               {}
-func (*ENTER_ROOM_RES) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{9} }
+func (*ENTER_ROOM_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
 
 func (m *ENTER_ROOM_RES) GetRet() uint32 {
 	if m != nil {
@@ -346,7 +346,7 @@ type EMAILS_REQ struct {
 func (m *EMAILS_REQ) Reset()                    { *m = EMAILS_REQ{} }
 func (m *EMAILS_REQ) String() string            { return proto.CompactTextString(m) }
 func (*EMAILS_REQ) ProtoMessage()               {}
-func (*EMAILS_REQ) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{10} }
+func (*EMAILS_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{10} }
 
 // 客户端请求邮件列表 10021
 type EMAILS_RES struct {
@@ -356,7 +356,7 @@ type EMAILS_RES struct {
 func (m *EMAILS_RES) Reset()                    { *m = EMAILS_RES{} }
 func (m *EMAILS_RES) String() string            { return proto.CompactTextString(m) }
 func (*EMAILS_RES) ProtoMessage()               {}
-func (*EMAILS_RES) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{11} }
+func (*EMAILS_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{11} }
 
 func (m *EMAILS_RES) GetEmails() []*Email {
 	if m != nil {
@@ -373,7 +373,7 @@ type EMAIL_READ_REQ struct {
 func (m *EMAIL_READ_REQ) Reset()                    { *m = EMAIL_READ_REQ{} }
 func (m *EMAIL_READ_REQ) String() string            { return proto.CompactTextString(m) }
 func (*EMAIL_READ_REQ) ProtoMessage()               {}
-func (*EMAIL_READ_REQ) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{12} }
+func (*EMAIL_READ_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{12} }
 
 func (m *EMAIL_READ_REQ) GetEmailID() uint32 {
 	if m != nil {
@@ -390,7 +390,7 @@ type EMAIL_READ_RES struct {
 func (m *EMAIL_READ_RES) Reset()                    { *m = EMAIL_READ_RES{} }
 func (m *EMAIL_READ_RES) String() string            { return proto.CompactTextString(m) }
 func (*EMAIL_READ_RES) ProtoMessage()               {}
-func (*EMAIL_READ_RES) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{13} }
+func (*EMAIL_READ_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{13} }
 
 func (m *EMAIL_READ_RES) GetEmailID() uint32 {
 	if m != nil {
@@ -407,7 +407,7 @@ type EMAIL_REWARD_REQ struct {
 func (m *EMAIL_REWARD_REQ) Reset()                    { *m = EMAIL_REWARD_REQ{} }
 func (m *EMAIL_REWARD_REQ) String() string            { return proto.CompactTextString(m) }
 func (*EMAIL_REWARD_REQ) ProtoMessage()               {}
-func (*EMAIL_REWARD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{14} }
+func (*EMAIL_REWARD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{14} }
 
 func (m *EMAIL_REWARD_REQ) GetEmailID() uint32 {
 	if m != nil {
@@ -425,7 +425,7 @@ type EMAIL_REWARD_RES struct {
 func (m *EMAIL_REWARD_RES) Reset()                    { *m = EMAIL_REWARD_RES{} }
 func (m *EMAIL_REWARD_RES) String() string            { return proto.CompactTextString(m) }
 func (*EMAIL_REWARD_RES) ProtoMessage()               {}
-func (*EMAIL_REWARD_RES) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{15} }
+func (*EMAIL_REWARD_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{15} }
 
 func (m *EMAIL_REWARD_RES) GetRet() int32 {
 	if m != nil {
@@ -449,7 +449,7 @@ type EMAIL_DEL_REQ struct {
 func (m *EMAIL_DEL_REQ) Reset()                    { *m = EMAIL_DEL_REQ{} }
 func (m *EMAIL_DEL_REQ) String() string            { return proto.CompactTextString(m) }
 func (*EMAIL_DEL_REQ) ProtoMessage()               {}
-func (*EMAIL_DEL_REQ) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{16} }
+func (*EMAIL_DEL_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{16} }
 
 func (m *EMAIL_DEL_REQ) GetEmailID() uint32 {
 	if m != nil {
@@ -466,7 +466,7 @@ type EMAIL_DEL_RES struct {
 func (m *EMAIL_DEL_RES) Reset()                    { *m = EMAIL_DEL_RES{} }
 func (m *EMAIL_DEL_RES) String() string            { return proto.CompactTextString(m) }
 func (*EMAIL_DEL_RES) ProtoMessage()               {}
-func (*EMAIL_DEL_RES) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{17} }
+func (*EMAIL_DEL_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{17} }
 
 func (m *EMAIL_DEL_RES) GetEmailID() uint32 {
 	if m != nil {
@@ -485,7 +485,7 @@ type UPDATE_MONEY struct {
 func (m *UPDATE_MONEY) Reset()                    { *m = UPDATE_MONEY{} }
 func (m *UPDATE_MONEY) String() string            { return proto.CompactTextString(m) }
 func (*UPDATE_MONEY) ProtoMessage()               {}
-func (*UPDATE_MONEY) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{18} }
+func (*UPDATE_MONEY) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{18} }
 
 func (m *UPDATE_MONEY) GetOperate() int32 {
 	if m != nil {
@@ -509,7 +509,7 @@ type EMAIL_NEW struct {
 func (m *EMAIL_NEW) Reset()                    { *m = EMAIL_NEW{} }
 func (m *EMAIL_NEW) String() string            { return proto.CompactTextString(m) }
 func (*EMAIL_NEW) ProtoMessage()               {}
-func (*EMAIL_NEW) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{19} }
+func (*EMAIL_NEW) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{19} }
 
 func (m *EMAIL_NEW) GetNew() *Email {
 	if m != nil {
@@ -526,7 +526,7 @@ type BROADCAST_MSG struct {
 func (m *BROADCAST_MSG) Reset()                    { *m = BROADCAST_MSG{} }
 func (m *BROADCAST_MSG) String() string            { return proto.CompactTextString(m) }
 func (*BROADCAST_MSG) ProtoMessage()               {}
-func (*BROADCAST_MSG) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{20} }
+func (*BROADCAST_MSG) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{20} }
 
 func (m *BROADCAST_MSG) GetContent() string {
 	if m != nil {
@@ -543,7 +543,7 @@ type UPDATE_ROOMLIST struct {
 func (m *UPDATE_ROOMLIST) Reset()                    { *m = UPDATE_ROOMLIST{} }
 func (m *UPDATE_ROOMLIST) String() string            { return proto.CompactTextString(m) }
 func (*UPDATE_ROOMLIST) ProtoMessage()               {}
-func (*UPDATE_ROOMLIST) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{21} }
+func (*UPDATE_ROOMLIST) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{21} }
 
 func (m *UPDATE_ROOMLIST) GetGames() map[uint32]*GameInfo {
 	if m != nil {
@@ -578,9 +578,9 @@ func init() {
 	proto.RegisterEnum("protomsg.MSG", MSG_name, MSG_value)
 }
 
-func init() { proto.RegisterFile("protobuf/hall.proto", fileDescriptor3) }
+func init() { proto.RegisterFile("protobuf/hall.proto", fileDescriptor4) }
 
-var fileDescriptor3 = []byte{
+var fileDescriptor4 = []byte{
 	// 887 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x54, 0xe9, 0x6e, 0xdb, 0x46,
 	0x10, 0xae, 0xac, 0x23, 0xf1, 0xd8, 0xb2, 0x36, 0x1b, 0xc7, 0x55, 0x8d, 0x14, 0x70, 0x16, 0x45,

@@ -56,7 +56,7 @@ var LUCKFRUITMSG_value = map[string]int32{
 func (x LUCKFRUITMSG) String() string {
 	return proto.EnumName(LUCKFRUITMSG_name, int32(x))
 }
-func (LUCKFRUITMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
+func (LUCKFRUITMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
 
 // 游戏1 图案枚举
 type LUCKFRUITID int32
@@ -108,7 +108,7 @@ var LUCKFRUITID_value = map[string]int32{
 func (x LUCKFRUITID) String() string {
 	return proto.EnumName(LUCKFRUITID_name, int32(x))
 }
-func (LUCKFRUITID) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
+func (LUCKFRUITID) EnumDescriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
 
 // 请求进入房间
 type ENTER_GAME_LUCKFRUIT_REQ struct {
@@ -119,7 +119,7 @@ type ENTER_GAME_LUCKFRUIT_REQ struct {
 func (m *ENTER_GAME_LUCKFRUIT_REQ) Reset()                    { *m = ENTER_GAME_LUCKFRUIT_REQ{} }
 func (m *ENTER_GAME_LUCKFRUIT_REQ) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_LUCKFRUIT_REQ) ProtoMessage()               {}
-func (*ENTER_GAME_LUCKFRUIT_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
+func (*ENTER_GAME_LUCKFRUIT_REQ) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
 
 func (m *ENTER_GAME_LUCKFRUIT_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -147,7 +147,7 @@ type ENTER_GAME_LUCKFRUIT_RES struct {
 func (m *ENTER_GAME_LUCKFRUIT_RES) Reset()                    { *m = ENTER_GAME_LUCKFRUIT_RES{} }
 func (m *ENTER_GAME_LUCKFRUIT_RES) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_LUCKFRUIT_RES) ProtoMessage()               {}
-func (*ENTER_GAME_LUCKFRUIT_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
+func (*ENTER_GAME_LUCKFRUIT_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
 
 func (m *ENTER_GAME_LUCKFRUIT_RES) GetRoomID() uint32 {
 	if m != nil {
@@ -200,7 +200,7 @@ type LEAVE_GAME_LUCKFRUIT_REQ struct {
 func (m *LEAVE_GAME_LUCKFRUIT_REQ) Reset()                    { *m = LEAVE_GAME_LUCKFRUIT_REQ{} }
 func (m *LEAVE_GAME_LUCKFRUIT_REQ) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_LUCKFRUIT_REQ) ProtoMessage()               {}
-func (*LEAVE_GAME_LUCKFRUIT_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{2} }
+func (*LEAVE_GAME_LUCKFRUIT_REQ) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{2} }
 
 func (m *LEAVE_GAME_LUCKFRUIT_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -224,7 +224,7 @@ type LEAVE_GAME_LUCKFRUIT_RES struct {
 func (m *LEAVE_GAME_LUCKFRUIT_RES) Reset()                    { *m = LEAVE_GAME_LUCKFRUIT_RES{} }
 func (m *LEAVE_GAME_LUCKFRUIT_RES) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_LUCKFRUIT_RES) ProtoMessage()               {}
-func (*LEAVE_GAME_LUCKFRUIT_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{3} }
+func (*LEAVE_GAME_LUCKFRUIT_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{3} }
 
 func (m *LEAVE_GAME_LUCKFRUIT_RES) GetRet() uint32 {
 	if m != nil {
@@ -249,7 +249,7 @@ type START_LUCKFRUIT_REQ struct {
 func (m *START_LUCKFRUIT_REQ) Reset()                    { *m = START_LUCKFRUIT_REQ{} }
 func (m *START_LUCKFRUIT_REQ) String() string            { return proto.CompactTextString(m) }
 func (*START_LUCKFRUIT_REQ) ProtoMessage()               {}
-func (*START_LUCKFRUIT_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{4} }
+func (*START_LUCKFRUIT_REQ) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{4} }
 
 func (m *START_LUCKFRUIT_REQ) GetBet() uint64 {
 	if m != nil {
@@ -272,7 +272,7 @@ type START_LUCKFRUIT_RES struct {
 func (m *START_LUCKFRUIT_RES) Reset()                    { *m = START_LUCKFRUIT_RES{} }
 func (m *START_LUCKFRUIT_RES) String() string            { return proto.CompactTextString(m) }
 func (*START_LUCKFRUIT_RES) ProtoMessage()               {}
-func (*START_LUCKFRUIT_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{5} }
+func (*START_LUCKFRUIT_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{5} }
 
 func (m *START_LUCKFRUIT_RES) GetRet() uint64 {
 	if m != nil {
@@ -338,7 +338,7 @@ type LUCKFRUITPosition struct {
 func (m *LUCKFRUITPosition) Reset()                    { *m = LUCKFRUITPosition{} }
 func (m *LUCKFRUITPosition) String() string            { return proto.CompactTextString(m) }
 func (*LUCKFRUITPosition) ProtoMessage()               {}
-func (*LUCKFRUITPosition) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{6} }
+func (*LUCKFRUITPosition) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{6} }
 
 func (m *LUCKFRUITPosition) GetPx() int32 {
 	if m != nil {
@@ -364,7 +364,7 @@ type LUCKFRUIT_Result struct {
 func (m *LUCKFRUIT_Result) Reset()                    { *m = LUCKFRUIT_Result{} }
 func (m *LUCKFRUIT_Result) String() string            { return proto.CompactTextString(m) }
 func (*LUCKFRUIT_Result) ProtoMessage()               {}
-func (*LUCKFRUIT_Result) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{7} }
+func (*LUCKFRUIT_Result) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{7} }
 
 func (m *LUCKFRUIT_Result) GetLineId() int32 {
 	if m != nil {
@@ -402,7 +402,7 @@ type UPDATE_LUCKFRUIT_BONUS struct {
 func (m *UPDATE_LUCKFRUIT_BONUS) Reset()                    { *m = UPDATE_LUCKFRUIT_BONUS{} }
 func (m *UPDATE_LUCKFRUIT_BONUS) String() string            { return proto.CompactTextString(m) }
 func (*UPDATE_LUCKFRUIT_BONUS) ProtoMessage()               {}
-func (*UPDATE_LUCKFRUIT_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{8} }
+func (*UPDATE_LUCKFRUIT_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{8} }
 
 func (m *UPDATE_LUCKFRUIT_BONUS) GetBonus() int64 {
 	if m != nil {
@@ -419,7 +419,7 @@ type PLAYERS_LUCKFRUIT_LIST_RES struct {
 func (m *PLAYERS_LUCKFRUIT_LIST_RES) Reset()                    { *m = PLAYERS_LUCKFRUIT_LIST_RES{} }
 func (m *PLAYERS_LUCKFRUIT_LIST_RES) String() string            { return proto.CompactTextString(m) }
 func (*PLAYERS_LUCKFRUIT_LIST_RES) ProtoMessage()               {}
-func (*PLAYERS_LUCKFRUIT_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{9} }
+func (*PLAYERS_LUCKFRUIT_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{9} }
 
 func (m *PLAYERS_LUCKFRUIT_LIST_RES) GetPlayers() []*AccountStorageData {
 	if m != nil {
@@ -443,9 +443,9 @@ func init() {
 	proto.RegisterEnum("protomsg.LUCKFRUITID", LUCKFRUITID_name, LUCKFRUITID_value)
 }
 
-func init() { proto.RegisterFile("protobuf/luckfruit.proto", fileDescriptor6) }
+func init() { proto.RegisterFile("protobuf/luckfruit.proto", fileDescriptor7) }
 
-var fileDescriptor6 = []byte{
+var fileDescriptor7 = []byte{
 	// 718 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0x4b, 0x6f, 0xda, 0x40,
 	0x10, 0x8e, 0x31, 0x06, 0x32, 0xe4, 0xb1, 0xda, 0x44, 0x91, 0x4b, 0xd2, 0x0a, 0xf9, 0x52, 0x94,

@@ -56,7 +56,7 @@ var DFDCMSG_value = map[string]int32{
 func (x DFDCMSG) String() string {
 	return proto.EnumName(DFDCMSG_name, int32(x))
 }
-func (DFDCMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (DFDCMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
 // 游戏1 图案枚举
 type DFDCID int32
@@ -114,7 +114,7 @@ var DFDCID_value = map[string]int32{
 func (x DFDCID) String() string {
 	return proto.EnumName(DFDCID_name, int32(x))
 }
-func (DFDCID) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (DFDCID) EnumDescriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
 
 // 请求进入房间
 type ENTER_GAME_DFDC_REQ struct {
@@ -125,7 +125,7 @@ type ENTER_GAME_DFDC_REQ struct {
 func (m *ENTER_GAME_DFDC_REQ) Reset()                    { *m = ENTER_GAME_DFDC_REQ{} }
 func (m *ENTER_GAME_DFDC_REQ) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_DFDC_REQ) ProtoMessage()               {}
-func (*ENTER_GAME_DFDC_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (*ENTER_GAME_DFDC_REQ) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
 func (m *ENTER_GAME_DFDC_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -154,7 +154,7 @@ type ENTER_GAME_DFDC_RES struct {
 func (m *ENTER_GAME_DFDC_RES) Reset()                    { *m = ENTER_GAME_DFDC_RES{} }
 func (m *ENTER_GAME_DFDC_RES) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_DFDC_RES) ProtoMessage()               {}
-func (*ENTER_GAME_DFDC_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (*ENTER_GAME_DFDC_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
 
 func (m *ENTER_GAME_DFDC_RES) GetRoomID() uint32 {
 	if m != nil {
@@ -216,7 +216,7 @@ func (m *ENTER_GAME_DFDC_RES_DfdcRatio) Reset()         { *m = ENTER_GAME_DFDC_R
 func (m *ENTER_GAME_DFDC_RES_DfdcRatio) String() string { return proto.CompactTextString(m) }
 func (*ENTER_GAME_DFDC_RES_DfdcRatio) ProtoMessage()    {}
 func (*ENTER_GAME_DFDC_RES_DfdcRatio) Descriptor() ([]byte, []int) {
-	return fileDescriptor1, []int{1, 0}
+	return fileDescriptor2, []int{1, 0}
 }
 
 func (m *ENTER_GAME_DFDC_RES_DfdcRatio) GetID() DFDCID {
@@ -256,7 +256,7 @@ type LEAVE_GAME_DFDC_REQ struct {
 func (m *LEAVE_GAME_DFDC_REQ) Reset()                    { *m = LEAVE_GAME_DFDC_REQ{} }
 func (m *LEAVE_GAME_DFDC_REQ) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_DFDC_REQ) ProtoMessage()               {}
-func (*LEAVE_GAME_DFDC_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+func (*LEAVE_GAME_DFDC_REQ) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
 
 func (m *LEAVE_GAME_DFDC_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -280,7 +280,7 @@ type LEAVE_GAME_DFDC_RES struct {
 func (m *LEAVE_GAME_DFDC_RES) Reset()                    { *m = LEAVE_GAME_DFDC_RES{} }
 func (m *LEAVE_GAME_DFDC_RES) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_DFDC_RES) ProtoMessage()               {}
-func (*LEAVE_GAME_DFDC_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
+func (*LEAVE_GAME_DFDC_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{3} }
 
 func (m *LEAVE_GAME_DFDC_RES) GetRet() uint32 {
 	if m != nil {
@@ -305,7 +305,7 @@ type START_DFDC_REQ struct {
 func (m *START_DFDC_REQ) Reset()                    { *m = START_DFDC_REQ{} }
 func (m *START_DFDC_REQ) String() string            { return proto.CompactTextString(m) }
 func (*START_DFDC_REQ) ProtoMessage()               {}
-func (*START_DFDC_REQ) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+func (*START_DFDC_REQ) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{4} }
 
 func (m *START_DFDC_REQ) GetBet() uint64 {
 	if m != nil {
@@ -327,7 +327,7 @@ type START_DFDC_RES struct {
 func (m *START_DFDC_RES) Reset()                    { *m = START_DFDC_RES{} }
 func (m *START_DFDC_RES) String() string            { return proto.CompactTextString(m) }
 func (*START_DFDC_RES) ProtoMessage()               {}
-func (*START_DFDC_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
+func (*START_DFDC_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{5} }
 
 func (m *START_DFDC_RES) GetRet() uint64 {
 	if m != nil {
@@ -386,7 +386,7 @@ type DFDCPosition struct {
 func (m *DFDCPosition) Reset()                    { *m = DFDCPosition{} }
 func (m *DFDCPosition) String() string            { return proto.CompactTextString(m) }
 func (*DFDCPosition) ProtoMessage()               {}
-func (*DFDCPosition) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
+func (*DFDCPosition) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{6} }
 
 func (m *DFDCPosition) GetPx() int32 {
 	if m != nil {
@@ -410,7 +410,7 @@ type UPDATE_DFDC_BONUS struct {
 func (m *UPDATE_DFDC_BONUS) Reset()                    { *m = UPDATE_DFDC_BONUS{} }
 func (m *UPDATE_DFDC_BONUS) String() string            { return proto.CompactTextString(m) }
 func (*UPDATE_DFDC_BONUS) ProtoMessage()               {}
-func (*UPDATE_DFDC_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
+func (*UPDATE_DFDC_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{7} }
 
 func (m *UPDATE_DFDC_BONUS) GetBonus() map[int32]int64 {
 	if m != nil {
@@ -427,7 +427,7 @@ type PLAYERS_DFDC_LIST_RES struct {
 func (m *PLAYERS_DFDC_LIST_RES) Reset()                    { *m = PLAYERS_DFDC_LIST_RES{} }
 func (m *PLAYERS_DFDC_LIST_RES) String() string            { return proto.CompactTextString(m) }
 func (*PLAYERS_DFDC_LIST_RES) ProtoMessage()               {}
-func (*PLAYERS_DFDC_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
+func (*PLAYERS_DFDC_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{8} }
 
 func (m *PLAYERS_DFDC_LIST_RES) GetPlayers() []*AccountStorageData {
 	if m != nil {
@@ -451,9 +451,9 @@ func init() {
 	proto.RegisterEnum("protomsg.DFDCID", DFDCID_name, DFDCID_value)
 }
 
-func init() { proto.RegisterFile("protobuf/dfdc.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("protobuf/dfdc.proto", fileDescriptor2) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor2 = []byte{
 	// 810 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xdb, 0x6e, 0xe3, 0x44,
 	0x18, 0x5e, 0xdb, 0xb1, 0xd3, 0xfe, 0xa1, 0xdd, 0xd9, 0xd9, 0x6e, 0x31, 0x61, 0x91, 0xa2, 0x20,

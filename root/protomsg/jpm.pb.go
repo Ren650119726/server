@@ -56,7 +56,7 @@ var JPMMSG_value = map[string]int32{
 func (x JPMMSG) String() string {
 	return proto.EnumName(JPMMSG_name, int32(x))
 }
-func (JPMMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (JPMMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
 
 // 游戏 图案枚举
 type JPMID int32
@@ -108,7 +108,7 @@ var JPMID_value = map[string]int32{
 func (x JPMID) String() string {
 	return proto.EnumName(JPMID_name, int32(x))
 }
-func (JPMID) EnumDescriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+func (JPMID) EnumDescriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
 
 // 请求进入房间
 type ENTER_GAME_JPM_REQ struct {
@@ -119,7 +119,7 @@ type ENTER_GAME_JPM_REQ struct {
 func (m *ENTER_GAME_JPM_REQ) Reset()                    { *m = ENTER_GAME_JPM_REQ{} }
 func (m *ENTER_GAME_JPM_REQ) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_JPM_REQ) ProtoMessage()               {}
-func (*ENTER_GAME_JPM_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (*ENTER_GAME_JPM_REQ) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
 
 func (m *ENTER_GAME_JPM_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -147,7 +147,7 @@ type ENTER_GAME_JPM_RES struct {
 func (m *ENTER_GAME_JPM_RES) Reset()                    { *m = ENTER_GAME_JPM_RES{} }
 func (m *ENTER_GAME_JPM_RES) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_JPM_RES) ProtoMessage()               {}
-func (*ENTER_GAME_JPM_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+func (*ENTER_GAME_JPM_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
 
 func (m *ENTER_GAME_JPM_RES) GetRoomID() uint32 {
 	if m != nil {
@@ -200,7 +200,7 @@ type LEAVE_GAME_JPM_REQ struct {
 func (m *LEAVE_GAME_JPM_REQ) Reset()                    { *m = LEAVE_GAME_JPM_REQ{} }
 func (m *LEAVE_GAME_JPM_REQ) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_JPM_REQ) ProtoMessage()               {}
-func (*LEAVE_GAME_JPM_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
+func (*LEAVE_GAME_JPM_REQ) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
 
 func (m *LEAVE_GAME_JPM_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -224,7 +224,7 @@ type LEAVE_GAME_JPM_RES struct {
 func (m *LEAVE_GAME_JPM_RES) Reset()                    { *m = LEAVE_GAME_JPM_RES{} }
 func (m *LEAVE_GAME_JPM_RES) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_JPM_RES) ProtoMessage()               {}
-func (*LEAVE_GAME_JPM_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
+func (*LEAVE_GAME_JPM_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{3} }
 
 func (m *LEAVE_GAME_JPM_RES) GetRet() uint32 {
 	if m != nil {
@@ -249,7 +249,7 @@ type START_JPM_REQ struct {
 func (m *START_JPM_REQ) Reset()                    { *m = START_JPM_REQ{} }
 func (m *START_JPM_REQ) String() string            { return proto.CompactTextString(m) }
 func (*START_JPM_REQ) ProtoMessage()               {}
-func (*START_JPM_REQ) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
+func (*START_JPM_REQ) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{4} }
 
 func (m *START_JPM_REQ) GetBet() uint64 {
 	if m != nil {
@@ -272,7 +272,7 @@ type START_JPM_RES struct {
 func (m *START_JPM_RES) Reset()                    { *m = START_JPM_RES{} }
 func (m *START_JPM_RES) String() string            { return proto.CompactTextString(m) }
 func (*START_JPM_RES) ProtoMessage()               {}
-func (*START_JPM_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
+func (*START_JPM_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{5} }
 
 func (m *START_JPM_RES) GetRet() uint64 {
 	if m != nil {
@@ -338,7 +338,7 @@ type JPMPosition struct {
 func (m *JPMPosition) Reset()                    { *m = JPMPosition{} }
 func (m *JPMPosition) String() string            { return proto.CompactTextString(m) }
 func (*JPMPosition) ProtoMessage()               {}
-func (*JPMPosition) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
+func (*JPMPosition) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{6} }
 
 func (m *JPMPosition) GetPx() int32 {
 	if m != nil {
@@ -364,7 +364,7 @@ type JPM_Result struct {
 func (m *JPM_Result) Reset()                    { *m = JPM_Result{} }
 func (m *JPM_Result) String() string            { return proto.CompactTextString(m) }
 func (*JPM_Result) ProtoMessage()               {}
-func (*JPM_Result) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
+func (*JPM_Result) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{7} }
 
 func (m *JPM_Result) GetLineId() int32 {
 	if m != nil {
@@ -402,7 +402,7 @@ type UPDATE_JPM_BONUS struct {
 func (m *UPDATE_JPM_BONUS) Reset()                    { *m = UPDATE_JPM_BONUS{} }
 func (m *UPDATE_JPM_BONUS) String() string            { return proto.CompactTextString(m) }
 func (*UPDATE_JPM_BONUS) ProtoMessage()               {}
-func (*UPDATE_JPM_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
+func (*UPDATE_JPM_BONUS) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{8} }
 
 func (m *UPDATE_JPM_BONUS) GetBonus() int64 {
 	if m != nil {
@@ -419,7 +419,7 @@ type PLAYERS_JPM_LIST_RES struct {
 func (m *PLAYERS_JPM_LIST_RES) Reset()                    { *m = PLAYERS_JPM_LIST_RES{} }
 func (m *PLAYERS_JPM_LIST_RES) String() string            { return proto.CompactTextString(m) }
 func (*PLAYERS_JPM_LIST_RES) ProtoMessage()               {}
-func (*PLAYERS_JPM_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
+func (*PLAYERS_JPM_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{9} }
 
 func (m *PLAYERS_JPM_LIST_RES) GetPlayers() []*AccountStorageData {
 	if m != nil {
@@ -443,9 +443,9 @@ func init() {
 	proto.RegisterEnum("protomsg.JPMID", JPMID_name, JPMID_value)
 }
 
-func init() { proto.RegisterFile("protobuf/jpm.proto", fileDescriptor4) }
+func init() { proto.RegisterFile("protobuf/jpm.proto", fileDescriptor5) }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor5 = []byte{
 	// 706 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0x4b, 0x73, 0xd2, 0x50,
 	0x14, 0x6e, 0x48, 0xc2, 0xe3, 0xb4, 0xd4, 0x3b, 0xb7, 0xb4, 0x66, 0x3a, 0x5d, 0x20, 0x2b, 0xa6,

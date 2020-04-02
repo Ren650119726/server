@@ -12,6 +12,7 @@ const (
 	EGameTypeLUCKFRUIT EGameType = 5 // 幸运水果机
 	EGameTypeRED2BLACK EGameType = 6 // 红黑大战
 	EGameTypeLHD       EGameType = 7 // 龙虎斗
+	EGameType777       EGameType = 8 // 777
 
 )
 
@@ -24,6 +25,7 @@ var GameTypeByID = map[EGameType]string{
 	EGameTypeLUCKFRUIT: "幸运水果机",
 	EGameTypeRED2BLACK: "红黑大战",
 	EGameTypeLHD:       "龙虎斗",
+	EGameType777:       "777",
 }
 
 var GameTypeByString = map[string]EGameType{
@@ -35,6 +37,7 @@ var GameTypeByString = map[string]EGameType{
 	"幸运水果机": EGameTypeLUCKFRUIT,
 	"红黑大战":  EGameTypeRED2BLACK,
 	"龙虎斗":   EGameTypeLHD,
+	"777":   EGameType777,
 }
 
 func (e EGameType) String() string {

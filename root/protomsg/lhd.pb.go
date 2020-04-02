@@ -65,7 +65,7 @@ var LHDMSG_value = map[string]int32{
 func (x LHDMSG) String() string {
 	return proto.EnumName(LHDMSG_name, int32(x))
 }
-func (LHDMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (LHDMSG) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
 
 // //////////////////////////////////////////////////// 游戏枚举 /////////////////////////////////////////////////////////////
 // 下注区域
@@ -94,7 +94,7 @@ var LHDAREA_value = map[string]int32{
 func (x LHDAREA) String() string {
 	return proto.EnumName(LHDAREA_name, int32(x))
 }
-func (LHDAREA) EnumDescriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
+func (LHDAREA) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
 
 // 游戏状态
 type LHDGAMESTATUS int32
@@ -125,7 +125,7 @@ var LHDGAMESTATUS_value = map[string]int32{
 func (x LHDGAMESTATUS) String() string {
 	return proto.EnumName(LHDGAMESTATUS_name, int32(x))
 }
-func (LHDGAMESTATUS) EnumDescriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
+func (LHDGAMESTATUS) EnumDescriptor() ([]byte, []int) { return fileDescriptor6, []int{2} }
 
 // //////////////////////////////////////////////////// 消息数据结构 /////////////////////////////////////////////////////////////
 // 请求进入房间
@@ -137,7 +137,7 @@ type ENTER_GAME_LHD_REQ struct {
 func (m *ENTER_GAME_LHD_REQ) Reset()                    { *m = ENTER_GAME_LHD_REQ{} }
 func (m *ENTER_GAME_LHD_REQ) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_LHD_REQ) ProtoMessage()               {}
-func (*ENTER_GAME_LHD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (*ENTER_GAME_LHD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
 
 func (m *ENTER_GAME_LHD_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -165,7 +165,7 @@ type ENTER_GAME_LHD_RES struct {
 func (m *ENTER_GAME_LHD_RES) Reset()                    { *m = ENTER_GAME_LHD_RES{} }
 func (m *ENTER_GAME_LHD_RES) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_LHD_RES) ProtoMessage()               {}
-func (*ENTER_GAME_LHD_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
+func (*ENTER_GAME_LHD_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
 
 func (m *ENTER_GAME_LHD_RES) GetRoomID() uint32 {
 	if m != nil {
@@ -209,7 +209,7 @@ type ENTER_GAME_LHD_RES_Winner struct {
 func (m *ENTER_GAME_LHD_RES_Winner) Reset()                    { *m = ENTER_GAME_LHD_RES_Winner{} }
 func (m *ENTER_GAME_LHD_RES_Winner) String() string            { return proto.CompactTextString(m) }
 func (*ENTER_GAME_LHD_RES_Winner) ProtoMessage()               {}
-func (*ENTER_GAME_LHD_RES_Winner) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1, 0} }
+func (*ENTER_GAME_LHD_RES_Winner) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1, 0} }
 
 func (m *ENTER_GAME_LHD_RES_Winner) GetWinArea() LHDAREA {
 	if m != nil {
@@ -227,7 +227,7 @@ type LEAVE_GAME_LHD_REQ struct {
 func (m *LEAVE_GAME_LHD_REQ) Reset()                    { *m = LEAVE_GAME_LHD_REQ{} }
 func (m *LEAVE_GAME_LHD_REQ) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_LHD_REQ) ProtoMessage()               {}
-func (*LEAVE_GAME_LHD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
+func (*LEAVE_GAME_LHD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{2} }
 
 func (m *LEAVE_GAME_LHD_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -251,7 +251,7 @@ type LEAVE_GAME_LHD_RES struct {
 func (m *LEAVE_GAME_LHD_RES) Reset()                    { *m = LEAVE_GAME_LHD_RES{} }
 func (m *LEAVE_GAME_LHD_RES) String() string            { return proto.CompactTextString(m) }
 func (*LEAVE_GAME_LHD_RES) ProtoMessage()               {}
-func (*LEAVE_GAME_LHD_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{3} }
+func (*LEAVE_GAME_LHD_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{3} }
 
 func (m *LEAVE_GAME_LHD_RES) GetRet() uint32 {
 	if m != nil {
@@ -277,7 +277,7 @@ func (m *SWITCH_GAME_STATUS_BROADCAST_LHD) Reset()         { *m = SWITCH_GAME_ST
 func (m *SWITCH_GAME_STATUS_BROADCAST_LHD) String() string { return proto.CompactTextString(m) }
 func (*SWITCH_GAME_STATUS_BROADCAST_LHD) ProtoMessage()    {}
 func (*SWITCH_GAME_STATUS_BROADCAST_LHD) Descriptor() ([]byte, []int) {
-	return fileDescriptor5, []int{4}
+	return fileDescriptor6, []int{4}
 }
 
 func (m *SWITCH_GAME_STATUS_BROADCAST_LHD) GetNextStatus() *StatusMsgLHD {
@@ -300,7 +300,7 @@ type StatusMsgLHD struct {
 func (m *StatusMsgLHD) Reset()                    { *m = StatusMsgLHD{} }
 func (m *StatusMsgLHD) String() string            { return proto.CompactTextString(m) }
 func (*StatusMsgLHD) ProtoMessage()               {}
-func (*StatusMsgLHD) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{5} }
+func (*StatusMsgLHD) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{5} }
 
 func (m *StatusMsgLHD) GetStatus() LHDGAMESTATUS {
 	if m != nil {
@@ -351,7 +351,7 @@ type Status_Wait_LHD struct {
 func (m *Status_Wait_LHD) Reset()                    { *m = Status_Wait_LHD{} }
 func (m *Status_Wait_LHD) String() string            { return proto.CompactTextString(m) }
 func (*Status_Wait_LHD) ProtoMessage()               {}
-func (*Status_Wait_LHD) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{6} }
+func (*Status_Wait_LHD) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{6} }
 
 // 2.押注
 type Status_Bet_LHD struct {
@@ -360,7 +360,7 @@ type Status_Bet_LHD struct {
 func (m *Status_Bet_LHD) Reset()                    { *m = Status_Bet_LHD{} }
 func (m *Status_Bet_LHD) String() string            { return proto.CompactTextString(m) }
 func (*Status_Bet_LHD) ProtoMessage()               {}
-func (*Status_Bet_LHD) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{7} }
+func (*Status_Bet_LHD) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{7} }
 
 // 3.停止下注
 type Status_Stop_LHD struct {
@@ -369,7 +369,7 @@ type Status_Stop_LHD struct {
 func (m *Status_Stop_LHD) Reset()                    { *m = Status_Stop_LHD{} }
 func (m *Status_Stop_LHD) String() string            { return proto.CompactTextString(m) }
 func (*Status_Stop_LHD) ProtoMessage()               {}
-func (*Status_Stop_LHD) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{8} }
+func (*Status_Stop_LHD) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{8} }
 
 // 4.结算
 type Status_Settle_LHD struct {
@@ -382,7 +382,7 @@ type Status_Settle_LHD struct {
 func (m *Status_Settle_LHD) Reset()                    { *m = Status_Settle_LHD{} }
 func (m *Status_Settle_LHD) String() string            { return proto.CompactTextString(m) }
 func (*Status_Settle_LHD) ProtoMessage()               {}
-func (*Status_Settle_LHD) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{9} }
+func (*Status_Settle_LHD) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{9} }
 
 func (m *Status_Settle_LHD) GetWinArea() LHDAREA {
 	if m != nil {
@@ -423,7 +423,7 @@ type BET_LHD_REQ struct {
 func (m *BET_LHD_REQ) Reset()                    { *m = BET_LHD_REQ{} }
 func (m *BET_LHD_REQ) String() string            { return proto.CompactTextString(m) }
 func (*BET_LHD_REQ) ProtoMessage()               {}
-func (*BET_LHD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{10} }
+func (*BET_LHD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{10} }
 
 func (m *BET_LHD_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -462,7 +462,7 @@ type BET_LHD_RES struct {
 func (m *BET_LHD_RES) Reset()                    { *m = BET_LHD_RES{} }
 func (m *BET_LHD_RES) String() string            { return proto.CompactTextString(m) }
 func (*BET_LHD_RES) ProtoMessage()               {}
-func (*BET_LHD_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{11} }
+func (*BET_LHD_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{11} }
 
 func (m *BET_LHD_RES) GetPlayers() []*BET_LHD_RES_BetPlayer {
 	if m != nil {
@@ -487,7 +487,7 @@ type BET_LHD_RES_BetPlayer struct {
 func (m *BET_LHD_RES_BetPlayer) Reset()                    { *m = BET_LHD_RES_BetPlayer{} }
 func (m *BET_LHD_RES_BetPlayer) String() string            { return proto.CompactTextString(m) }
 func (*BET_LHD_RES_BetPlayer) ProtoMessage()               {}
-func (*BET_LHD_RES_BetPlayer) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{11, 0} }
+func (*BET_LHD_RES_BetPlayer) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{11, 0} }
 
 func (m *BET_LHD_RES_BetPlayer) GetAccountID() uint32 {
 	if m != nil {
@@ -518,7 +518,7 @@ type CLEAN_BET_LHD_REQ struct {
 func (m *CLEAN_BET_LHD_REQ) Reset()                    { *m = CLEAN_BET_LHD_REQ{} }
 func (m *CLEAN_BET_LHD_REQ) String() string            { return proto.CompactTextString(m) }
 func (*CLEAN_BET_LHD_REQ) ProtoMessage()               {}
-func (*CLEAN_BET_LHD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{12} }
+func (*CLEAN_BET_LHD_REQ) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{12} }
 
 func (m *CLEAN_BET_LHD_REQ) GetAccountID() uint32 {
 	if m != nil {
@@ -537,7 +537,7 @@ type CLEAN_BET_LHD_RES struct {
 func (m *CLEAN_BET_LHD_RES) Reset()                    { *m = CLEAN_BET_LHD_RES{} }
 func (m *CLEAN_BET_LHD_RES) String() string            { return proto.CompactTextString(m) }
 func (*CLEAN_BET_LHD_RES) ProtoMessage()               {}
-func (*CLEAN_BET_LHD_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{13} }
+func (*CLEAN_BET_LHD_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{13} }
 
 func (m *CLEAN_BET_LHD_RES) GetAccountID() uint32 {
 	if m != nil {
@@ -568,7 +568,7 @@ type PLAYERS_LHD_LIST_RES struct {
 func (m *PLAYERS_LHD_LIST_RES) Reset()                    { *m = PLAYERS_LHD_LIST_RES{} }
 func (m *PLAYERS_LHD_LIST_RES) String() string            { return proto.CompactTextString(m) }
 func (*PLAYERS_LHD_LIST_RES) ProtoMessage()               {}
-func (*PLAYERS_LHD_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{14} }
+func (*PLAYERS_LHD_LIST_RES) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{14} }
 
 func (m *PLAYERS_LHD_LIST_RES) GetPlayers() []*AccountStorageData {
 	if m != nil {
@@ -600,9 +600,9 @@ func init() {
 	proto.RegisterEnum("protomsg.LHDGAMESTATUS", LHDGAMESTATUS_name, LHDGAMESTATUS_value)
 }
 
-func init() { proto.RegisterFile("protobuf/lhd.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("protobuf/lhd.proto", fileDescriptor6) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor6 = []byte{
 	// 1074 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x56, 0xdd, 0x72, 0xdb, 0x44,
 	0x14, 0xae, 0x24, 0xc7, 0x69, 0x8f, 0x63, 0x67, 0xb3, 0xf9, 0x33, 0xa6, 0x50, 0x8f, 0x4b, 0x18,

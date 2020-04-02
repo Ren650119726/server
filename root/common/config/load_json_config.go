@@ -65,7 +65,7 @@ func Get_config(table string) Config_map {
 	defer lock.RUnlock()
 	tb, e := Config_Data[table]
 	if !e {
-		log.Panicf("找不到配置文件:%v", table)
+		log.Panicf("找不到配置文件:%v ", table)
 		return nil
 	}
 	return tb
