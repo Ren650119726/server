@@ -16,6 +16,7 @@ type (
 		*protomsg.AccountGameData
 		SessionId int64
 		FeeCount  int32
+		FeeProfit int64
 		LastBet   uint64
 		Forbid bool
 	}

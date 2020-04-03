@@ -50,6 +50,7 @@ message ENTER_GAME_LUCKFRUIT_RES {
 	int64 LastBet                   = 4; // 最后一次压住
 	repeated uint64 Bets 		 	= 5; // 可以选择的押注金额
 	int32 FeeCount                  = 8; // 免费次数
+	int64 FeeProfit                 = 9; // 免费次数盈利值
 }
 
 
@@ -79,6 +80,7 @@ message START_LUCKFRUIT_RES {
 	int64 Money                       = 6; // 身上的钱
 	int64 FreeCount                   = 7; // 获得免费次数
 	repeated LUCKFRUIT_position FeePositions = 8; //中免费的坐标
+	int64 FeeProfit                   = 9; // 免费游戏获得盈利
 }
 
 message LUCKFRUIT_position{

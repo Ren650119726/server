@@ -37,8 +37,8 @@ enum S777ID {
 	S77711	    = 11; // J
 	S77712      = 12; // 10
 	S77713	    = 13; // 9
-
 }
+
 // 请求进入房间
 message ENTER_GAME_S777_REQ {
 	uint32 AccountID = 1;// 

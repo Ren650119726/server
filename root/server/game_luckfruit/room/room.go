@@ -159,12 +159,13 @@ func (self *Room) enterRoom(accountId uint32) {
 
 	// 通知玩家进入游戏
 	send_tools.Send2Account(protomsg.LUCKFRUITMSG_SC_ENTER_GAME_LUCKFRUIT_RES.UInt16(), &protomsg.ENTER_GAME_LUCKFRUIT_RES{
-		RoomID:   self.roomId,
-		Basics:   self.basics,
-		Bonus:    self.bonus,
-		LastBet:  int64(acc.LastBet),
-		Bets:     self.bets,
-		FeeCount: acc.FeeCount,
+		RoomID:    self.roomId,
+		Basics:    self.basics,
+		Bonus:     self.bonus,
+		LastBet:   int64(acc.LastBet),
+		Bets:      self.bets,
+		FeeCount:  acc.FeeCount,
+		FeeProfit: acc.FeeProfit,
 	}, acc.SessionId)
 
 	pc, rc := self.countStatis()
