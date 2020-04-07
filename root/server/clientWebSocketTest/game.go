@@ -23,6 +23,7 @@ type (
 var count = 0
 var fee = 0
 var total = 0
+var retmap = make(map[int]int)
 
 func NewGame() *Game {
 	return &Game{}
@@ -33,7 +34,7 @@ var game_GLobal *Client
 func (self *Game) Init(actor *core.Actor) bool {
 	self.owner = actor
 
-	game_GLobal = NewWebsocketClient(addr+":41701", "/connect")
+	game_GLobal = NewWebsocketClient(addr+":41801", "/connect")
 	game_GLobal.connect()
 	if game_GLobal.ws == nil {
 		log.Printf("connect faild \r\n")
@@ -60,7 +61,7 @@ func (self *Game) Init(actor *core.Actor) bool {
 		}
 	}()
 
-	Send2Game(protomsg.LHDMSG_CS_ENTER_GAME_LHD_REQ.UInt16(), &protomsg.ENTER_GAME_LHD_REQ{
+	Send2Game(protomsg.S777MSG_CS_ENTER_GAME_S777_REQ.UInt16(), &protomsg.ENTER_GAME_S777_REQ{
 		AccountID: AccountID,
 		RoomID:    self.roomID,
 	})
@@ -110,13 +111,24 @@ func (self *Game) Stop() {
 func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
 	switch pack.GetMsgID() {
-	case protomsg.LHDMSG_SC_ENTER_GAME_LHD_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_GAME_LHD_RES{}).(*protomsg.ENTER_GAME_LHD_RES)
+	case protomsg.S777MSG_SC_ENTER_GAME_S777_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_GAME_S777_RES{}).(*protomsg.ENTER_GAME_S777_RES)
 		log.Infof(colorized.Blue("进入游戏成功：%+v"), pb)
 
-	case protomsg.LHDMSG_SC_BET_LHD_RES.UInt16():
-		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.BET_LHD_RES{}).(*protomsg.BET_LHD_RES)
-		log.Infof(colorized.Blue("押注成功：%+v"), pb)
+	case protomsg.S777MSG_SC_START_S777_RES.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.START_S777_RES{}).(*protomsg.START_S777_RES)
+		//log.Infof(colorized.Blue("押注成功：%+v"), pb)
+		retmap[int(pb.Id)] = retmap[int(pb.Id)] + 1
+		if pb.TotalOdds != 0 {
+			total++
+		}
+
+		count--
+		if count > 0 {
+			Send2Game(protomsg.S777MSG_CS_START_S777_REQ.UInt16(), &protomsg.START_S777_REQ{Bet: uint64(1000)})
+		} else {
+			log.Infof(colorized.Blue("身上钱：%v retmap:%v total:%v"), pb.Money, retmap, total)
+		}
 	}
 	return true
 }

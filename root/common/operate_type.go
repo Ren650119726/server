@@ -25,6 +25,8 @@ const (
 	EOperateType_LHD_WIN                          = 34 // 龙虎斗 赢的钱
 	EOperateType_LHD_BET                          = 35 // 龙虎斗 押注扣除金币
 	EOperateType_LHD_BET_CLEAN                    = 36 // 龙虎斗 押注清除
+	EOperateType_S777_WIN                         = 37 // 777 赢钱
+	EOperateType_S777_BET                         = 38 // 777 押注
 
 )
 
@@ -49,6 +51,8 @@ var typeStringify_operate = map[EOperateType]string{
 	EOperateType_RED2BLACK_BET_CLEAN: "RED2BLACK_BET_CLEAN", // 红黑大战 押注清除
 	EOperateType_LHD_WIN:             "LHD_WIN",             // 龙虎斗 赢的钱
 	EOperateType_LHD_BET_CLEAN:       "LHD_BET_CLEAN",       // 龙虎斗 押注清除
+	EOperateType_S777_WIN:            "777_WIN",             // 777 赢钱
+	EOperateType_S777_BET:            "777_BET",             // 777 押注
 }
 
 func (e EOperateType) String() string {

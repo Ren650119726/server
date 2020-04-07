@@ -21,22 +21,27 @@ enum S777MSG {
 	SC_PLAYERS_S777_LIST_RES    = 18016;
 }
 
-// 游戏1 图案枚举
+// 1-3槽 图案枚举
 enum S777ID {
 	S777Unknow  = 0;
-	S7771       = 1; // 福字
-	S7772       = 2; // 铜锣
-	S7773       = 3; // 金鸟
-	S7774       = 4; // 帆船
-	S7775       = 5; // 金龟
-	S7776       = 6; // 元宝
-	S7777       = 7; // 通宝
-	S7778       = 8; // A
-	S7779       = 9; // K
-	S77710      = 10; // Q
-	S77711	    = 11; // J
-	S77712      = 12; // 10
-	S77713	    = 13; // 9
+	S7771       = 1; // 大Bar
+	S7772       = 2; // 小Bar
+	S7773       = 3; // 77
+	S7774       = 4; // 西瓜
+	S7775       = 5; // 芒果
+	S7776       = 6; // 橘子
+	S7777       = 7; // 苹果
+}
+
+// 4槽 图案枚举
+enum JackPotID {
+	JackPotUnknow  = 0;
+	JackPot1       = 1; //Jackpot
+	JackPot2       = 2; //X1
+	JackPot3       = 3; //X2
+	JackPot4       = 4; //X4
+	JackPot5       = 5; //X10
+	JackPot6       = 6; //X25
 }
 
 // 请求进入房间
@@ -46,19 +51,11 @@ message ENTER_GAME_S777_REQ {
 }
 
 message ENTER_GAME_S777_RES {
-	message S777Ratio {
-		S777ID ID    = 1;
-		int32 Same_3 = 4; // 三连赔率
-		int32 Same_4 = 5; // 四连赔率
-		int32 Same_5 = 6; // 五连赔率
-	}
 	uint32 RoomID 	    		 	= 1; // 房间ID
 	int64 Basics        		 	= 2; // 基础金额
 	map<int32, int64> Bonus         = 3; // key 等级  val 奖池
 	int64 LastBet                   = 4; // 最后一次压住
 	repeated uint64 Bets 		 	= 5; // 可以选择的押注金额
-	map<int32, S777Ratio> Ratio    = 6; //  图案连续赔率
-	int32 FeeCount                  = 8; // 免费次数
 }
 
 // 请求退出房间
@@ -80,12 +77,11 @@ message START_S777_REQ {
 
 message START_S777_RES {
 	uint64 Ret 						  = 1; // 0成功
-	repeated int32 PictureList        = 2; // 图形列表( [0-14] 即15个图形)
+	repeated int32 PictureList        = 2; // 图形列表( [0-9] 即9个图形)
 	map<int32, int64> Bonus           = 3; // 水池盈利 (key级别 vale盈利)
 	int64 Money                       = 4; // 身上的钱
 	int64 TotalOdds                   = 5; // 总赔率
-	int64 FreeCount                   = 6; // 获得免费次数
-	repeated S777_position Shows      = 7; // 中奖需要展示的坐标
+	JackPotID id                      = 7; // 第四个槽的id
 }
 
 message S777_position{
@@ -101,5 +97,5 @@ message UPDATE_S777_BONUS{
 
 // 请求S777玩家列表
 message PLAYERS_S777_LIST_RES{
-   repeated AccountStorageData players = 1; // 房间捏所有的玩家
+   repeated AccountStorageData players = 1; // 房间所有的玩家
 }

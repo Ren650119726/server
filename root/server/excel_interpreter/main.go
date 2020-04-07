@@ -17,6 +17,7 @@ import (
 )
 
 const sheet = "s1"
+
 type jsonMap map[string]interface{}
 
 func main() {
@@ -25,18 +26,18 @@ func main() {
 	outputstr := beego.AppConfig.DefaultString("CONF::Output_path", "C:/Users/wwj/Desktop/server/root/config/")
 	fmt.Println("输出目录:", outputstr)
 	inputs := strings.Split(inputstr, " ")
-	for _,v := range inputs{
+	for _, v := range inputs {
 		fmt.Println("输入目录:", v)
 	}
 	time := time.Now().Format(utils.STD_NUMBER_FORMAT)
 
 	// 打包并删除旧文件
-	if !compressZIP(outputstr,time){
+	if !compressZIP(outputstr, time) {
 		return
 	}
 
 	// 生成新文件
-	for _,input := range inputs{
+	for _, input := range inputs {
 		dir_list, e := ioutil.ReadDir(input)
 		if e != nil {
 			fmt.Println("read dir error")
@@ -47,10 +48,10 @@ func main() {
 			ret := regexp.MustCompile(`xlsx`).FindStringIndex(filename.Name())
 			if ret != nil {
 				name := input + "/" + filename.Name()
-				jsonname := filename.Name()[:ret[0]-1] +"_"+ time + ".json"
+				jsonname := filename.Name()[:ret[0]-1] + "_" + time + ".json"
 				outjson := outputstr + "/" + jsonname
 				transform2json(name, outjson)
-				fmt.Printf("解析文件:%-70v %-30v\n",name,jsonname)
+				fmt.Printf("解析文件:%-70v %-30v\n", name, jsonname)
 			} else {
 				//fmt.Println("igrone:",filename.Name())
 				continue
@@ -59,7 +60,7 @@ func main() {
 	}
 }
 
-func transform2json(dirFile string, out string){
+func transform2json(dirFile string, out string) {
 	xls, err := excelize.OpenFile(dirFile)
 	if err != nil {
 		fmt.Println(err)
@@ -85,7 +86,6 @@ func transform2json(dirFile string, out string){
 		}
 		return string(c)
 	}
-
 
 	dataRow := 5 // 数据段从第5行开始
 	for {
@@ -118,7 +118,7 @@ func transform2json(dirFile string, out string){
 			if t == "int" {
 				iv, e := strconv.Atoi(v)
 				if e != nil {
-					e := errors.New(fmt.Sprint("行:[%v] 列:[%v] 值:[%v] 类型不是int 请检查", dataRow, line, v))
+					e := errors.New(fmt.Sprintf("行:[%v] 列:[%v] 值:[%v] 类型不是int 请检查表:%v", dataRow, line, v, dirFile))
 					panic(e)
 				}
 				jsonmap[key][n] = iv
@@ -134,26 +134,26 @@ func transform2json(dirFile string, out string){
 	return
 }
 
-func compressZIP(outputPath,time string) bool {
+func compressZIP(outputPath, time string) bool {
 	// 先将旧文件打包保存，在生成新文件
 	dir_list, e := ioutil.ReadDir(outputPath)
 	if e != nil {
 		fmt.Println("read dir error")
 		return false
 	}
-	for i := len(dir_list)-1;i >=0;i--{
+	for i := len(dir_list) - 1; i >= 0; i-- {
 		if !strings.Contains(dir_list[i].Name(), "json") {
-			dir_list = append(dir_list[:i],dir_list[i+1:]...)
+			dir_list = append(dir_list[:i], dir_list[i+1:]...)
 		}
 	}
-	if len(dir_list) == 0{
+	if len(dir_list) == 0 {
 		return true
 	}
 	// 打包旧文件
-	file_zip := outputPath +fmt.Sprintf("config_%v.zip",time)
+	file_zip := outputPath + fmt.Sprintf("config_%v.zip", time)
 	fzip, e := os.Create(file_zip)
 	if e != nil {
-		fmt.Println("文件打开失败:",file_zip)
+		fmt.Println("文件打开失败:", file_zip)
 		return false
 	}
 	w := zip.NewWriter(fzip)
@@ -164,7 +164,7 @@ func compressZIP(outputPath,time string) bool {
 
 	}()
 
-	for _,file := range dir_list{
+	for _, file := range dir_list {
 		if strings.Contains(file.Name(), "json") {
 			fw, err := w.Create(file.Name())
 			if err != nil {

@@ -18,11 +18,11 @@ func (self *Room) updateRobot(dt int64) {
 				}
 				val += self.bets[randbetindex]
 				if utils.Probability(50) {
-					acc.AddMoney(-int64(val), common.EOperateType_DFDC_BET)
+					acc.AddMoney(-int64(val), common.EOperateType_S777_BET)
 				} else if utils.Probability(80) {
-					acc.AddMoney(int64(val), common.EOperateType_DFDC_WIN)
+					acc.AddMoney(int64(val), common.EOperateType_S777_WIN)
 				} else {
-					acc.AddMoney(int64(val*uint64(utils.Randx_y(2, 4))), common.EOperateType_DFDC_WIN)
+					acc.AddMoney(int64(val*uint64(utils.Randx_y(2, 4))), common.EOperateType_S777_WIN)
 				}
 			}
 			if acc.GetMoney() < self.bets[0] {

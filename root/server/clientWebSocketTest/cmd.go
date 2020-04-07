@@ -75,17 +75,9 @@ func start1(s []string) {
 	if c == 0 {
 		c = 1
 	}
+	count = c
 	log.Infof("请求开始:%v", c)
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
-	Send2Game(protomsg.LHDMSG_CS_BET_LHD_REQ.UInt16(), &protomsg.BET_LHD_REQ{Area: protomsg.LHDAREA(c), Bet: uint64(bet)})
+	Send2Game(protomsg.S777MSG_CS_START_S777_REQ.UInt16(), &protomsg.START_S777_REQ{Bet: uint64(bet)})
 
 }
 func show(s []string) {

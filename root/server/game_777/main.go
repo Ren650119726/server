@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// 创建server
-	hb := logic.NewDFDC()
+	hb := logic.NewS777()
 	msgchan := make(chan core.IMessage, 10000)
 	actor := core.NewActor(common.EActorType_MAIN.Int32(), hb, msgchan)
 	core.CoreRegisteActor(actor)

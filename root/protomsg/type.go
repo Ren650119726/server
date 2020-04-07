@@ -27,3 +27,7 @@ func (self RED2BLACKMSG) UInt16() uint16 {
 func (self LHDMSG) UInt16() uint16 {
 	return uint16(self)
 }
+
+func (self S777MSG) UInt16() uint16 {
+	return uint16(self)
+}

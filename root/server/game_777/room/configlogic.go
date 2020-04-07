@@ -6,8 +6,8 @@ import (
 	"math/rand"
 	"root/common/config"
 	"root/core/log"
+	"root/core/log/colorized"
 	"root/core/utils"
-	"root/protomsg"
 	"sort"
 	"time"
 )
@@ -18,6 +18,18 @@ type (
 		cfPosition int   //图案位置
 		ids        []int //图案id列表
 	}
+
+	// 图案中奖
+	BingoPicture struct {
+		ID   int
+		Odds int
+	}
+
+	// 大奖翻倍信息
+	bigWinConf struct {
+		weight int
+		odds   int
+	}
 )
 
 func (self *Room) LoadConfig() {
@@ -25,24 +37,9 @@ func (self *Room) LoadConfig() {
 	self.bets = utils.SplitConf2ArrUInt64(bets_conf)
 	self.addr_url = beego.AppConfig.DefaultString("DEF::setuserinfo", "")
 	self.Conf_JackpotBet = int64(config.Get_configInt("777_room", int(self.roomId), "JackpotBet"))
-	self.Conf_Bet_Probability = int64(config.Get_configInt("777_room", int(self.roomId), "Bet_Probability"))
+	self.mainWheel, _ = initWheel(int64(config.Get_configInt("777_room", int(self.roomId), "Real")))
 
-	self.mapPictureNodes = make(map[int32]*protomsg.ENTER_GAME_DFDC_RES_DfdcRatio)
-	for _, id := range protomsg.DFDCID_value {
-		if id == 0 {
-			continue
-		}
-		self.mapPictureNodes[id] = &protomsg.ENTER_GAME_DFDC_RES_DfdcRatio{
-			ID:     protomsg.DFDCID(id),
-			Same_3: int32(config.Get_configInt("777_pattern", int(id), "Odds3")),
-			Same_4: int32(config.Get_configInt("777_pattern", int(id), "Odds4")),
-			Same_5: int32(config.Get_configInt("777_pattern", int(id), "Odds5")),
-		}
-	}
-
-	self.mainWheel, self.freeWheel = initWheel(int64(config.Get_configInt("777_room", int(self.roomId), "Real")))
-
-	self.bonusRatio = make([][]int32, 0)
+	self.bonus_jackpot_conf = make(map[int32]int)
 	conf := config.Get_config("777_jackpot")
 	group := config.Get_configInt("777_room", int(self.roomId), "Real")
 	for id, _ := range conf {
@@ -50,12 +47,37 @@ func (self *Room) LoadConfig() {
 			continue
 		}
 		lv := config.Get_configInt("777_jackpot", id, "Level")
-		ratio := config.Get_configInt("777_jackpot", id, "Reward_Probability")
 		initGold := int64(config.Get_configInt("777_jackpot", id, "Gold"))
-		self.bonus[int32(lv)] = initGold
+		rewardID := int32(config.Get_configInt("777_jackpot", id, "Reward_id"))
+		self.bonus[int32(lv)] = 0
 		self.bounsInitGold[int32(lv)] = initGold
-		self.bonusRatio = append(self.bonusRatio, []int32{int32(lv), int32(ratio)})
 		self.bounsRoller[int32(lv)] = int64(config.Get_configInt("777_jackpot", id, "Roller_Rate"))
+		self.bonus_jackpot_conf[rewardID] = lv
+	}
+
+	self.bingoPictureID = make(map[int]*BingoPicture)
+	reward := config.Get_config("777_reward")
+	for id, _ := range reward {
+		n := &BingoPicture{
+			ID:   id,
+			Odds: config.Get_configInt("777_reward", id, "Odds"),
+		}
+		real := config.Get_configInt("777_reward", id, "Real")
+		self.bingoPictureID[real] = n
+	}
+
+	self.multiple_conf = make(map[int]*bigWinConf)
+	bigWin := config.Get_config("777_multiple")
+	for id, _ := range bigWin {
+		n := &bigWinConf{
+			weight: config.Get_configInt("777_multiple", id, "Point"),
+			odds:   config.Get_configInt("777_multiple", id, "Multiple"),
+		}
+		self.multiple_conf[id] = n
+	}
+	self.multipleWeightArr = make([][]int32, 0)
+	for k, v := range self.multiple_conf {
+		self.multipleWeightArr = append(self.multipleWeightArr, []int32{int32(k), int32(v.weight)})
 	}
 	log.Infof("房间:%v 配置加载完成", self.roomId)
 }
@@ -71,7 +93,7 @@ func initWheel(group int64) (main, free []*wheelNode) {
 		node := new(wheelNode)
 		node.cfPosition = config.Get_configInt("777_real", id, "Site")
 		if node.cfPosition > 0 {
-			for i := 1; i <= 5; i++ {
+			for i := 1; i <= 3; i++ {
 				value := config.Get_configInt("777_real", id, fmt.Sprintf("Real%v", i))
 				node.ids = append(node.ids, value)
 			}
@@ -91,58 +113,15 @@ func initWheel(group int64) (main, free []*wheelNode) {
 	return main, free
 }
 
-// 图案id 连续个数
-// 返回 赔率,免费次数
-func (self *Room) getOddsByPictureId(cfId int32, count int) (int32, int32) {
-	odds := int32(0)
-	fee := int32(0)
-
-	pPic := self.mapPictureNodes[cfId]
-	if nil == pPic {
-		log.Errorf("配置解析错误 函数:getOddsByPictureId cfId:%d", cfId)
-		return 0, 0
-	}
-	switch count {
-	case 3:
-		{
-			odds = pPic.Same_3
-			fee = int32(config.Get_configInt("777_pattern", int(cfId), "Free3"))
-			break
-		}
-	case 4:
-		{
-			odds = pPic.Same_4
-			fee = int32(config.Get_configInt("777_pattern", int(cfId), "Free4"))
-			break
-		}
-	case 5:
-		{
-			odds = pPic.Same_5
-			fee = int32(config.Get_configInt("777_pattern", int(cfId), "Free5"))
-			break
-		}
-	default:
-		{
-			break
-		}
-	}
-	return odds, fee
-}
-
 /**
 该函数用于在轮轴列表中选出15个点，并且判断每条线的倍率已经总的免费次数
 input: @nodes 选择的轮轴列表
 return:
-	@ args[0] awardResluts 中奖列表
 	@ args[0] []int32 图案一维数组
-	@ args[1] int 增加的免费次数
-	@ args[2] float32 总倍数
-	@ args[2] int 小玛利连续次数
 	@ args[3] 中奖总倍数
-	@ args[4] 获得大奖的数量
 */
-//picA, freeCount, int64(sumOdds), reward,pos
-func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32, freeCount int, sumOdds int64, showPos []*protomsg.DFDCPosition) {
+//picA, int64(sumOdds), reward,pos
+func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32, sumOdds int64, bigwinID int32, lv int) {
 	rand.Seed(time.Now().UnixNano() + int64(rand.Int31n(int32(10000))))
 	// 随机一个索引x 组成一个集合 [x-1,x,x+1]
 	f := func() [3]int {
@@ -164,76 +143,49 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32, f
 		return a
 	}
 
-	//选出所有的图案id 组成3*5的图
-	var coordinate [3][5]int
-	for i := 0; i < 5; i++ {
-		c := f()
-		coordinate[0][i] = int(self.mapPictureNodes[int32(nodes[c[0]].ids[i])].ID)
-		coordinate[1][i] = int(self.mapPictureNodes[int32(nodes[c[1]].ids[i])].ID)
-		coordinate[2][i] = int(self.mapPictureNodes[int32(nodes[c[2]].ids[i])].ID)
-	}
-
-	resultMap := make(map[int][]int)
-	tempPos := make(map[int][]*protomsg.DFDCPosition, 0)
+	//选出所有的图案id 组成3*3的图
+	var coordinate [3][3]int
 	for i := 0; i < 3; i++ {
-		val := coordinate[i][0] // 获得第一列的图案
-		if val == 1 {
-			log.Panicf("第一列出现了福字，请策划检查:%v", coordinate)
-		}
-		arr, e := resultMap[val]
-		if !e {
-			resultMap[val] = []int{1, 0, 0, 0, 0}
-		} else {
-			arr[0]++
-		}
-		tempPos[val] = append(tempPos[val], &protomsg.DFDCPosition{Px: int32(i), Py: 0})
+		c := f()
+		coordinate[0][i] = nodes[c[0]].ids[i]
+		coordinate[1][i] = nodes[c[1]].ids[i]
+		coordinate[2][i] = nodes[c[2]].ids[i]
 	}
-
-	for val, arr := range resultMap {
-		totalline := arr[0]
-		continous := 1
-
-		// 遍历后4列，统计图案出现数量
-		for y := 1; y < 5; y++ {
-			// 遍历每一列的值
-			for x := 0; x < 3; x++ {
-				if cv := coordinate[x][y]; cv == val || cv == 1 {
-					arr[y]++
-					tempPos[val] = append(tempPos[val], &protomsg.DFDCPosition{Px: int32(x), Py: int32(y)})
-				}
-			}
-			if arr[y] != 0 {
-				totalline *= arr[y]
-				continous++
-			} else {
-				break
-			}
-		}
-
-		if continous <= 2 {
-			continue
-		}
-
-		showPos = append(showPos, tempPos[val]...)
-		odds, free := self.getOddsByPictureId(int32(val), continous)
-		sumOdds += int64(odds) * int64(totalline)
-		freeCount += int(free)
-		//if odds > 0 {
-		//	log.Infof("图案:%v 最大连数:%v 赔率:%v totalline:%v fee:%v arr:%v pos:%+v",val,continous,odds,totalline,free,arr,tempPos[val])
-		//}
-	}
-	//if sumOdds > 0 {
-	//	for i:=0;i < 3;i++{
-	//		log.Infof("%v", coordinate[i])
-	//	}
-	//}
 
 	picA = make([]int32, 0)
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 3; i++ {
 		picA = append(picA, int32(coordinate[0][i]))
 		picA = append(picA, int32(coordinate[1][i]))
 		picA = append(picA, int32(coordinate[2][i]))
 	}
 
-	return picA, freeCount, sumOdds, showPos
+	realID := 100*coordinate[1][0] + 10*coordinate[1][1] + coordinate[1][2]
+	realID0 := 100*coordinate[1][0] + 10*coordinate[1][1]
+	rewardID := 0
+	if reword, e := self.bingoPictureID[realID]; e {
+		sumOdds = int64(reword.Odds)
+		rewardID = reword.ID
+	} else if reword, e := self.bingoPictureID[realID0]; e {
+		sumOdds = int64(reword.Odds)
+		rewardID = reword.ID
+	}
+
+	// 随机第四个图案
+	index := utils.RandomWeight32(self.multipleWeightArr, 1)
+	bigwinID = self.multipleWeightArr[index][0]
+	sumOdds *= int64(self.multiple_conf[int(bigwinID)].odds)
+
+	jackpotLv := 0
+	if bigwinID == 1 {
+		lv, e := self.bonus_jackpot_conf[int32(rewardID)]
+		if e {
+			jackpotLv = lv
+			log.Infof("中jackpot %v", rewardID)
+		}
+	}
+
+	if sumOdds != 0 {
+		log.Infof(colorized.Blue("中奖:%v %v realID:%v odds:%v"), coordinate[1], bigwinID, realID, sumOdds)
+	}
+	return picA, sumOdds, bigwinID, jackpotLv
 }

@@ -20,18 +20,18 @@ import (
 )
 
 type (
-	DFDC struct {
+	S777 struct {
 		owner *core.Actor
 		init  bool // 是否是第一次启动程序
 		close bool // 关服
 	}
 )
 
-func NewDFDC() *DFDC {
-	return &DFDC{}
+func NewS777() *S777 {
+	return &S777{}
 }
 
-func (self *DFDC) Init(actor *core.Actor) bool {
+func (self *S777) Init(actor *core.Actor) bool {
 	// 先处理脚本
 	if core.ScriptDir != "" {
 		core.InitScript(core.ScriptDir)
@@ -51,7 +51,7 @@ func (self *DFDC) Init(actor *core.Actor) bool {
 }
 
 // 向hall注册
-func (self *DFDC) registerHall() {
+func (self *S777) registerHall() {
 	// 发送注册消息登记自身信息
 	sid, _ := strconv.Atoi(core.Appname)
 	count := uint32(room.RoomMgr.RoomCount())
@@ -75,7 +75,7 @@ func (self *DFDC) registerHall() {
 	self.init = true
 }
 
-func (self *DFDC) StartService() {
+func (self *S777) StartService() {
 	// 监听端口，客户端连接用
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
@@ -85,11 +85,11 @@ func (self *DFDC) StartService() {
 	core.CoreRegisteActor(room.ServerActor)
 }
 
-func (self *DFDC) Stop() {
+func (self *S777) Stop() {
 
 }
 
-func (self *DFDC) HandleMessage(actor int32, msg []byte, session int64) bool {
+func (self *S777) HandleMessage(actor int32, msg []byte, session int64) bool {
 	if self.close {
 		return true
 	}
@@ -115,8 +115,8 @@ func (self *DFDC) HandleMessage(actor int32, msg []byte, session int64) bool {
 		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
 		self.SERVERMSG_HG_PLAYER_DATA_REQ(actor, pack.ReadBytes(), session)
-	case protomsg.DFDCMSG_CS_ENTER_GAME_DFDC_REQ.UInt16(): // 请求进入房间
-		actor := self.DFDCMSG_CS_ENTER_GAME_DFDC_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.S777MSG_CS_ENTER_GAME_S777_REQ.UInt16(): // 请求进入房间
+		actor := self.S777MSG_CS_ENTER_GAME_S777_REQ(actor, pack.ReadBytes(), session)
 		core.CoreSend(self.owner.Id, actor, msg, session)
 	case inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16(): // 大厅返回水池金额
 		data := packet.PBUnmarshal(pack.ReadBytes(), &inner.ROOM_BONUS_RES{}).(*inner.ROOM_BONUS_RES)
