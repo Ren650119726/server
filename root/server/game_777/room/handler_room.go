@@ -83,6 +83,7 @@ func (self *Room) S777MSG_CS_START_S777_REQ(actor int32, msg []byte, session int
 		if BetNum >= uint64(self.Conf_JackpotBet) && jackpotlv != 0 {
 			jackpotval = self.bonus[int32(jackpotlv)]
 			jackpotval += self.bounsInitGold[int32(jackpotlv)] * int64(BetNum)
+			msgBouns[int32(jackpotlv)] = jackpotval
 			val += jackpotval
 			self.bonus[int32(jackpotlv)] = 0
 			log.Infof("中奖池 lv:%v val:%v 奖池初始化:%v ", jackpotlv, jackpotval, self.bonus[int32(jackpotlv)])

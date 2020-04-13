@@ -13,6 +13,7 @@ const (
 	EGameTypeRED2BLACK EGameType = 6 // 红黑大战
 	EGameTypeLHD       EGameType = 7 // 龙虎斗
 	EGameType777       EGameType = 8 // 777
+	EGameTypeHONGBAO   EGameType = 9 // 红包
 
 )
 
@@ -26,18 +27,20 @@ var GameTypeByID = map[EGameType]string{
 	EGameTypeRED2BLACK: "红黑大战",
 	EGameTypeLHD:       "龙虎斗",
 	EGameType777:       "777",
+	EGameTypeHONGBAO:   "HONGBAO",
 }
 
 var GameTypeByString = map[string]EGameType{
-	"大厅":    EGameTypeNIL,
-	"捕鱼":    EGameTypeCATCHFISH,
-	"水果小玛丽": EGameTypeFRUITMARY,
-	"多福多财":  EGameTypeDFDC,
-	"金瓶梅":   EGameTypeJPM,
-	"幸运水果机": EGameTypeLUCKFRUIT,
-	"红黑大战":  EGameTypeRED2BLACK,
-	"龙虎斗":   EGameTypeLHD,
-	"777":   EGameType777,
+	"大厅":      EGameTypeNIL,
+	"捕鱼":      EGameTypeCATCHFISH,
+	"水果小玛丽":   EGameTypeFRUITMARY,
+	"多福多财":    EGameTypeDFDC,
+	"金瓶梅":     EGameTypeJPM,
+	"幸运水果机":   EGameTypeLUCKFRUIT,
+	"红黑大战":    EGameTypeRED2BLACK,
+	"龙虎斗":     EGameTypeLHD,
+	"777":     EGameType777,
+	"HONGBAO": EGameTypeHONGBAO,
 }
 
 func (e EGameType) String() string {

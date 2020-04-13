@@ -13,25 +13,25 @@ import (
 	"root/core/packet"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_hongbao/account"
-	"root/server/game_hongbao/room"
-	"root/server/game_hongbao/send_tools"
+	"root/server/game_jpm/account"
+	"root/server/game_jpm/room"
+	"root/server/game_jpm/send_tools"
 	"strconv"
 )
 
 type (
-	jpm struct {
+	hongbao struct {
 		owner *core.Actor
 		init  bool // 是否是第一次启动程序
 		close bool // 关服
 	}
 )
 
-func Newjpm() *jpm {
-	return &jpm{}
+func Newhongbao() *hongbao {
+	return &hongbao{}
 }
 
-func (self *jpm) Init(actor *core.Actor) bool {
+func (self *hongbao) Init(actor *core.Actor) bool {
 	// 先处理脚本
 	if core.ScriptDir != "" {
 		core.InitScript(core.ScriptDir)
@@ -51,7 +51,7 @@ func (self *jpm) Init(actor *core.Actor) bool {
 }
 
 // 向hall注册
-func (self *jpm) registerHall() {
+func (self *hongbao) registerHall() {
 	// 发送注册消息登记自身信息
 	sid, _ := strconv.Atoi(core.Appname)
 	count := uint32(room.RoomMgr.RoomCount())
@@ -75,7 +75,7 @@ func (self *jpm) registerHall() {
 	self.init = true
 }
 
-func (self *jpm) StartService() {
+func (self *hongbao) StartService() {
 	// 监听端口，客户端连接用
 	var customer []*core.Actor
 	customer = append(customer, self.owner)
@@ -85,11 +85,11 @@ func (self *jpm) StartService() {
 	core.CoreRegisteActor(room.ServerActor)
 }
 
-func (self *jpm) Stop() {
+func (self *hongbao) Stop() {
 
 }
 
-func (self *jpm) HandleMessage(actor int32, msg []byte, session int64) bool {
+func (self *hongbao) HandleMessage(actor int32, msg []byte, session int64) bool {
 	if self.close {
 		return true
 	}

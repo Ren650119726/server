@@ -6,7 +6,7 @@ import (
 	"root/core/log"
 	"root/core/packet"
 	"root/protomsg/inner"
-	"root/server/game_hongbao/send_tools"
+	"root/server/game_jpm/send_tools"
 	"strconv"
 )
 
@@ -62,7 +62,7 @@ func (self *roomMgr) CreateRoom(id uint32) {
 	room := NewRoom(id)
 	self.Rooms[id] = id
 	if id < 1000 {
-		log.Panicf("房间ID 不能小于1000 id:%v jsonParam:%v", id)
+		log.Panicf("房间ID 不能小于1000 id:%v", id)
 	}
 	core.CoreRegisteActor(core.NewActor(int32(id), room, make(chan core.IMessage, 5000)))
 	conf := config.Get_config("jpm_room")

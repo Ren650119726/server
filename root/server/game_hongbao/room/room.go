@@ -10,30 +10,25 @@ import (
 	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_hongbao/account"
-	"root/server/game_hongbao/send_tools"
+	"root/server/game_jpm/account"
+	"root/server/game_jpm/send_tools"
 )
 
 type (
 	Room struct {
 		owner    *core.Actor
-		status   *utils.FSM
 		roomId   uint32
 		accounts map[uint32]*account.Account // 进房间的所有人
 		Close    bool
 		bonus    int64 // 奖金池
 
-		bets            []uint64
-		basics          int64  // 奖金池 中将的基础金额系数
-		jackpotRate     uint64 // 滚动率
-		mapPictureNodes map[int]*pictureNode
-		jackLimit       int64
-		lineConf        [][5]int
-		mainWheel       []*wheelNode
-		freeWheel       []*wheelNode
-		JPMWheel        []*wheelNode
-		bonus_pattern   map[int]int
-		addr_url        string
+		bets          []uint64
+		basics        int64  // 奖金池 中将的基础金额系数
+		jackpotRate   uint64 // 滚动率
+		jackLimit     int64
+		lineConf      [][5]int
+		bonus_pattern map[int]int
+		addr_url      string
 	}
 )
 
@@ -47,12 +42,7 @@ func NewRoom(id uint32) *Room {
 
 func (self *Room) Init(actor *core.Actor) bool {
 	self.owner = actor
-	self.status = utils.NewFSM()
-	self.status.Add(ERoomStatus_GAME.Int32(), &game{Room: self, s: ERoomStatus_GAME})
-
-	self.switchStatus(0, ERoomStatus_GAME)
 	// 200ms 更新一次
-	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*0.2, -1, self.update)
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*3, -1, self.updateRobot)
 
 	self.LoadConfig()
@@ -98,23 +88,8 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.JPMMSG_CS_START_JPM_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.JPMMSG_CS_PLAYERS_JPM_LIST_REQ.UInt16(): // 请求玩家列表
 		self.JPMMSG_CS_PLAYERS_JPM_LIST_REQ(actor, pack.ReadBytes(), session)
-	case inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16(): // 水池金额
-		self.SERVERMSG_HG_ROOM_BONUS_RES(actor, pack.ReadBytes(), session)
-	default:
-		self.status.Handle(actor, msg, session)
 	}
 	return true
-}
-
-// 逻辑更新
-func (self *Room) update(dt int64) {
-	now := utils.SecondTimeSince1970()
-	self.status.Update(now)
-}
-
-// 切换状态
-func (self *Room) switchStatus(now int64, next ERoomStatus) {
-	self.status.Swtich(now, int32(next))
 }
 
 // 进入房间条件校验
@@ -152,9 +127,9 @@ func (self *Room) enterRoom(accountId uint32) {
 	self.accounts[accountId] = acc
 
 	if acc.Robot == 0 {
-		log.Infof(colorized.Cyan("-> In roomid:%v Player:%v name:%v money:%v kill:%v %v session:%v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.GetKill(), ERoomStatus(self.status.State()).String(), acc.SessionId)
+		log.Infof(colorized.Cyan("-> In roomid:%v Player:%v name:%v money:%v kill:%v %v session:%v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.GetKill(), acc.SessionId)
 	} else {
-		log.Infof(colorized.Cyan("-> In roomid:%v Robot:%v name:%v money:%v kill:%v %v session:%v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.GetKill(), ERoomStatus(self.status.State()).String(), acc.SessionId)
+		log.Infof(colorized.Cyan("-> In roomid:%v Robot:%v name:%v money:%v kill:%v %v session:%v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.GetKill(), acc.SessionId)
 	}
 
 	// 通知玩家进入游戏
