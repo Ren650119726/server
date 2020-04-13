@@ -5,8 +5,8 @@ import (
 	"root/core/packet"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_jpm/account"
-	"root/server/game_jpm/send_tools"
+	"root/server/game_hongbao/account"
+	"root/server/game_hongbao/send_tools"
 )
 
 // 大厅发送的玩家数据
@@ -33,8 +33,8 @@ func (self *hongbao) SERVERMSG_HG_PLAYER_DATA_REQ(actor int32, msg []byte, sessi
 }
 
 // 玩家请求进入小玛利房间
-func (self *hongbao) JPMMSG_CS_ENTER_GAME_JPM_REQ(actor int32, data []byte, session int64) int32 {
-	enterPB := packet.PBUnmarshal(data, &protomsg.ENTER_GAME_JPM_REQ{}).(*protomsg.ENTER_GAME_JPM_REQ)
+func (self *hongbao) HBMSG_CS_ENTER_GAME_HB_REQ(actor int32, data []byte, session int64) int32 {
+	enterPB := packet.PBUnmarshal(data, &protomsg.ENTER_GAME_HB_REQ{}).(*protomsg.ENTER_GAME_HB_REQ)
 	acc := account.AccountMgr.GetAccountByIDAssert(enterPB.GetAccountID())
 	acc.SessionId = session
 	account.AccountMgr.SetAccountBySession(acc, session)

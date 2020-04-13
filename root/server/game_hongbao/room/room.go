@@ -10,8 +10,8 @@ import (
 	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_jpm/account"
-	"root/server/game_jpm/send_tools"
+	"root/server/game_hongbao/account"
+	"root/server/game_hongbao/send_tools"
 )
 
 type (
@@ -80,14 +80,16 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.SERVERMSG_HG_NOTIFY_ALTER_DATE(actor, pack.ReadBytes(), session)
 	case utils.ID_DISCONNECT: // 有连接断开
 		self.Disconnect(session)
-	case protomsg.JPMMSG_CS_ENTER_GAME_JPM_REQ.UInt16(): // 请求进入房间
-		self.JPMMSG_CS_ENTER_GAME_JPM_REQ(actor, pack.ReadBytes(), session)
-	case protomsg.JPMMSG_CS_LEAVE_GAME_JPM_REQ.UInt16(): // 请求离开房间
-		self.JPMMSG_CS_LEAVE_GAME_JPM_REQ(actor, pack.ReadBytes(), session)
-	case protomsg.JPMMSG_CS_START_JPM_REQ.UInt16(): // 请求开始游戏
-		self.JPMMSG_CS_START_JPM_REQ(actor, pack.ReadBytes(), session)
-	case protomsg.JPMMSG_CS_PLAYERS_JPM_LIST_REQ.UInt16(): // 请求玩家列表
-		self.JPMMSG_CS_PLAYERS_JPM_LIST_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.HBMSG_CS_ENTER_GAME_HB_REQ.UInt16(): // 请求进入房间
+		self.HBMSG_CS_ENTER_GAME_HB_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.HBMSG_CS_LEAVE_GAME_HB_REQ.UInt16(): // 请求离开房间
+		self.HBMSG_CS_LEAVE_GAME_HB_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.HBMSG_CS_ASSIGN_HB_REQ.UInt16(): // 请求发红包
+		self.HBMSG_CS_ASSIGN_HB_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.HBMSG_CS_GRAB_HB_REQ.UInt16(): // 请求抢红包
+		self.HBMSG_CS_GRAB_HB_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.HBMSG_CS_PLAYERS_HB_LIST_REQ.UInt16(): // 请求玩家列表
+		self.HBMSG_CS_PLAYERS_HB_LIST_REQ(actor, pack.ReadBytes(), session)
 	}
 	return true
 }
@@ -133,13 +135,8 @@ func (self *Room) enterRoom(accountId uint32) {
 	}
 
 	// 通知玩家进入游戏
-	send_tools.Send2Account(protomsg.JPMMSG_SC_ENTER_GAME_JPM_RES.UInt16(), &protomsg.ENTER_GAME_JPM_RES{
-		RoomID:   self.roomId,
-		Basics:   self.basics,
-		Bonus:    self.bonus,
-		LastBet:  int64(acc.LastBet),
-		Bets:     self.bets,
-		FeeCount: acc.FeeCount,
+	send_tools.Send2Account(protomsg.HBMSG_SC_ENTER_GAME_HB_RES.UInt16(), &protomsg.ENTER_GAME_HB_RES{
+		RoomID: self.roomId,
 	}, acc.SessionId)
 
 	pc, rc := self.countStatis()

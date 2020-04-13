@@ -6,47 +6,54 @@ import (
 	"root/core/packet"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_jpm/account"
-	"root/server/game_jpm/send_tools"
+	"root/server/game_hongbao/account"
+	"root/server/game_hongbao/send_tools"
 )
 
 // 玩家进入游戏
-func (self *Room) JPMMSG_CS_ENTER_GAME_JPM_REQ(actor int32, msg []byte, session int64) {
-	enterPB := packet.PBUnmarshal(msg, &protomsg.ENTER_GAME_JPM_REQ{}).(*protomsg.ENTER_GAME_JPM_REQ)
+func (self *Room) HBMSG_CS_ENTER_GAME_HB_REQ(actor int32, msg []byte, session int64) {
+	enterPB := packet.PBUnmarshal(msg, &protomsg.ENTER_GAME_HB_REQ{}).(*protomsg.ENTER_GAME_HB_REQ)
 	self.enterRoom(enterPB.GetAccountID())
 }
 
 // 玩家离开
-func (self *Room) JPMMSG_CS_LEAVE_GAME_JPM_REQ(actor int32, msg []byte, session int64) {
-	enterPB := packet.PBUnmarshal(msg, &protomsg.LEAVE_GAME_JPM_REQ{}).(*protomsg.LEAVE_GAME_JPM_REQ)
+func (self *Room) HBMSG_CS_LEAVE_GAME_HB_REQ(actor int32, msg []byte, session int64) {
+	enterPB := packet.PBUnmarshal(msg, &protomsg.LEAVE_GAME_HB_REQ{}).(*protomsg.LEAVE_GAME_HB_REQ)
 	ret := uint32(1)
 	if self.canleave(enterPB.GetAccountID()) {
 		ret = 0
 	}
-	send_tools.Send2Account(protomsg.JPMMSG_SC_LEAVE_GAME_JPM_RES.UInt16(), &protomsg.LEAVE_GAME_JPM_RES{
+	send_tools.Send2Account(protomsg.HBMSG_SC_LEAVE_GAME_HB_RES.UInt16(), &protomsg.LEAVE_GAME_HB_RES{
 		Ret:    ret,
 		RoomID: self.roomId,
 	}, session)
 }
 
-// 玩家请求开始游戏
-func (self *Room) JPMMSG_CS_START_JPM_REQ(actor int32, msg []byte, session int64) {
-	//start := packet.PBUnmarshal(msg, &protomsg.START_JPM_REQ{}).(*protomsg.START_JPM_REQ)
+// 玩家请求发红包
+func (self *Room) HBMSG_CS_ASSIGN_HB_REQ(actor int32, msg []byte, session int64) {
+	//start := packet.PBUnmarshal(msg, &protomsg.START_HB_REQ{}).(*protomsg.START_HB_REQ)
 	//msgBetNum := start.GetBet()
 	//acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
 
 }
 
-// 请求玩家列表
-func (self *Room) JPMMSG_CS_PLAYERS_JPM_LIST_REQ(actor int32, msg []byte, session int64) {
+// 请求抢红包
+func (self *Room) HBMSG_CS_GRAB_HB_REQ(actor int32, msg []byte, session int64) {
+	//start := packet.PBUnmarshal(msg, &protomsg.START_HB_REQ{}).(*protomsg.START_HB_REQ)
+	//msgBetNum := start.GetBet()
+	//acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
+
+}
+
+func (self *Room) HBMSG_CS_PLAYERS_HB_LIST_REQ(actor int32, msg []byte, session int64) {
 	account.AccountMgr.GetAccountBySessionIDAssert(session)
 
-	ret := &protomsg.PLAYERS_JPM_LIST_RES{}
+	ret := &protomsg.PLAYERS_HB_LIST_RES{}
 	ret.Players = make([]*protomsg.AccountStorageData, 0)
 	for _, p := range self.accounts {
 		ret.Players = append(ret.Players, p.AccountStorageData)
 	}
-	send_tools.Send2Account(protomsg.JPMMSG_SC_PLAYERS_JPM_LIST_RES.UInt16(), ret, session)
+	send_tools.Send2Account(protomsg.HBMSG_SC_PLAYERS_HB_LIST_RES.UInt16(), ret, session)
 }
 
 // 大厅请求修改玩家数据

@@ -6,6 +6,12 @@ import (
 	"root/core/utils"
 )
 
+func init() {
+	for i := 0; i < 100; i++ {
+		log.Infof("%v", hongbao_slice(10000, 5, 7000))
+	}
+}
+
 func (self *Room) LoadConfig() {
 	_ = config.Get_configString("jpm_room", int(self.roomId), "Bet")
 
@@ -15,7 +21,7 @@ func (self *Room) LoadConfig() {
 // money 红包金额
 // num   切分的红包数量
 // ratio 每个红包随机比例 / 10000
-func honagbao_slice(money, num, ratio int64) []int64 {
+func hongbao_slice(money, num, ratio int64) []int64 {
 	if money < num {
 		log.Errorf("钱不够分 money:%v num:%v,ratio:%v", money, num, ratio)
 		return []int64{}
@@ -32,15 +38,18 @@ func honagbao_slice(money, num, ratio int64) []int64 {
 	}
 
 	// 根据随机比例，依次添加到红包中
-	for i := 0; i < int(num); i++ {
+	for i := 0; i < int(num-1); i++ {
 		r := utils.Randx_y(0, int(ratio/100)+1) * 100
 		add_val := money * int64(r) / 10000
-		if add_val == 0 {
-			break
-		}
 		ret[i] += add_val
 		money -= add_val
 	}
+	ret[int(num-1)] += money
 
+	// 做一个随机处理
+	for i := 0; i < int(num); i++ {
+		ri := utils.Randx_y(i, int(num))
+		ret[i], ret[ri] = ret[ri], ret[i]
+	}
 	return ret
 }

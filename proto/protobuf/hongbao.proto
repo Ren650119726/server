@@ -5,76 +5,72 @@ option go_package = "root/protomsg";
 import "protobuf/data.proto";
 
 // 网络消息
-enum HONGBAOMSG {
-	UNKNOW_HONGBAO = 0;
-	CS_ENTER_GAME_HONGBAO_REQ = 19001; // 玩家请求进入房间
-	SC_ENTER_GAME_HONGBAO_RES = 19002;
-	CS_LEAVE_GAME_HONGBAO_REQ = 19003; // 玩家请求退出房间
-	SC_LEAVE_GAME_HONGBAO_RES = 19004;
+enum HBMSG {
+	UNKNOW_HB = 0;
+	CS_ENTER_GAME_HB_REQ = 19001; // 玩家请求进入房间
+	SC_ENTER_GAME_HB_RES = 19002;
+	CS_LEAVE_GAME_HB_REQ = 19003; // 玩家请求退出房间
+	SC_LEAVE_GAME_HB_RES = 19004;
 	
-	CS_ASSIGN_HONGBAO_REQ     = 19008;// 请求发红包
-	SC_ASSIGN_HONGBAO_RES     = 19009;// 服务器发红包
+	CS_ASSIGN_HB_REQ     = 19008;// 请求发红包
+	SC_ASSIGN_HB_RES     = 19009;// 服务器发红包
 
-    CS_GRAB_HONGBAO_REQ       = 19010;// 抢红包
-    SC_GRAB_HONGBAO_RES       = 19011;//
+    CS_GRAB_HB_REQ       = 19010;// 抢红包
+    SC_GRAB_HB_RES       = 19011;//
 
-    CS_HONGBAO_INFO_REQ       = 19012;// 红包信息
-    SC_HONGBAO_INFO_RES       = 19013;//
+    CS_HB_INFO_REQ       = 19012;// 红包信息
+    SC_HB_INFO_RES       = 19013;//
 
 
 
-	CS_PLAYERS_HONGBAO_LIST_REQ          = 19015; // 请求在线玩家列表
-	SC_PLAYERS_HONGBAO_LIST_RES          = 19016;
+	CS_PLAYERS_HB_LIST_REQ          = 19015; // 请求在线玩家列表
+	SC_PLAYERS_HB_LIST_RES          = 19016;
 }
 
 // 请求进入房间
-message ENTER_GAME_HONGBAO_REQ {
+message ENTER_GAME_HB_REQ {
 	uint32 AccountID = 1;// 
 	uint32 RoomID    = 2;// 房间ID
 }
 
-message ENTER_GAME_HONGBAO_RES {
+message ENTER_GAME_HB_RES {
 	uint32 RoomID 	    		 	= 1; // 房间ID
 }
 
 
 // 请求退出房间
-message LEAVE_GAME_HONGBAO_REQ {
+message LEAVE_GAME_HB_REQ {
 	uint32 AccountID = 1;// 
 	uint32 RoomID    = 2;// 房间ID
 }
 
-message LEAVE_GAME_HONGBAO_RES {
+message LEAVE_GAME_HB_RES {
     uint32 Ret    = 1; // 0.可以退出  1.不能退出房间
 	uint32 RoomID = 2; // 房间ID
 }
 
 // 发红包
-message ASSIGN_HONGBAO_REQ {
+message ASSIGN_HB_REQ {
 	uint64 Bet = 1; 
 }
 
 // 广播所有玩家
-message ASSIGN_HONGBAO_RES {
+message ASSIGN_HB_RES {
 	uint64 Ret 						  = 1; // 0成功
 }
 
 // 抢红包
-message GRAB_HONGBAO_REQ {
+message GRAB_HB_REQ {
 	uint64 Bet = 1;
 }
 
 // 广播所有玩家
-message GRAB_HONGBAO_RES {
+message GRAB_HB_RES {
 	uint64 Bet = 1;
 }
 
-message ASSIGN_HONGBAO_RES {
-	uint64 Ret 						  = 1; // 0成功
-}
 
-
-// 请求HONGBAO玩家列表
-message PLAYERS_HONGBAO_LIST_RES{
+// 请求HB玩家列表
+message PLAYERS_HB_LIST_RES{
    repeated AccountStorageData players = 1; // 房间内所有的玩家
 }

@@ -6,7 +6,7 @@ import (
 	"root/core/log"
 	"root/core/packet"
 	"root/protomsg/inner"
-	"root/server/game_jpm/send_tools"
+	"root/server/game_hongbao/send_tools"
 	"strconv"
 )
 
@@ -33,7 +33,7 @@ func NewRoomMgr() *roomMgr {
 
 func (self *roomMgr) InitRoomMgr() {
 	// 初始化房间
-	conf := config.Get_config("jpm_room")
+	conf := config.Get_config("red_room")
 	for id, _ := range conf {
 		self.CreateRoom(uint32(id))
 	}

@@ -13,9 +13,9 @@ import (
 	"root/core/packet"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_jpm/account"
-	"root/server/game_jpm/room"
-	"root/server/game_jpm/send_tools"
+	"root/server/game_hongbao/account"
+	"root/server/game_hongbao/room"
+	"root/server/game_hongbao/send_tools"
 	"strconv"
 )
 
@@ -115,8 +115,8 @@ func (self *hongbao) HandleMessage(actor int32, msg []byte, session int64) bool 
 		send_tools.Send2Account(protomsg.MSG_CLIENT_KEEPALIVE.UInt16(), nil, session)
 	case inner.SERVERMSG_HG_PLAYER_DATA_REQ.UInt16(): // 大厅发送玩家数据
 		self.SERVERMSG_HG_PLAYER_DATA_REQ(actor, pack.ReadBytes(), session)
-	case protomsg.JPMMSG_CS_ENTER_GAME_JPM_REQ.UInt16(): // 请求进入小玛利房间
-		actor := self.JPMMSG_CS_ENTER_GAME_JPM_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.HBMSG_CS_ENTER_GAME_HB_REQ.UInt16(): // 请求进入小玛利房间
+		actor := self.HBMSG_CS_ENTER_GAME_HB_REQ(actor, pack.ReadBytes(), session)
 		core.CoreSend(self.owner.Id, actor, msg, session)
 	case inner.SERVERMSG_HG_ROOM_BONUS_RES.UInt16(): // 大厅返回水池金额
 		data := packet.PBUnmarshal(pack.ReadBytes(), &inner.ROOM_BONUS_RES{}).(*inner.ROOM_BONUS_RES)

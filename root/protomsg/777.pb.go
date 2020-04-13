@@ -10,6 +10,7 @@ It is generated from these files:
 	protobuf/dfdc.proto
 	protobuf/fruitmary.proto
 	protobuf/hall.proto
+	protobuf/hongbao.proto
 	protobuf/jpm.proto
 	protobuf/lhd.proto
 	protobuf/luckfruit.proto
@@ -76,6 +77,15 @@ It has these top-level messages:
 	EMAIL_NEW
 	BROADCAST_MSG
 	UPDATE_ROOMLIST
+	ENTER_GAME_HB_REQ
+	ENTER_GAME_HB_RES
+	LEAVE_GAME_HB_REQ
+	LEAVE_GAME_HB_RES
+	ASSIGN_HB_REQ
+	ASSIGN_HB_RES
+	GRAB_HB_REQ
+	GRAB_HB_RES
+	PLAYERS_HB_LIST_RES
 	ENTER_GAME_JPM_REQ
 	ENTER_GAME_JPM_RES
 	LEAVE_GAME_JPM_REQ
