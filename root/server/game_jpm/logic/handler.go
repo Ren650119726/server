@@ -5,8 +5,8 @@ import (
 	"root/core/packet"
 	"root/protomsg"
 	"root/protomsg/inner"
-	"root/server/game_hongbao/account"
-	"root/server/game_hongbao/send_tools"
+	"root/server/game_jpm/account"
+	"root/server/game_jpm/send_tools"
 )
 
 // 大厅发送的玩家数据

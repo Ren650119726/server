@@ -8,7 +8,7 @@ import (
 	"root/core/log"
 	"root/core/packet"
 	"root/protomsg/inner"
-	"root/server/game_hongbao/account"
+	"root/server/game_jpm/account"
 	"strconv"
 )
 
