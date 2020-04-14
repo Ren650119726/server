@@ -8,13 +8,15 @@ import (
 
 func (self *Room) LoadConfig() {
 	self.conf = &conf{}
-	self.
-		self.
-		self.
-		self.
-		self.
-		self.
-		_ = config.Get_configString("red_room", int(self.roomId), "Bet")
+	self.Min_Red = config.Get_configInt("red_room", int(self.roomId), "Min_Red")
+	self.Max_Red = config.Get_configInt("red_room", int(self.roomId), "Max_Red")
+	self.Red_Count = config.Get_configInt("red_room", int(self.roomId), "Red_Count")
+	self.Pump = config.Get_configInt("red_room", int(self.roomId), "Pump")
+	self.Robot_Num = config.Get_configInt("red_room", int(self.roomId), "Robot_Num")
+	self.Robot_Send_Interval = config.Get_configString("red_room", int(self.roomId), "Robot_Send_Interval")
+	self.Robot_Send_Count = config.Get_configInt("red_room", int(self.roomId), "Robot_Send_Count")
+	self.Robot_Send_Value = config.Get_configString("red_room", int(self.roomId), "Robot_Send_Value")
+	self.Rand_Point = config.Get_configInt("red_room", int(self.roomId), "Rand_Point")
 
 	log.Infof("房间:%v 配置加载完成", self.roomId)
 }

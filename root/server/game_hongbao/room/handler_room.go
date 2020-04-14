@@ -31,9 +31,8 @@ func (self *Room) HBMSG_CS_LEAVE_GAME_HB_REQ(actor int32, msg []byte, session in
 
 // 玩家请求发红包
 func (self *Room) HBMSG_CS_ASSIGN_HB_REQ(actor int32, msg []byte, session int64) {
-	assign := packet.PBUnmarshal(msg, &protomsg.ASSIGN_HB_REQ{}).(*protomsg.ASSIGN_HB_REQ)
-	msgBetNum := start.GetBet()
-	acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
+	assignHB := packet.PBUnmarshal(msg, &protomsg.ASSIGN_HB_REQ{}).(*protomsg.ASSIGN_HB_REQ)
+	account.AccountMgr.GetAccountByIDAssert(assignHB.GetAccountID())
 
 }
 

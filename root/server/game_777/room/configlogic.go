@@ -51,6 +51,7 @@ func (self *Room) LoadConfig() {
 		rewardID := int32(config.Get_configInt("777_jackpot", id, "Reward_id"))
 		self.bonus[int32(lv)] = 0
 		self.bounsInitGold[int32(lv)] = initGold
+		log.Infof("奖池初始: ", self.bounsInitGold)
 		self.bounsRoller[int32(lv)] = int64(config.Get_configInt("777_jackpot", id, "Roller_Rate"))
 		self.bonus_jackpot_conf[rewardID] = lv
 	}

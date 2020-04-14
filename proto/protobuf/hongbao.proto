@@ -70,10 +70,11 @@ message LEAVE_GAME_HB_RES {
 
 // 发红包
 message ASSIGN_HB_REQ {
-	uint64 Value      = 1; // 红包金额
-	uint32 Count      = 2; // 红包包数
-	uint32 BombNumber = 3; // 雷号
-	uint32 Num        = 4; // 同时发包个数
+    uint32 accountID  = 1; // 前端不用
+	uint64 Value      = 2; // 红包金额
+	uint32 Count      = 3; // 红包包数
+	uint32 BombNumber = 4; // 雷号
+	uint32 Num        = 5; // 同时发包个数
 }
 
 // 返回发红包结果
@@ -88,7 +89,8 @@ message BROADCAST_NEW_HB{
 
 // 抢红包
 message GRAB_HB_REQ {
-	uint32 ID = 1; // 红包实例ID
+    uint32 accountID  = 1; // 前端不用
+	uint32 ID         = 2; // 红包实例ID
 }
 
 // 返回抢红包结果

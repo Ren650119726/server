@@ -60,9 +60,6 @@ func NewRoom(id uint32) *Room {
 
 func (self *Room) Init(actor *core.Actor) bool {
 	self.owner = actor
-	// 200ms 更新一次
-	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*3, -1, self.updateRobot)
-
 	self.LoadConfig()
 
 	// 请求水池金额
