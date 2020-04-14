@@ -52,7 +52,7 @@ message ENTER_GAME_S777_REQ {
 
 message ENTER_GAME_S777_RES {
 	uint32 RoomID 	    		 	= 1; // 房间ID
-	int64 Basics        		 	= 2; // 基础金额
+	map<int32, int64> Basics        = 2; // 基础金额
 	map<int32, int64> Bonus         = 3; // key 等级  val 奖池
 	int64 LastBet                   = 4; // 最后一次压住
 	repeated uint64 Bets 		 	= 5; // 可以选择的押注金额

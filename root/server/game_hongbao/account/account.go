@@ -16,9 +16,8 @@ type (
 		*protomsg.AccountStorageData
 		*protomsg.AccountGameData
 		SessionId int64
-		FeeCount  int32
-		LastBet   uint64
-		Forbid    bool
+		GrabVal   int64 // 抢到的总金额
+		BombCount int64 // 中雷次数
 	}
 )
 

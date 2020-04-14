@@ -12,20 +12,19 @@ enum HBMSG {
 	CS_LEAVE_GAME_HB_REQ = 19003; // 玩家请求退出房间
 	SC_LEAVE_GAME_HB_RES = 19004;
 	
-	CS_ASSIGN_HB_REQ     = 19008;// 请求发红包
-	SC_ASSIGN_HB_RES     = 19009;// 服务器发红包
+	CS_ASSIGN_HB_REQ     = 19008; // 请求发红包
+	SC_ASSIGN_HB_RES     = 19009; // 服务器发红包
+	SC_BROADCAST_NEW_HB  = 19010; // 服务器广播添加新红包
 
-    CS_GRAB_HB_REQ       = 19010;// 抢红包
-    SC_GRAB_HB_RES       = 19011;//
+    CS_GRAB_HB_REQ          = 19015;// 抢红包
+    SC_GRAB_HB_RES          = 19016;//
+    SC_BROADCAST_UPDATE_HB  = 19017; // 服务器广播更新红包包数
 
-    CS_HB_INFO_REQ       = 19012;// 红包信息
-    SC_HB_INFO_RES       = 19013;//
-
-
-
-	CS_PLAYERS_HB_LIST_REQ          = 19015; // 请求在线玩家列表
-	SC_PLAYERS_HB_LIST_RES          = 19016;
+	CS_PLAYERS_HB_LIST_REQ   = 19020; // 请求在线玩家列表
+	SC_PLAYERS_HB_LIST_RES   = 19021;
 }
+
+
 
 // 请求进入房间
 message ENTER_GAME_HB_REQ {
@@ -33,8 +32,28 @@ message ENTER_GAME_HB_REQ {
 	uint32 RoomID    = 2;// 房间ID
 }
 
+// 红包结构
+message HONGBAO{
+	uint32 ID 			 = 1; // 红包实例ID
+	uint32 AssignerAccID = 2; // 发红包人的账号ID
+	uint32 AssignerName  = 3; // 发红包人的名字
+	uint64 Value         = 4; // 红包总金额
+	uint64 Count         = 5; // 红包总数量
+	uint64 Spare         = 6; // 红包剩余包数
+	uint64 BombNumber    = 7; // 雷号0-9
+}
+
 message ENTER_GAME_HB_RES {
-	uint32 RoomID 	    		 	= 1; // 房间ID
+	uint32 RoomID 	    		 			= 1; // 房间ID
+	repeated HONGBAO HongBaoList    		= 2; // 红包列表
+	AccountStorageData luckPlayer   		= 3; // 幸运玩家
+	AccountStorageData bigWealth    		= 4; // 大富豪玩家
+	repeated AccountStorageData RankPlayers = 5; // 金币排行前4名
+
+	uint64 Conf_MinValue  = 6; // 发红包最小值
+	uint64 Conf_MaxValue  = 7; // 发红包最大值
+	uint32 Conf_OnceCount = 8; // 一次性最大发包次数
+	uint32 Conf_Pump      = 9; // 赔付金额系统抽水比例（万分比）
 }
 
 
@@ -51,24 +70,38 @@ message LEAVE_GAME_HB_RES {
 
 // 发红包
 message ASSIGN_HB_REQ {
-	uint64 Bet = 1; 
+	uint64 Value      = 1; // 红包金额
+	uint32 Count      = 2; // 红包包数
+	uint32 BombNumber = 3; // 雷号
+	uint32 Num        = 4; // 同时发包个数
 }
 
-// 广播所有玩家
+// 返回发红包结果
 message ASSIGN_HB_RES {
-	uint64 Ret 						  = 1; // 0成功
+	uint64 Ret = 1; // 0、 成功 1、 钱不够
+}
+
+// 服务器广播添加一个新红包
+message BROADCAST_NEW_HB{
+    HONGBAO new = 1; // 新加红包
 }
 
 // 抢红包
 message GRAB_HB_REQ {
-	uint64 Bet = 1;
+	uint32 ID = 1; // 红包实例ID
 }
 
-// 广播所有玩家
+// 返回抢红包结果
 message GRAB_HB_RES {
-	uint64 Bet = 1;
+	uint64 Ret = 1; // 0、 成功 1、 红包抢光了 2、身上的钱不够赔，不能抢
+
 }
 
+// 服务器广播更新红包包数信息
+message BROADCAST_UPDATE_HB{
+    uint32 UD = 1;// 红包实例ID
+    uint32 Spare = 2; // 红包剩余包数
+}
 
 // 请求HB玩家列表
 message PLAYERS_HB_LIST_RES{

@@ -15,20 +15,37 @@ import (
 )
 
 type (
+	hongbao struct {
+		hbID         int32            // 红包实例ID
+		assignerID   uint32           // 发红包的账号ID
+		assignerName string           // 发红包人的名字
+		value        int64            // 红包金额
+		bombNumber   int64            // 雷号
+		arr          []int64          // 剩余的红包
+		count        int64            // 红包总数
+		grabs        map[uint32]int64 // key 抢红包的人 value 抢到的金额
+	}
+
+	conf struct {
+		Min_Red             int
+		Max_Red             int
+		Red_Count           int
+		Pump                int
+		Robot_Num           int
+		Robot_Send_Interval string
+		Robot_Send_Count    int
+		Robot_Send_Value    string
+		Rand_Point          int
+	}
+
 	Room struct {
 		owner    *core.Actor
 		roomId   uint32
 		accounts map[uint32]*account.Account // 进房间的所有人
 		Close    bool
-		bonus    int64 // 奖金池
-
-		bets          []uint64
-		basics        int64  // 奖金池 中将的基础金额系数
-		jackpotRate   uint64 // 滚动率
-		jackLimit     int64
-		lineConf      [][5]int
-		bonus_pattern map[int]int
-		addr_url      string
+		hbList   []*hongbao // 红包列表
+		*conf
+		addr_url string
 	}
 )
 
@@ -37,6 +54,7 @@ func NewRoom(id uint32) *Room {
 		accounts: make(map[uint32]*account.Account),
 		roomId:   id,
 		Close:    false,
+		hbList:   make([]*hongbao, 10),
 	}
 }
 
@@ -46,7 +64,6 @@ func (self *Room) Init(actor *core.Actor) bool {
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*3, -1, self.updateRobot)
 
 	self.LoadConfig()
-	self.bonus = 0
 
 	// 请求水池金额
 	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_REQ.UInt16(), &inner.ROOM_BONUS_REQ{
@@ -56,10 +73,10 @@ func (self *Room) Init(actor *core.Actor) bool {
 }
 
 func (self *Room) Stop() {
-	log.Infof("房间:%v 关闭，回存房间水池:%v ", self.roomId, self.bonus)
+	log.Infof("房间:%v 关闭", self.roomId)
 }
 func (self *Room) close() {
-	log.Infof("房间:%v 正在关闭", self.roomId)
+	log.Infof("房间:%v 正在关闭 剩余红包数量:%v", self.roomId, len(self.hbList))
 	roomId := self.roomId
 	core.LocalCoreSend(0, common.EActorType_MAIN.Int32(), func() {
 		delete(RoomMgr.Rooms, roomId)
@@ -137,11 +154,12 @@ func (self *Room) enterRoom(accountId uint32) {
 	// 通知玩家进入游戏
 	send_tools.Send2Account(protomsg.HBMSG_SC_ENTER_GAME_HB_RES.UInt16(), &protomsg.ENTER_GAME_HB_RES{
 		RoomID: self.roomId,
+		// todo .............
 	}, acc.SessionId)
 
 	pc, rc := self.countStatis()
 	// 通知大厅 玩家进入房间
-	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_ENTER_ROOM.UInt16(), &inner.PLAYER_ENTER_ROOM{ //jpm
+	send_tools.Send2Hall(inner.SERVERMSG_GH_PLAYER_ENTER_ROOM.UInt16(), &inner.PLAYER_ENTER_ROOM{
 		AccountID:   acc.GetAccountId(),
 		RoomID:      self.roomId,
 		PlayerCount: uint32(pc),
@@ -156,8 +174,12 @@ func (self *Room) canleave(accountId uint32) bool {
 		log.Warnf("找不到玩家:%v ", accountId)
 		return false
 	}
-	if acc.FeeCount > 0 {
-		return false
+
+	// 如果玩家还有红包没有被抢完，不能退出房间
+	for _, hb := range self.hbList {
+		if hb.assignerID == accountId && len(hb.arr) != 0 {
+			return false
+		}
 	}
 	return true
 }
@@ -202,11 +224,6 @@ func (self *Room) SendBroadcast(msgID uint16, pb proto.Message) {
 			send_tools.Send2Account(msgID, pb, acc.SessionId)
 		}
 	}
-}
-
-func (self *Room) sendGameData(acc *account.Account, status_duration int64) packet.IPacket {
-	dataMSG := packet.NewPacket(nil)
-	return dataMSG
 }
 
 // 连接断开处理

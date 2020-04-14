@@ -151,6 +151,7 @@ func (self *Room) enterRoom(accountId uint32) {
 		Bonus:   self.bonus,
 		LastBet: int64(acc.LastBet),
 		Bets:    self.bets,
+		Basics:  self.bounsInitGold,
 	}, acc.SessionId)
 
 	pc, rc := self.countStatis()

@@ -6,14 +6,15 @@ import (
 	"root/core/utils"
 )
 
-func init() {
-	for i := 0; i < 100; i++ {
-		log.Infof("%v", hongbao_slice(10000, 5, 7000))
-	}
-}
-
 func (self *Room) LoadConfig() {
-	_ = config.Get_configString("jpm_room", int(self.roomId), "Bet")
+	self.conf = &conf{}
+	self.
+		self.
+		self.
+		self.
+		self.
+		self.
+		_ = config.Get_configString("red_room", int(self.roomId), "Bet")
 
 	log.Infof("房间:%v 配置加载完成", self.roomId)
 }
