@@ -194,5 +194,5 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32, s
 	if sumOdds != 0 {
 		log.Infof(colorized.Blue("中奖:%v %v realID:%v odds:%v"), coordinate[1], bigwinID, realID, sumOdds)
 	}
-	return picA, sumOdds, bigwinID, jackpotLv
+	return picA, sumOdds, bigwinID, jackpotLv, re
 }
