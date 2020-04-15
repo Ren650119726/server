@@ -32,7 +32,7 @@ func (self *hongbao) SERVERMSG_HG_PLAYER_DATA_REQ(actor int32, msg []byte, sessi
 
 }
 
-// 玩家请求进入小玛利房间
+// 玩家请求进入房间
 func (self *hongbao) HBMSG_CS_ENTER_GAME_HB_REQ(actor int32, data []byte, session int64) int32 {
 	enterPB := packet.PBUnmarshal(data, &protomsg.ENTER_GAME_HB_REQ{}).(*protomsg.ENTER_GAME_HB_REQ)
 	acc := account.AccountMgr.GetAccountByIDAssert(enterPB.GetAccountID())
@@ -41,7 +41,7 @@ func (self *hongbao) HBMSG_CS_ENTER_GAME_HB_REQ(actor int32, data []byte, sessio
 
 	actorId := int32(enterPB.GetRoomID())
 	if actorId == 0 {
-		log.Warnf("玩家连上金瓶梅 但是找不到房间所在actor roomId:%v", enterPB.GetRoomID())
+		log.Warnf("玩家连上红包 但是找不到房间所在actor roomId:%v", enterPB.GetRoomID())
 		return 0
 	}
 

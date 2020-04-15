@@ -15,6 +15,10 @@ import (
 )
 
 type (
+	unit struct {
+		name string
+		val  int64
+	}
 	hongbao struct {
 		hbID         int32            // 红包实例ID
 		assignerID   uint32           // 发红包的账号ID
@@ -23,7 +27,9 @@ type (
 		bombNumber   int64            // 雷号
 		arr          []int64          // 剩余的红包
 		count        int64            // 红包总数
-		grabs        map[uint32]int64 // key 抢红包的人 value 抢到的金额
+		time         string           // 发包时间
+		grabs        map[uint32]*unit // key 抢红包的人 value 抢到的金额
+		bombs        map[uint32]*unit // key 抢红包的人 value 中炸弹赔的钱
 	}
 
 	conf struct {
@@ -31,30 +37,39 @@ type (
 		Max_Red             int
 		Red_Count           int
 		Pump                int
-		Robot_Num           int
 		Robot_Send_Interval string
 		Robot_Send_Count    int
 		Robot_Send_Value    string
 		Rand_Point          int
+		Red_Odds            map[uint32]int64 // key 包数  val 赔率
+		Red_Max             uint64           // 红包列表最大数量
 	}
 
 	Room struct {
-		owner    *core.Actor
-		roomId   uint32
-		accounts map[uint32]*account.Account // 进房间的所有人
-		Close    bool
-		hbList   []*hongbao // 红包列表
+		owner     *core.Actor
+		roomId    uint32
+		accounts  map[uint32]*account.Account // 进房间的所有人
+		Close     bool
+		hbList    []*hongbao // 红包列表
+		players   map[uint32][]*hongbao
+		hongbaoID int32
 		*conf
-		addr_url string
+
+		luckPlayer *account.Account
+		bigWealth  *account.Account
+		top4Player []*account.Account
+		addr_url   string
 	}
 )
 
 func NewRoom(id uint32) *Room {
 	return &Room{
-		accounts: make(map[uint32]*account.Account),
-		roomId:   id,
-		Close:    false,
-		hbList:   make([]*hongbao, 10),
+		accounts:   make(map[uint32]*account.Account),
+		roomId:     id,
+		Close:      false,
+		hbList:     make([]*hongbao, 0),
+		players:    make(map[uint32][]*hongbao),
+		top4Player: make([]*account.Account, 0),
 	}
 }
 
@@ -66,7 +81,73 @@ func (self *Room) Init(actor *core.Actor) bool {
 	send_tools.Send2Hall(inner.SERVERMSG_GH_ROOM_BONUS_REQ.UInt16(), &inner.ROOM_BONUS_REQ{
 		RoomID: self.roomId,
 	})
+
+	conf := utils.SplitConf2ArrInt64(self.Robot_Send_Interval)
+	time := utils.Randx_y(int(conf[0]), int(conf[1]))
+	self.owner.AddTimer(2000, -1, self.updateRank)
+	self.owner.AddTimer(int64(time), 1, self.autoAssignHB)
 	return true
+}
+
+func (self *Room) updateRank(dt int64) {
+	luckCount := int64(0)
+	bigWealthCount := int64(0)
+	top4Player := make([]*account.Account, 0)
+	arr := make([]*account.Account, 0)
+
+	for _, acc := range self.accounts {
+		arr = append(arr, acc)
+		if luckCount == 0 || acc.TotalCount-acc.BombCount > luckCount {
+			luckCount = acc.TotalCount - acc.BombCount
+			self.luckPlayer = acc
+		}
+		if bigWealthCount == 0 || acc.GrabVal > bigWealthCount {
+			bigWealthCount = acc.GrabVal
+			self.bigWealth = acc
+		}
+	}
+
+	if len(arr) > 0 {
+		for i := 0; i < 4; i++ {
+			max := uint64(0)
+			ji := 0
+			for j := 0; j < len(arr); j++ {
+				if arr[i].GetMoney() > max {
+					max = arr[i].GetMoney()
+					ji = j
+				}
+			}
+			arr[0], arr[ji] = arr[ji], arr[0]
+			top4Player = append(top4Player, arr[0])
+			arr = arr[1:]
+		}
+	}
+
+	self.top4Player = top4Player
+
+	rank4 := make([]*protomsg.AccountStorageData, 0)
+	for _, v := range self.top4Player {
+		rank4 = append(rank4, v.AccountStorageData)
+	}
+	var l *protomsg.AccountStorageData
+	var b *protomsg.AccountStorageData
+	if self.luckPlayer != nil {
+		l = self.luckPlayer.AccountStorageData
+	}
+	if self.bigWealth != nil {
+		b = self.bigWealth.AccountStorageData
+	}
+
+	broadcast := &protomsg.BROADCAST_UPDATE_PLAYERINFO{
+		LuckPlayer:  l,
+		BigWealth:   b,
+		RankPlayers: rank4,
+	}
+	for _, acc := range self.accounts {
+		if acc.SessionId != 0 {
+			send_tools.Send2Account(protomsg.HBMSG_SC_BROADCAST_UPDATE_PLAYERINFO.UInt16(), broadcast, acc.SessionId)
+		}
+	}
 }
 
 func (self *Room) Stop() {
@@ -102,6 +183,10 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.HBMSG_CS_ASSIGN_HB_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.HBMSG_CS_GRAB_HB_REQ.UInt16(): // 请求抢红包
 		self.HBMSG_CS_GRAB_HB_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.HBMSG_CS_HB_LIST_REQ.UInt16(): // 请求自己的发红包列表
+		self.HBMSG_CS_HB_LIST_REQ(actor, pack.ReadBytes(), session)
+	case protomsg.HBMSG_CS_HB_INFO_REQ.UInt16(): // 请求红包详情
+		self.HBMSG_CS_HB_INFO_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.HBMSG_CS_PLAYERS_HB_LIST_REQ.UInt16(): // 请求玩家列表
 		self.HBMSG_CS_PLAYERS_HB_LIST_REQ(actor, pack.ReadBytes(), session)
 	}
@@ -143,16 +228,59 @@ func (self *Room) enterRoom(accountId uint32) {
 	self.accounts[accountId] = acc
 
 	if acc.Robot == 0 {
-		log.Infof(colorized.Cyan("-> In roomid:%v Player:%v name:%v money:%v kill:%v %v session:%v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.GetKill(), acc.SessionId)
+		log.Infof(colorized.Cyan("-> In roomid:%v Player:%v name:%v money:%v kill:%v session:%v"),
+			self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.GetKill(), acc.SessionId)
 	} else {
-		log.Infof(colorized.Cyan("-> In roomid:%v Robot:%v name:%v money:%v kill:%v %v session:%v"), self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.GetKill(), acc.SessionId)
+		log.Infof(colorized.Cyan("-> In roomid:%v Robot:%v name:%v money:%v kill:% vsession:%v"),
+			self.roomId, acc.AccountId, acc.Name, acc.GetMoney(), acc.GetKill(), acc.SessionId)
 	}
 
-	// 通知玩家进入游戏
-	send_tools.Send2Account(protomsg.HBMSG_SC_ENTER_GAME_HB_RES.UInt16(), &protomsg.ENTER_GAME_HB_RES{
-		RoomID: self.roomId,
-		// todo .............
-	}, acc.SessionId)
+	if acc.Robot == 0 {
+		hblist := []*protomsg.HONGBAO{}
+		for _, hb := range self.hbList {
+			p := map[uint32]int64{}
+			for k, v := range hb.grabs {
+				b := int64(0)
+				if bb, e := hb.bombs[k]; e {
+					b = bb.val
+				}
+				p[k] = v.val - b
+			}
+			hblist = append(hblist, &protomsg.HONGBAO{
+				ID:            uint32(hb.hbID),
+				AssignerAccID: hb.assignerID,
+				AssignerName:  hb.assignerName,
+				Value:         uint64(hb.value),
+				Count:         uint64(hb.count),
+				Spare:         uint64(len(hb.arr)),
+				BombNumber:    uint64(hb.bombNumber),
+				Time:          hb.time,
+				Profits:       p,
+			})
+		}
+		send := &protomsg.ENTER_GAME_HB_RES{
+			RoomID:         self.roomId,
+			HongBaoList:    hblist,
+			Conf_MinValue:  uint64(self.Min_Red),
+			Conf_MaxValue:  uint64(self.Max_Red),
+			Conf_OnceCount: uint32(self.Red_Count),
+			Conf_Pump:      uint32(self.Pump),
+			Ratio:          self.Red_Odds,
+			MaxSize:        self.Red_Max,
+		}
+		if self.luckPlayer != nil {
+			send.LuckPlayer = self.luckPlayer.AccountStorageData
+		}
+		if self.bigWealth != nil {
+			send.BigWealth = self.bigWealth.AccountStorageData
+		}
+		send.RankPlayers = []*protomsg.AccountStorageData{}
+		for _, v := range self.top4Player {
+			send.RankPlayers = append(send.RankPlayers, v.AccountStorageData)
+		}
+		// 通知玩家进入游戏
+		send_tools.Send2Account(protomsg.HBMSG_SC_ENTER_GAME_HB_RES.UInt16(), send, acc.SessionId)
+	}
 
 	pc, rc := self.countStatis()
 	// 通知大厅 玩家进入房间
@@ -214,6 +342,17 @@ func (self *Room) leaveRoom(accountId uint32) {
 // 房间总人数
 func (self *Room) count() int {
 	return len(self.accounts)
+}
+
+// 房间总人数
+func (self *Room) robots() []*account.Account {
+	ret := []*account.Account{}
+	for _, acc := range self.accounts {
+		if acc.Robot != 0 {
+			ret = append(ret, acc)
+		}
+	}
+	return ret
 }
 func (self *Room) SendBroadcast(msgID uint16, pb proto.Message) {
 	for _, acc := range self.accounts {

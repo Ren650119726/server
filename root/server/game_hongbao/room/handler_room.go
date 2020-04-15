@@ -1,13 +1,17 @@
 package room
 
 import (
+	"fmt"
 	"root/common"
+	"root/common/config"
 	"root/core/log"
 	"root/core/packet"
+	"root/core/utils"
 	"root/protomsg"
 	"root/protomsg/inner"
 	"root/server/game_hongbao/account"
 	"root/server/game_hongbao/send_tools"
+	"root/server/platform"
 )
 
 // 玩家进入游戏
@@ -32,16 +36,350 @@ func (self *Room) HBMSG_CS_LEAVE_GAME_HB_REQ(actor int32, msg []byte, session in
 // 玩家请求发红包
 func (self *Room) HBMSG_CS_ASSIGN_HB_REQ(actor int32, msg []byte, session int64) {
 	assignHB := packet.PBUnmarshal(msg, &protomsg.ASSIGN_HB_REQ{}).(*protomsg.ASSIGN_HB_REQ)
-	account.AccountMgr.GetAccountByIDAssert(assignHB.GetAccountID())
+	acc := account.AccountMgr.GetAccountBySessionID(session)
+	if acc == nil {
+		acc = account.AccountMgr.GetAccountByIDAssert(assignHB.GetAccountID())
+	}
+	if _, e := self.Red_Odds[assignHB.Count]; !e {
+		log.Warnf("%v %v 请求发红包,但是 包数:%v 不在配置中:%v ", acc.GetAccountId(), acc.UnDevice, assignHB.Count, self.Red_Odds)
+		return
+	}
 
+	if assignHB.GetNum() > uint32(self.Red_Count) {
+		log.Warnf("%v %v 请求发红包,但是 同时发包数%v 操作配置大小", acc.GetAccountId(), acc.UnDevice, assignHB.GetNum(), self.Red_Count)
+		return
+	}
+
+	totalVal := assignHB.GetValue() * uint64(assignHB.GetNum())
+	if acc.GetMoney() < totalVal {
+		send_tools.Send2Account(protomsg.HBMSG_SC_PLAYERS_HB_LIST_RES.UInt16(), &protomsg.ASSIGN_HB_RES{Ret: 1}, session)
+		return
+	}
+	send_tools.Send2Account(protomsg.HBMSG_SC_PLAYERS_HB_LIST_RES.UInt16(), &protomsg.ASSIGN_HB_RES{Ret: 0}, session)
+
+	if acc.Robot == 0 {
+		log.Infof("玩家:%v uid:%v 请求发红包 金额:%v 红包包数:%v 雷号:%v 同时发包数:%v ",
+			acc.GetAccountId(), acc.GetUnDevice(), assignHB.GetValue(), assignHB.GetCount(), assignHB.BombNumber, assignHB.Num)
+	}
+
+	newHBLogic := func() {
+		self.hongbaoID++
+		if self.hongbaoID >= 99999999 {
+			self.hongbaoID = 1
+		}
+
+		new := &hongbao{
+			hbID:         self.hongbaoID,
+			assignerID:   acc.GetAccountId(),
+			assignerName: acc.GetName(),
+			value:        int64(assignHB.GetValue()),
+			bombNumber:   int64(assignHB.GetBombNumber()),
+			arr:          hongbao_slice(int64(assignHB.GetValue()), int64(assignHB.GetCount()), int64(self.Rand_Point), 0, int(assignHB.GetBombNumber())),
+			count:        int64(assignHB.GetCount()),
+			time:         utils.DateString(),
+			grabs:        make(map[uint32]*unit),
+			bombs:        make(map[uint32]*unit),
+		}
+		self.hbList = append(self.hbList, new)
+		if len(self.hbList) > int(self.Red_Max) {
+			lasthb := self.hbList[0]
+			acc := account.AccountMgr.GetAccountByID(lasthb.assignerID)
+			backVal := int64(0)
+			c := 0
+			for _, v := range lasthb.arr {
+				backVal += v
+				c++
+			}
+			if backVal > 0 {
+				lasthb.arr = lasthb.arr[:0]
+				acc.AddMoney(backVal, common.EOperateType_HB_BACK)
+				if acc.GetOSType() == 4 {
+					platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, backVal, int32(self.roomId), "game_hb",
+						fmt.Sprintf("退还没抢完的红包 id:%v 发包人:%v 红包金额:%v 包数:%v 剩余包数:%v 退还金额:%v ", lasthb.hbID, lasthb.assignerName, lasthb.value, lasthb.count, c, backVal),
+						nil, nil)
+				} else {
+					log.Infof("红包没抢完，退还钱 id:%v 发包人:%v 红包金额:%v 包数:%v 剩余包数:%v 退还金额:%v ", lasthb.hbID, lasthb.assignerName, lasthb.value, lasthb.count, c, backVal)
+				}
+			}
+
+			self.hbList = self.hbList[1:]
+			arr := self.players[acc.GetAccountId()]
+			if arr == nil {
+				self.players[acc.GetAccountId()] = make([]*hongbao, 0)
+				arr = self.players[acc.GetAccountId()]
+			}
+			arr = append(arr, new)
+			if len(arr) > int(self.Red_Max) {
+				arr = arr[1:]
+			}
+			self.players[acc.GetAccountId()] = arr
+		}
+
+		broadcast := &protomsg.BROADCAST_NEW_HB{New: &protomsg.HONGBAO{
+			ID:            uint32(new.hbID),
+			AssignerAccID: acc.GetAccountId(),
+			AssignerName:  acc.GetName(),
+			Value:         assignHB.GetValue(),
+			Count:         uint64(assignHB.GetCount()),
+			Spare:         uint64(assignHB.GetCount()),
+			BombNumber:    uint64(assignHB.GetBombNumber()),
+			Time:          new.time,
+			Profits:       make(map[uint32]int64),
+		}}
+
+		for _, acc := range self.accounts {
+			if acc.SessionId != 0 {
+				send_tools.Send2Account(protomsg.HBMSG_SC_BROADCAST_NEW_HB.UInt16(), broadcast, acc.SessionId)
+			}
+		}
+		log.Infof("玩家:%v uid:%v 发的红包 新红包:%+v", acc.GetAccountId(), acc.GetUnDevice(), new)
+	}
+
+	if acc.Robot != 0 {
+		for i := 0; i < int(assignHB.Num); i++ {
+			newHBLogic()
+		}
+	} else {
+		back := func(backunique string, backmoney int64, bwType int32) { // 押注
+			if bwType == 1 {
+				acc.Kill = int32(config.GetPublicConfig_Int64(4))
+				log.Infof("acc:%v 三方黑名单 杀数为:%v ", acc.GetAccountId(), acc.Kill)
+			} else if bwType == 2 {
+				acc.Kill = int32(config.GetPublicConfig_Int64(5))
+				log.Infof("acc:%v 三方白名单 杀数为:%v ", acc.GetAccountId(), acc.Kill)
+			} else if bwType == 0 {
+				acc.Kill = 0
+				log.Infof("acc:%v bwType:0 ", acc.GetAccountId())
+			}
+			if acc.GetMoney()-totalVal != uint64(backmoney) {
+				log.Warnf("数据错误  ->>>>>> userID:%v money:%v totalVal:%v gold:%v", acc.GetUnDevice(), acc.GetMoney(), totalVal, backmoney)
+				acc.AddMoney(backmoney-int64(acc.GetMoney()), common.EOperateType_INIT)
+			} else {
+				acc.AddMoney(int64(-(totalVal)), common.EOperateType_HB_BET)
+			}
+
+			for i := 0; i < int(assignHB.Num); i++ {
+				newHBLogic()
+			}
+		}
+		if acc.GetOSType() == 4 {
+			// 错误返回
+			errback := func() {
+				log.Warnf("http请求报错")
+				resultMsg := &protomsg.ASSIGN_HB_RES{
+					Ret: 3,
+				}
+				send_tools.Send2Account(protomsg.HBMSG_SC_ASSIGN_HB_RES.UInt16(), resultMsg, session)
+			}
+			platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, -int64(totalVal), int32(self.roomId), "game_hb", fmt.Sprintf("红包id:%v 发红包金额:%v 同时发包数量:%v", self.hongbaoID, assignHB.GetValue(), assignHB.GetNum()), back, errback)
+		} else {
+			back("", int64(acc.GetMoney()-totalVal), 0)
+		}
+	}
 }
 
 // 请求抢红包
 func (self *Room) HBMSG_CS_GRAB_HB_REQ(actor int32, msg []byte, session int64) {
-	//start := packet.PBUnmarshal(msg, &protomsg.START_HB_REQ{}).(*protomsg.START_HB_REQ)
-	//msgBetNum := start.GetBet()
-	//acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
+	grab := packet.PBUnmarshal(msg, &protomsg.GRAB_HB_REQ{}).(*protomsg.GRAB_HB_REQ)
+	hbID := grab.GetID()
+	acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
+	if acc == nil {
+		acc = account.AccountMgr.GetAccountByIDAssert(grab.GetAccountID())
+	}
 
+	var hb *hongbao
+	for _, v := range self.hbList {
+		if v.hbID == int32(hbID) {
+			hb = v
+			break
+		}
+	}
+	if hb == nil {
+		log.Infof("不存在的红包实例ID:%v", hbID)
+		return
+	}
+
+	// 红包已经被抢完了
+	if len(hb.arr) == 0 {
+		send_tools.Send2Account(protomsg.HBMSG_SC_GRAB_HB_RES.UInt16(), &protomsg.GRAB_HB_RES{
+			Ret: 1,
+		}, session)
+		return
+	}
+
+	// 钱不够赔
+	if acc.GetMoney() < uint64(self.Red_Odds[uint32(hb.count)]*hb.value/100) {
+		log.Infof("玩家%v %v 身上的钱:%v 不够赔 不能抢 红包金额:%v 红包包数:%v 赔率", acc.GetAccountId(), acc.GetUnDevice(), hb.value, hb.count, self.Red_Odds[uint32(hb.count)])
+		send_tools.Send2Account(protomsg.HBMSG_SC_GRAB_HB_RES.UInt16(), &protomsg.GRAB_HB_RES{
+			Ret: 2,
+		}, session)
+		return
+	}
+	send_tools.Send2Account(protomsg.HBMSG_SC_GRAB_HB_RES.UInt16(), &protomsg.GRAB_HB_RES{
+		Ret: 0,
+	}, session)
+
+	val := hb.arr[0]
+	hb.arr = hb.arr[1:]
+	totalVal := val // 总盈利
+	bomb := int64(0)
+	if val%10 == hb.bombNumber {
+		bomb = hb.value * self.Red_Odds[uint32(hb.count)]
+	}
+	totalVal -= bomb
+	hb.grabs[acc.AccountId] = &unit{
+		name: acc.GetName(),
+		val:  val,
+	}
+
+	// 先处理逻辑，再通知平台改变金币
+	acc.AddMoney(totalVal, common.EOperateType_HB_BET)
+	self.SendBroadcast(protomsg.HBMSG_SC_BROADCAST_UPDATE_GRAB.UInt16(), &protomsg.BROADCAST_UPDATE_GRAB{
+		AccountID: acc.GetAccountId(),
+		HbID:      uint32(hb.hbID),
+		Profit:    totalVal,
+	})
+	if acc.GetOSType() == 4 {
+		platform.Asyn_addMoney(5, self.addr_url, acc.UnDevice, totalVal, int32(self.roomId), "game_hb",
+			fmt.Sprintf("抢红包 id:%v 发包人:%v 红包金额:%v 包数:%v 雷号:%v 抢到:%v 总金额:%v ", hb.hbID, hb.assignerName, hb.value, hb.count, hb.bombNumber, val, totalVal),
+			nil, nil)
+	}
+
+	var profit int64
+	if bomb != 0 {
+		hb.bombs[acc.AccountId] = &unit{
+			name: acc.GetName(),
+			val:  bomb,
+		}
+		profit_acc := account.AccountMgr.GetAccountByID(hb.assignerID)
+		profit = bomb - (bomb * int64(self.Pump) / 10000)
+		if profit_acc != nil {
+			profit_acc.AddMoney(profit, common.EOperateType_HB_WIN)
+			self.SendBroadcast(protomsg.HBMSG_SC_BROADCAST_UPDATE_BOMB.UInt16(), &protomsg.BROADCAST_UPDATE_BOMB{
+				AccountID: hb.assignerID,
+				HbID:      uint32(hb.hbID),
+				Profit:    profit,
+			})
+			if profit_acc.GetOSType() == 4 {
+				platform.Asyn_addMoney(5, self.addr_url, profit_acc.UnDevice, profit, int32(self.roomId), "game_hb",
+					fmt.Sprintf("玩家:%v %v 发红包 中雷的人:%v  盈利:%v ",
+						hb.assignerID, hb.assignerName, acc.UnDevice, profit),
+					nil, nil)
+			}
+		} else {
+			log.Warnf("给玩家赔，但是找不到玩家了 %v", hb.assignerID)
+		}
+	}
+	log.Infof("抢红包成功 玩家:%v uid:%v 抢得:%v 雷号:%v 赔付玩家:%v 炸了:%v 抽水后:%v",
+		acc.GetAccountId(), acc.GetUnDevice(), val, hb.bombNumber, hb.assignerID, bomb, profit)
+
+	broadcast := &protomsg.BROADCAST_UPDATE_HB{
+		ID:    uint32(hb.hbID),
+		Spare: uint32(len(hb.arr)),
+	}
+	for _, acc := range self.accounts {
+		if acc.SessionId != 0 {
+			send_tools.Send2Account(protomsg.HBMSG_SC_BROADCAST_UPDATE_HB.UInt16(), broadcast, acc.SessionId)
+		}
+	}
+	//
+	//if acc.Robot != 0 {
+	//	Logic()
+	//} else {
+	//	back := func(backunique string, backmoney int64, bwType int32) { // 押注
+	//		if int64(acc.GetMoney())+totalVal != backmoney {
+	//			log.Warnf("数据错误  ->>>>>> userID:%v money:%v totalVal:%v gold:%v", acc.GetUnDevice(), acc.GetMoney(), totalVal, backmoney)
+	//			acc.AddMoney(backmoney-int64(acc.GetMoney()), common.EOperateType_INIT)
+	//		} else {
+	//			acc.AddMoney(totalVal, common.EOperateType_HB_BET)
+	//			self.SendBroadcast(protomsg.HBMSG_SC_BROADCAST_UPDATE_GRAB.UInt16(), &protomsg.BROADCAST_UPDATE_GRAB{
+	//				AccountID: acc.GetAccountId(),
+	//				HbID:      uint32(hb.hbID),
+	//				Profit:    totalVal,
+	//			})
+	//		}
+	//		Logic()
+	//	}
+	//	if acc.GetOSType() == 4 {
+	//		// 错误返回
+	//		errback := func() {
+	//			log.Warnf("acc:%v http请求报错", acc.GetUnDevice())
+	//			resultMsg := &protomsg.ASSIGN_HB_RES{
+	//				Ret: 3,
+	//			}
+	//			send_tools.Send2Account(protomsg.HBMSG_SC_ASSIGN_HB_RES.UInt16(), resultMsg, session)
+	//			hb.arr = append(hb.arr, val)
+	//			log.Warnf("平台返回错误，抢红包失败，重新把红包丢入红包列表里 红包ID:", hb.hbID, hb.arr)
+	//		}
+	//
+	//	} else {
+	//		back("", int64(acc.GetMoney())+totalVal, 0)
+	//	}
+	//}
+}
+
+func (self *Room) HBMSG_CS_HB_LIST_REQ(actor int32, msg []byte, session int64) {
+	acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
+	arr := self.players[acc.GetAccountId()]
+	send := &protomsg.HB_LIST_RES{List: make([]*protomsg.HONGBAO, 0)}
+	if arr != nil {
+		for _, hb := range arr {
+			send.List = append(send.List, &protomsg.HONGBAO{
+				ID:            uint32(hb.hbID),
+				AssignerAccID: uint32(hb.assignerID),
+				AssignerName:  hb.assignerName,
+				Value:         uint64(hb.value),
+				Count:         uint64(hb.count),
+				Spare:         uint64(len(hb.arr)),
+				BombNumber:    uint64(hb.bombNumber),
+				Profits:       nil,
+			})
+		}
+	}
+
+	send_tools.Send2Account(protomsg.HBMSG_SC_HB_INFO_RES.UInt16(), send, session)
+}
+func (self *Room) HBMSG_CS_HB_INFO_REQ(actor int32, msg []byte, session int64) {
+	grab := packet.PBUnmarshal(msg, &protomsg.HB_INFO_REQ{}).(*protomsg.HB_INFO_REQ)
+	hbID := grab.GetHbID()
+	acc := account.AccountMgr.GetAccountBySessionIDAssert(session)
+
+	arr := self.players[acc.GetAccountId()]
+	if arr == nil {
+		log.Infof("房间:%v 没有玩家:%v 发红包记录", self.roomId, acc.GetAccountId())
+		return
+	}
+	var hb *hongbao
+	for _, h := range arr {
+		if h.hbID == int32(hbID) {
+			hb = h
+			break
+		}
+	}
+	if hb == nil {
+		log.Infof("房间:%v 没有玩家:%v 发红包记录 请求的记录:%v  玩家红包记录:%v ", self.roomId, acc.GetAccountId(), hbID, arr)
+		return
+	}
+
+	send := &protomsg.HB_INFO_RES{
+		HbID: hbID,
+		List: []*protomsg.HB_INFO_RES_HBGrabInfo{},
+	}
+
+	for accid, u := range hb.grabs {
+		ub := hb.bombs[accid]
+		ubval := int64(0)
+		if ub != nil {
+			ubval = ub.val
+		}
+		send.List = append(send.List, &protomsg.HB_INFO_RES_HBGrabInfo{
+			AccountID: accid,
+			Name:      u.name,
+			Profit:    ub.val - ubval,
+		})
+	}
+
+	send_tools.Send2Account(protomsg.HBMSG_SC_HB_INFO_RES.UInt16(), send, session)
 }
 
 func (self *Room) HBMSG_CS_PLAYERS_HB_LIST_REQ(actor int32, msg []byte, session int64) {

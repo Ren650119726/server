@@ -122,7 +122,7 @@ return:
 	@ args[3] 中奖总倍数
 */
 //picA, int64(sumOdds), reward,pos
-func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32, sumOdds int64, bigwinID int32, lv int) {
+func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32, sumOdds int64, bigwinID int32, lv int, re int) {
 	rand.Seed(time.Now().UnixNano() + int64(rand.Int31n(int32(10000))))
 	// 随机一个索引x 组成一个集合 [x-1,x,x+1]
 	f := func() [3]int {
@@ -169,6 +169,12 @@ func (self *Room) selectWheel(nodes []*wheelNode, betNum int64) (picA []int32, s
 	} else if reword, e := self.bingoPictureID[realID0]; e {
 		sumOdds = int64(reword.Odds)
 		rewardID = reword.ID
+	}
+
+	if realID%10 == 0 {
+		re = 2
+	} else {
+		re = 3
 	}
 
 	// 随机第四个图案

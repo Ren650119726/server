@@ -63,6 +63,7 @@ func (self *Room) S777MSG_CS_START_S777_REQ(actor int32, msg []byte, session int
 		msgBouns := make(map[int32]int64)
 		jackpotlv := 0
 		bigwinID := int32(0)
+		re := 0
 		sumKillP := int32(config.Get_configInt("777_room", int(self.roomId), "KillPersent")) + acc.GetKill()
 		rNum := rand.Int31n(10000) + 1
 		maxLoop := 1
@@ -70,7 +71,7 @@ func (self *Room) S777MSG_CS_START_S777_REQ(actor int32, msg []byte, session int
 			maxLoop = 30
 		}
 		for i := 0; i < maxLoop; i++ {
-			pArr, sumOdds, bigwinID, jackpotlv = self.selectWheel(self.mainWheel, int64(BetNum))
+			pArr, sumOdds, bigwinID, jackpotlv, re = self.selectWheel(self.mainWheel, int64(BetNum))
 			if maxLoop > 1 && sumOdds > 0 && i < (maxLoop-1) {
 				continue
 			} else {
@@ -105,6 +106,7 @@ func (self *Room) S777MSG_CS_START_S777_REQ(actor int32, msg []byte, session int
 			Money:       int64(acc.GetMoney()),
 			TotalOdds:   sumOdds,
 			Id:          protomsg.JackPotID(bigwinID),
+			Reward:      int32(re),
 		}
 		send_tools.Send2Account(protomsg.S777MSG_SC_START_S777_RES.UInt16(), resultMsg, session)
 

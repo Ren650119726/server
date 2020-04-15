@@ -21,9 +21,9 @@ type (
 
 var AccountID = uint32(0)
 
-var addr = "47.108.87.29"
+//var addr = "47.108.87.29"
 
-//var addr = "192.168.8.100"
+var addr = "192.168.8.111"
 
 func NewLogic() *Logic {
 	return &Logic{}

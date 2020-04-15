@@ -15,9 +15,10 @@ type (
 	Account struct {
 		*protomsg.AccountStorageData
 		*protomsg.AccountGameData
-		SessionId int64
-		GrabVal   int64 // 抢到的总金额
-		BombCount int64 // 中雷次数
+		SessionId  int64
+		GrabVal    int64 // 抢到的总金额
+		BombCount  int64 // 中雷次数
+		TotalCount int64 // 抢红包总次数
 	}
 )
 

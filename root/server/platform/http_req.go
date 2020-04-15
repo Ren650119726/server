@@ -12,8 +12,9 @@ import (
 	"time"
 )
 
-func Asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int32,gamestring, desc string, back func(backunique string, backmoney int64, bwType int32), errback func()) {
+func Asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int32, gamestring, desc string, back func(backunique string, backmoney int64, bwType int32), errback func()) {
 	if trycount == 0 {
+		errback()
 		return
 	}
 	desc += " time:" + utils.DateString()
@@ -25,7 +26,7 @@ func Asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 				"num":    {strconv.Itoa(int(num))},
 				"desc":   {desc},
 			}
-			log.Infof("http-request try:%v :%v addr:%v ",trycount, send, addr_url)
+			log.Infof("http-request try:%v :%v addr:%v ", trycount, send, addr_url)
 			resp, err := http.PostForm(addr_url,
 				send)
 
@@ -40,11 +41,11 @@ func Asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 						send)
 					if err == nil {
 						break
-					}else{
+					} else {
 						if resp != nil && resp.Body != nil {
 							resp.Body.Close()
 						}
-						log.Errorf("三方平台，http %v 请求错误:%v send:%v", i+1,err.Error(),send)
+						log.Errorf("三方平台，http %v 请求错误:%v send:%v", i+1, err.Error(), send)
 					}
 				}
 
@@ -65,7 +66,7 @@ func Asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 				log.Errorf("三方平台，read 错误:%v", err.Error())
 				return
 			}
-			log.Infof("http-response try:%v :%v",trycount, string(body))
+			log.Infof("http-response try:%v :%v", trycount, string(body))
 			var jsonstr map[string]interface{}
 			e := json.Unmarshal(body, &jsonstr)
 			if e != nil {
@@ -74,7 +75,7 @@ func Asyn_addMoney(trycount int, addr_url, unique string, num int64, roomID int3
 			}
 			if err, e := jsonstr["status"]; e && int(err.(float64)) != 0 {
 				log.Errorf("平台返回错误码:%v ", int(err.(float64)))
-				Asyn_addMoney(trycount-1, addr_url, unique, num, roomID,gamestring, desc, back, errback)
+				Asyn_addMoney(trycount-1, addr_url, unique, num, roomID, gamestring, desc, back, errback)
 				return
 			} else {
 				data := jsonstr["data"].(map[string]interface{})

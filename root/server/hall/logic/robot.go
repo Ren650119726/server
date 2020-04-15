@@ -144,8 +144,15 @@ func (self *robotMgr) UpdateRobot(roomID uint32, robotCount uint32) {
 				case common.EGameTypeLHD:
 					roomidMSG = protomsg.LHDMSG_CS_ENTER_GAME_LHD_REQ.UInt16()
 					pbMessage = &protomsg.ENTER_GAME_LHD_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
+				case common.EGameType777:
+					roomidMSG = protomsg.S777MSG_CS_ENTER_GAME_S777_REQ.UInt16()
+					pbMessage = &protomsg.ENTER_GAME_S777_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
+				case common.EGameTypeHONGBAO:
+					roomidMSG = protomsg.HBMSG_CS_ENTER_GAME_HB_REQ.UInt16()
+					pbMessage = &protomsg.ENTER_GAME_HB_REQ{AccountID: acc.GetAccountId(), RoomID: roomID}
 				default:
-
+					log.Errorf("找不到游戏枚举:%v ", common.EGameType(node.gameType))
+					return
 				}
 				send_tools.Send2Game(roomidMSG, pbMessage, node.session)
 				log.Infof("机器人:[%v] 请求进入房间:%v 给游戏:%v 发送数据 ", acc.GetAccountId(), roomID, room.serverID)

@@ -82,6 +82,7 @@ message START_S777_RES {
 	int64 Money                       = 4; // 身上的钱
 	int64 TotalOdds                   = 5; // 总赔率
 	JackPotID id                      = 7; // 第四个槽的id
+	int32 reward                      = 8; // 连中数量2 或 3
 }
 
 message S777_position{

@@ -16,6 +16,7 @@ func init() {
 	core.Cmd.Regist("engame", engame, true)
 	core.Cmd.Regist("start1", start1, true)
 	core.Cmd.Regist("show", show, true)
+	core.Cmd.Regist("a", assign, true)
 
 }
 
@@ -82,4 +83,25 @@ func start1(s []string) {
 }
 func show(s []string) {
 	log.Infof("count:%v fee:%v", count, fee)
+}
+
+func assign(s []string) {
+	if len(s) < 4 {
+		fmt.Printf("× 参数错误 \r\n")
+		return
+	}
+	bet, _ := strconv.Atoi(s[0]) // 金额
+	b, _ := strconv.Atoi(s[1])   // 雷号
+	c, _ := strconv.Atoi(s[2])   // 几个包
+	num, _ := strconv.Atoi(s[3]) // 连发数
+
+	log.Infof("发红包 金额:%v 雷号:%v 包数:%v 连发:%v ", bet, b, c, num)
+	Send2Game(protomsg.HBMSG_CS_ASSIGN_HB_REQ.UInt16(), &protomsg.ASSIGN_HB_REQ{
+		AccountID:  0,
+		Value:      uint64(bet),
+		Count:      uint32(c),
+		BombNumber: uint32(b),
+		Num:        uint32(num),
+	})
+
 }
