@@ -17,6 +17,7 @@ func init() {
 	core.Cmd.Regist("start1", start1, true)
 	core.Cmd.Regist("show", show, true)
 	core.Cmd.Regist("a", assign, true)
+	core.Cmd.Regist("g", grab, true)
 
 }
 
@@ -103,5 +104,16 @@ func assign(s []string) {
 		BombNumber: uint32(b),
 		Num:        uint32(num),
 	})
+}
 
+func grab(s []string) {
+	if len(s) < 1 {
+		fmt.Printf("× 参数错误 \r\n")
+		return
+	}
+	id, _ := strconv.Atoi(s[0]) // 金额
+	Send2Game(protomsg.HBMSG_CS_GRAB_HB_REQ.UInt16(), &protomsg.GRAB_HB_REQ{
+		AccountID: 0,
+		ID:        uint32(id),
+	})
 }

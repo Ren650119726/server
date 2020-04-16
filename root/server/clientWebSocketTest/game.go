@@ -115,17 +115,29 @@ func (self *Game) HandleMessage(actor int32, msg []byte, session int64) bool {
 		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ENTER_GAME_HB_RES{}).(*protomsg.ENTER_GAME_HB_RES)
 		log.Infof(colorized.Blue("进入游戏成功：%+v"), pb)
 
-	case protomsg.HBMSG_SC_ASSIGN_HB_RES.UInt16():
+	case protomsg.HBMSG_SC_ASSIGN_HB_RES.UInt16(): // 发红包结果
 		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.ASSIGN_HB_RES{}).(*protomsg.ASSIGN_HB_RES)
 		log.Infof("%v ", pb.String())
 
-	case protomsg.HBMSG_SC_BROADCAST_NEW_HB.UInt16():
+	case protomsg.HBMSG_SC_BROADCAST_NEW_HB.UInt16(): // 新红包
 		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.BROADCAST_NEW_HB{}).(*protomsg.BROADCAST_NEW_HB)
 		log.Infof("%v ", pb.String())
 
-	case protomsg.HBMSG_SC_GRAB_HB_RES.UInt16():
+	case protomsg.HBMSG_SC_GRAB_HB_RES.UInt16(): // 抢红包结果
 		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.GRAB_HB_RES{}).(*protomsg.GRAB_HB_RES)
 		log.Infof("%v ", pb.String())
+
+	case protomsg.HBMSG_SC_BROADCAST_UPDATE_HB.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.BROADCAST_UPDATE_HB{}).(*protomsg.BROADCAST_UPDATE_HB)
+		log.Infof("更新红包数量:%v ", pb.String())
+
+	case protomsg.HBMSG_SC_BROADCAST_UPDATE_GRAB.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.BROADCAST_UPDATE_GRAB{}).(*protomsg.BROADCAST_UPDATE_GRAB)
+		log.Infof("抢到红包：%v ", pb.String())
+
+	case protomsg.HBMSG_SC_BROADCAST_UPDATE_BOMB.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &protomsg.BROADCAST_UPDATE_BOMB{}).(*protomsg.BROADCAST_UPDATE_BOMB)
+		log.Infof("中雷：%v ", pb.String())
 	}
 
 	return true

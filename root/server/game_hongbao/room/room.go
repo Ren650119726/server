@@ -20,16 +20,16 @@ type (
 		val  int64
 	}
 	hongbao struct {
-		hbID         int32            // 红包实例ID
-		assignerID   uint32           // 发红包的账号ID
-		assignerName string           // 发红包人的名字
-		value        int64            // 红包金额
-		bombNumber   int64            // 雷号
-		arr          []int64          // 剩余的红包
-		count        int64            // 红包总数
-		time         string           // 发包时间
-		grabs        map[uint32]*unit // key 抢红包的人 value 抢到的金额
-		bombs        map[uint32]*unit // key 抢红包的人 value 中炸弹赔的钱
+		hbID         int32           // 红包实例ID
+		assignerID   uint32          // 发红包的账号ID
+		assignerName string          // 发红包人的名字
+		value        int64           // 红包金额
+		bombNumber   int64           // 雷号
+		arr          []int64         // 剩余的红包
+		count        int64           // 红包总数
+		time         string          // 发包时间
+		grabs        map[uint32]unit // key 抢红包的人 value 抢到的金额
+		bombs        map[uint32]unit // key 抢红包的人 value 中炸弹赔的钱
 	}
 
 	conf struct {
@@ -43,6 +43,8 @@ type (
 		Rand_Point          int
 		Red_Odds            map[uint32]int64 // key 包数  val 赔率
 		Red_Max             uint64           // 红包列表最大数量
+		Send_Thunder        [][]int32        // 机器人发包生成雷得数量和概率
+		Grab_Thunder        int32            // 机器人抢包中雷概率
 	}
 
 	Room struct {
@@ -50,8 +52,8 @@ type (
 		roomId    uint32
 		accounts  map[uint32]*account.Account // 进房间的所有人
 		Close     bool
-		hbList    []*hongbao // 红包列表
-		players   map[uint32][]*hongbao
+		hbList    []*hongbao            // 红包列表
+		players   map[uint32][]*hongbao // 只有玩家的数据
 		hongbaoID int32
 		*conf
 
@@ -86,6 +88,8 @@ func (self *Room) Init(actor *core.Actor) bool {
 	time := utils.Randx_y(int(conf[0]), int(conf[1]))
 	self.owner.AddTimer(2000, -1, self.updateRank)
 	self.owner.AddTimer(int64(time), 1, self.autoAssignHB)
+	self.owner.AddTimer(1000, -1, self.autoGrabHB)
+	self.owner.AddTimer(60000, -1, self.robotAutoQuit)
 	return true
 }
 
@@ -175,6 +179,20 @@ func (self *Room) HandleMessage(actor int32, msg []byte, session int64) bool {
 		self.SERVERMSG_HG_NOTIFY_ALTER_DATE(actor, pack.ReadBytes(), session)
 	case utils.ID_DISCONNECT: // 有连接断开
 		self.Disconnect(session)
+
+	////////////////////////////// GM //////////////////////////////////
+	case inner.CMD_CMD_HB_INFO_DETAIL.UInt16():
+		pb := packet.PBUnmarshal(pack.ReadBytes(), &inner.HB_INFO_DETAIL{}).(*inner.HB_INFO_DETAIL)
+		var hb *hongbao
+		for _, v := range self.hbList {
+			if v.hbID == int32(pb.GetHbID()) {
+				hb = v
+				break
+			}
+		}
+		log.Infof("红包信息:%+v ", hb)
+
+		////////////////////////////////// 玩家消息 /////////////////////////////
 	case protomsg.HBMSG_CS_ENTER_GAME_HB_REQ.UInt16(): // 请求进入房间
 		self.HBMSG_CS_ENTER_GAME_HB_REQ(actor, pack.ReadBytes(), session)
 	case protomsg.HBMSG_CS_LEAVE_GAME_HB_REQ.UInt16(): // 请求离开房间

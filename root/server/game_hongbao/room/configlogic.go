@@ -24,6 +24,11 @@ func (self *Room) LoadConfig() {
 		odds := config.Get_configInt("red_odds", k, "Odds")
 		self.Red_Odds[uint32(num)] = int64(odds)
 	}
+
+	str := config.Get_configString("red_robot_config", 1, "Send_Thunder")
+	self.Send_Thunder = utils.SplitConf2Arr_ArrInt32(str)
+	self.Grab_Thunder = int32(config.Get_configInt("red_robot_config", 1, "Grab_Thunder"))
+
 	log.Infof("房间:%v 配置加载完成", self.roomId)
 }
 

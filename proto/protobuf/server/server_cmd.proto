@@ -1,0 +1,15 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg/inner";
+
+
+enum CMD {
+	CMDUNKNOW = 0;
+	CMD_HB_INFO_DETAIL = 1; // 查看红包详情
+
+}
+
+ // 查看红包详情
+message HB_INFO_DETAIL{
+    uint32 hbID = 1; // 红包ID
+}

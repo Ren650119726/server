@@ -107,7 +107,7 @@ message GRAB_HB_REQ {
 
 // 返回抢红包结果
 message GRAB_HB_RES {
-	uint64 Ret = 1; // 0、 成功 1、 红包抢光了 2、身上的钱不够赔，不能抢
+	uint64 Ret = 1; // 0、 成功 1、 红包抢光了 2、身上的钱不够赔，不能抢 3、 已经抢过该红包
 
 }
 
