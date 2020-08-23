@@ -3,9 +3,9 @@ package utils
 type FuncTimeOut func(dt int64)
 
 type MyTimer struct {
-	timeid           int64
-	interval         int64 // 时间间隔(单位毫秒)
-	next_triggertime int64 // 下一次执行的时间点(单位毫秒)
+	timeid           int64	// 计时器id
+	interval         int64  // 时间间隔(单位毫秒)
+	next_triggertime int64  // 下一次执行的时间戳(单位毫秒)
 	last_triggertime int64
 	trigger_times    int32       // 执行次数
 	func_timeout     FuncTimeOut // 超时回调
@@ -20,11 +20,11 @@ type TimerMgr struct {
 
 // 创建一个timer管理器
 func NewTimerMgr() *TimerMgr {
-	timer_mgr := &TimerMgr{}
+	timer_mgr := TimerMgr{}
 	timer_mgr.cur_timeid = 0
 	timer_mgr.id2timer = make(map[int64]*MyTimer)
 	timer_mgr.timers = NewHeap(nil, 1)
-	return timer_mgr
+	return &timer_mgr
 }
 
 // 创建一个timer
@@ -50,6 +50,7 @@ func (self *TimerMgr) AddTimer(timer *MyTimer) int64 {
 	self.cur_timeid += 1
 	timer.timeid = self.cur_timeid
 	self.timers.Push(timer)
+	self.id2timer[timer.timeid] = timer
 	return timer.timeid
 }
 
@@ -61,7 +62,6 @@ func (self *TimerMgr) CancelTimer(timeid int64) {
 
 // 获取遍历
 func (self *TimerMgr) Update(now int64) {
-
 	for {
 		intf := self.timers.Peek()
 		if intf == nil {

@@ -50,7 +50,7 @@ type (
 // 新创建一个actor
 func NewActor(id int32, handler IFHandler, msgchan chan IMessage) *Actor {
 	actor := &Actor{Id: id, Handler: handler, MessageCache: msgchan}
-	actor.TimerMgr = utils.NewTimerMgr(100)
+	actor.TimerMgr = utils.NewTimerMgr()
 	actor.Resume()
 	return actor
 }
