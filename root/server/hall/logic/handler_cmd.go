@@ -28,7 +28,6 @@ func CMD_Help(sParam []string) {
 func (self *Hall) CMD_LoadConfig(sParam []string) {
 	config.Load_Conf()
 
-	RobotMgr.Load()
 	strServerIP := utils.GetLocalIP()
 	GameMgr.PrintSign(strServerIP)
 	for _, v := range GameMgr.nodes {

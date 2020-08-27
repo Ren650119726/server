@@ -32,7 +32,6 @@ func (self *Hall) Init(actor *core.Actor) bool {
 		core.InitScript(core.ScriptDir)
 	}
 	self.owner = actor
-	RobotMgr.Load()
 	// 连接DB
 	connectDB_actor := network.NewTCPClient(self.owner, func() string {
 		return core.CoreAppConfString("connectDB")

@@ -1,3 +1,4 @@
-protoc .\protobuf\*.proto --go_out=C:\Users\admin\Desktop\server
-protoc .\protobuf\server\*.proto --go_out=C:\Users\admin\Desktop\server
+protoc  --go_out=plugins=grpc:C:\Users\22948\Desktop\github\server .\protobuf\*.proto
+protoc --go_out=plugins=grpc:C:\Users\22948\Desktop\github\server .\protobuf\server\*.proto
+
 pause

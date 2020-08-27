@@ -1,7 +1,10 @@
 package main
 
 import (
+	"google.golang.org/grpc"
+	"net"
 	"root/core/log"
+	"root/protomsg"
 	"runtime"
 )
 type test_stru struct {
@@ -43,4 +46,13 @@ func main() {
 	log.Infof("LastGC %v",s.LastGC)
 	log.Infof("PauseEnd %v",s.PauseEnd)
 	log.Infof("over %v", len(arr))
+
+	lis, err := net.Listen("tcp", ":8028")  //监听所有网卡8028端口的TCP连接
+	if err != nil {
+		log.Fatalf("监听失败: %v", err)
+	}
+	rpc := grpc.NewServer()
+	protomsg.Register
+	rpc.Serve(lis)
+
 }

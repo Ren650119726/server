@@ -6,12 +6,10 @@ import (
 	"root/server/hall/account"
 	"root/server/hall/logcache"
 	"root/server/hall/send_tools"
-	"root/server/hall/speaker"
 )
 
 // 小喇叭更新
 func OnSpeakerUpdate(dt int64) {
-	speaker.SpeakerMgr.Update()
 }
 
 // 每分钟更新
@@ -43,7 +41,7 @@ func SecondUpdate(dt int64) {
 
 // 每10秒更新
 func TenSecondUpdate(dt int64) {
-	RobotMgr.update()
+
 }
 
 // 每日0点更新更新
@@ -63,5 +61,5 @@ func ZeroUpdate(dt int64) {
 
 // 每日0点更新更新
 func NewDayUpdate(dt int64) {
-	RobotMgr.Load()
+
 }
