@@ -5,7 +5,7 @@ option go_package = "root/protomsg/inner";
 import "protobuf/data.proto";
 
 enum SERVERMSG {
-	UNKNOW = 0;
+	SERVERMSG_UNKNOW = 0;
 	HD_HELLO_DB     	 = 100; // 大厅向db建立链接
 	SS_TEST_NETWORK      = 101; // 网络测试
 	SS_CLOSE_SERVER      = 102; // 关闭服务器消息

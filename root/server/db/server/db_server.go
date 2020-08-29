@@ -75,15 +75,11 @@ func (self *DBServer) Init(actor *core.Actor) bool {
 	child = core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 100000))
 	core.CoreRegisteActor(child)
 
-	core.Cmd.Regist("shift", self.CMD_ShiftData, true)
+	go GRPC_SERVER()
 	// 读取所有名字
 	return true
 }
 
-func (self *DBServer) CMD_ShiftData(s []string) {
-	servicereslut := logdb.ShiftServiceFee()
-	log.Info(servicereslut)
-}
 
 func registTable() {
 	// 角色表

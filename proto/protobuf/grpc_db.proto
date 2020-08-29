@@ -1,0 +1,14 @@
+syntax = "proto3";
+package protomsg;
+option go_package = "root/protomsg";
+import "protobuf/data.proto";
+
+// 可以定义多个服务，每个服务内可以定义多个接口
+service MySQLServer {
+// 方法 (请求消息结构体) returns (返回消息结构体) {}
+rpc GetAccount (GetAccountReq) returns (AccountStorageData) {}
+}
+
+message GetAccountReq{
+    uint32 accountID = 1;
+}

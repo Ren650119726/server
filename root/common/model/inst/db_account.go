@@ -55,7 +55,18 @@ func (self *AccountModel) FindbyAccountID(accountId uint32) error {
 	}
 
 	self.AccountId = accountId
+	conn.First(self, self)
 	err := conn.FirstOrInit(self, self).Error
+	return err
+}
+
+func (self *AccountModel) GetAccount() error {
+	conn := db.GetInst()
+	if conn == nil {
+		return errors.New("no db connect")
+	}
+
+	err := conn.First(self, self).Error
 	return err
 }
 

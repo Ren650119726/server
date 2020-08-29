@@ -6,11 +6,9 @@ import (
 	"root/core"
 	"root/core/db"
 	"root/server/hall/logic"
-	"common"
 )
 
 func main() {
-	log.Infof("????")
 	// 创建server
 	hall := logic.NewHall()
 

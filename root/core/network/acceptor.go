@@ -131,7 +131,6 @@ func (self *Acceptor) DoListenHttp(httpAddr string) {
 
 /* 检查session */
 func (self *Acceptor) Update() {
-
 	// 处理关闭的连接
 	for {
 		if len(self.offchan) <= 0 {

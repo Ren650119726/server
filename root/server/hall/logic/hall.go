@@ -1,7 +1,9 @@
 package logic
 
 import (
+	"context"
 	"github.com/astaxie/beego"
+	"google.golang.org/grpc"
 	"root/common"
 	"root/core"
 	"root/core/log"
@@ -19,6 +21,7 @@ type (
 		owner       *core.Actor
 		init        bool // 重新建立连接是否需要拉取所有数据
 		ListenActor *core.Actor
+		rpc *grpc.ClientConn
 	}
 )
 
@@ -38,11 +41,24 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	}, self.registerDB)
 	child := core.NewActor(common.EActorType_CONNECT_DB.Int32(), connectDB_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(child)
+	var err error
+	self.rpc, err = grpc.Dial("192.168.2.100:8028",grpc.WithInsecure())
+	if err != nil{
+		log.Errorf("grpc连接错误:%v",err.Error())
+		return false
+	}
 
-	c := &network.Connector_secret{}
-	msgchan := make(chan core.IMessage, 10000)
-	a := core.NewActor(1000, c, msgchan)
-	core.CoreRegisteActor(a)
+	c := protomsg.NewMySQLServerClient(self.rpc)
+	ret, err := c.GetAccount(context.Background(),&protomsg.GetAccountReq{
+		AccountID: 123,
+	})
+	if err != nil {
+		log.Warnf("数据返回错误:%v",err.Error())
+		return false
+	}
+	log.Infof("ret:%v",ret.String())
+
+
 
 	// 初始化定时器
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*20, -1, OnSpeakerUpdate)
@@ -100,7 +116,7 @@ func (self *Hall) SERVERMSG_HD_SAVE_ALL() {
 	log.Info("数据回存完毕!!! ")
 }
 func (self *Hall) Stop() {
-
+	self.rpc.Close()
 }
 
 func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
