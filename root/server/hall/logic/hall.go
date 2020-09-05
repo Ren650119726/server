@@ -21,7 +21,6 @@ type (
 		owner       *core.Actor
 		init        bool // 重新建立连接是否需要拉取所有数据
 		ListenActor *core.Actor
-		rpc *grpc.ClientConn
 	}
 )
 
@@ -41,24 +40,6 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	}, self.registerDB)
 	child := core.NewActor(common.EActorType_CONNECT_DB.Int32(), connectDB_actor, make(chan core.IMessage, 10000))
 	core.CoreRegisteActor(child)
-	var err error
-	self.rpc, err = grpc.Dial("192.168.2.100:8028",grpc.WithInsecure())
-	if err != nil{
-		log.Errorf("grpc连接错误:%v",err.Error())
-		return false
-	}
-
-	c := protomsg.NewMySQLServerClient(self.rpc)
-	ret, err := c.GetAccount(context.Background(),&protomsg.GetAccountReq{
-		AccountID: 123,
-	})
-	if err != nil {
-		log.Warnf("数据返回错误:%v",err.Error())
-		return false
-	}
-	log.Infof("ret:%v",ret.String())
-
-
 
 	// 初始化定时器
 	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*20, -1, OnSpeakerUpdate)
@@ -121,11 +102,6 @@ func (self *Hall) Stop() {
 
 func (self *Hall) HandleMessage(actor int32, msg []byte, session int64) bool {
 	pack := packet.NewPacket(msg)
-	//if name,e := protomsg.MSG_name[int32(pack.GetMsgID())];e{
-	//	log.Infof("收到消息:%v %v ", pack.GetMsgID(),name)
-	//}else{
-	//	log.Infof("收到消息:%v %v ", pack.GetMsgID(),inner.SERVERMSG_name[int32(pack.GetMsgID())])
-	//}
 	switch pack.GetMsgID() {
 	case utils.ID_DISCONNECT: // 客户端或游戏进程断开连接
 		self.MSGID_CLOSE_CONNECT(actor, msg, session)
