@@ -22,6 +22,7 @@ type (
 		init        bool // 重新建立连接是否需要拉取所有数据
 		ListenActor *core.Actor
 		rpc *grpc.ClientConn
+		stream protomsg.GRPC_SERVICE_RouteClient
 	}
 )
 
@@ -48,15 +49,24 @@ func (self *Hall) Init(actor *core.Actor) bool {
 		return false
 	}
 
-	c := protomsg.NewMySQLServerClient(self.rpc)
-	ret, err := c.GetAccount(context.Background(),&protomsg.GetAccountReq{
-		AccountID: 123,
-	})
-	if err != nil {
-		log.Warnf("数据返回错误:%v",err.Error())
-		return false
-	}
-	log.Infof("ret:%v",ret.String())
+	//c := protomsg.NewMySQLServerClient(self.rpc)
+	//go func() {
+	//	ret, err := c.GetAccount(context.Background(),&protomsg.GetAccountReq{
+	//		AccountID: 123,
+	//	})
+	//	if err != nil {
+	//		log.Warnf("数据返回错误:%v",err.Error())
+	//	}
+	//	log.Infof("ret:%v",ret.String())
+	//	core.LocalCoreSend(0,common.EActorType_MAIN.Int32(), func() {
+	//
+	//	})
+	//}()
+
+
+
+	c := protomsg.NewGRPC_SERVICEClient(self.rpc)
+	self.stream ,_ = c.Route(context.Background())
 
 
 
@@ -66,7 +76,7 @@ func (self *Hall) Init(actor *core.Actor) bool {
 	self.owner.AddTimer(utils.MILLISECONDS_OF_MINUTE, -1, OneMinuteUpdate)
 	self.owner.AddTimer(utils.MILLISECONDS_OF_MINUTE*5, -1, FiveMinuteUpdate)
 	self.owner.AddTimer(utils.MILLISECONDS_OF_HOUR, -1, OneHourUpdate)
-	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND, -1, SecondUpdate)
+	self.owner.AddTimer(utils.MILLISECONDS_OF_SECOND*5, -1, self.SecondUpdate)
 	self.owner.AddTimer(15*utils.MILLISECONDS_OF_SECOND, -1, TenSecondUpdate)
 	self.owner.AddEverydayTimer("23:59:59", ZeroUpdate)
 	self.owner.AddEverydayTimer("00:00:01", NewDayUpdate)

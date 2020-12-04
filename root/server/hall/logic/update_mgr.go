@@ -2,7 +2,10 @@ package logic
 
 import (
 	"fmt"
+	"math/rand"
+	"root/core/log"
 	"root/core/utils"
+	"root/protomsg"
 	"root/server/hall/account"
 	"root/server/hall/logcache"
 	"root/server/hall/send_tools"
@@ -34,8 +37,21 @@ func OneHourUpdate(dt int64) {
 
 }
 
+var c = 0
 // 每秒更新
-func SecondUpdate(dt int64) {
+func (self *Hall)SecondUpdate(dt int64) {
+	if c >= 5{
+		self.stream.CloseAndRecv()
+	}
+	c++
+	if self.stream != nil {
+		e := self.stream.Send(&protomsg.Data{
+			ID: uint32(rand.Intn(2000)),
+		})
+		if e != nil {
+			log.Error("%v",e.Error())
+		}
+	}
 
 }
 

@@ -76,6 +76,100 @@ func (x *GetAccountReq) GetAccountID() uint32 {
 	return 0
 }
 
+type Data struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID uint32 `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+}
+
+func (x *Data) Reset() {
+	*x = Data{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_protobuf_grpc_db_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Data) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Data) ProtoMessage() {}
+
+func (x *Data) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_grpc_db_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Data.ProtoReflect.Descriptor instead.
+func (*Data) Descriptor() ([]byte, []int) {
+	return file_protobuf_grpc_db_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Data) GetID() uint32 {
+	if x != nil {
+		return x.ID
+	}
+	return 0
+}
+
+type Close struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ret uint32 `protobuf:"varint,1,opt,name=ret,proto3" json:"ret,omitempty"`
+}
+
+func (x *Close) Reset() {
+	*x = Close{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_protobuf_grpc_db_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Close) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Close) ProtoMessage() {}
+
+func (x *Close) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_grpc_db_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Close.ProtoReflect.Descriptor instead.
+func (*Close) Descriptor() ([]byte, []int) {
+	return file_protobuf_grpc_db_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Close) GetRet() uint32 {
+	if x != nil {
+		return x.Ret
+	}
+	return 0
+}
+
 var File_protobuf_grpc_db_proto protoreflect.FileDescriptor
 
 var file_protobuf_grpc_db_proto_rawDesc = []byte{
@@ -85,14 +179,21 @@ var file_protobuf_grpc_db_proto_rawDesc = []byte{
 	0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x2d, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x41, 0x63,
 	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x12, 0x1c, 0x0a, 0x09, 0x61, 0x63, 0x63, 0x6f,
 	0x75, 0x6e, 0x74, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x09, 0x61, 0x63, 0x63,
-	0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x32, 0x54, 0x0a, 0x0b, 0x4d, 0x79, 0x53, 0x51, 0x4c, 0x53,
-	0x65, 0x72, 0x76, 0x65, 0x72, 0x12, 0x45, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x41, 0x63, 0x63, 0x6f,
-	0x75, 0x6e, 0x74, 0x12, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x6d, 0x73, 0x67, 0x2e, 0x47,
-	0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x6d, 0x73, 0x67, 0x2e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x53,
-	0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x44, 0x61, 0x74, 0x61, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d,
-	0x72, 0x6f, 0x6f, 0x74, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x6d, 0x73, 0x67, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x22, 0x16, 0x0a, 0x04, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0e,
+	0x0a, 0x02, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x49, 0x44, 0x22, 0x19,
+	0x0a, 0x05, 0x43, 0x6c, 0x6f, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x72, 0x65, 0x74, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0d, 0x52, 0x03, 0x72, 0x65, 0x74, 0x32, 0x54, 0x0a, 0x0b, 0x4d, 0x79, 0x53,
+	0x51, 0x4c, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x12, 0x45, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x41,
+	0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x6d, 0x73,
+	0x67, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x1a,
+	0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x6d, 0x73, 0x67, 0x2e, 0x41, 0x63, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x44, 0x61, 0x74, 0x61, 0x22, 0x00, 0x32,
+	0x3c, 0x0a, 0x0c, 0x47, 0x52, 0x50, 0x43, 0x5f, 0x53, 0x45, 0x52, 0x56, 0x49, 0x43, 0x45, 0x12,
+	0x2c, 0x0a, 0x05, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x6d, 0x73, 0x67, 0x2e, 0x44, 0x61, 0x74, 0x61, 0x1a, 0x0f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x6d, 0x73, 0x67, 0x2e, 0x43, 0x6c, 0x6f, 0x73, 0x65, 0x22, 0x00, 0x28, 0x01, 0x42, 0x0f, 0x5a,
+	0x0d, 0x72, 0x6f, 0x6f, 0x74, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x6d, 0x73, 0x67, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -107,16 +208,20 @@ func file_protobuf_grpc_db_proto_rawDescGZIP() []byte {
 	return file_protobuf_grpc_db_proto_rawDescData
 }
 
-var file_protobuf_grpc_db_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_protobuf_grpc_db_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_protobuf_grpc_db_proto_goTypes = []interface{}{
 	(*GetAccountReq)(nil),      // 0: protomsg.GetAccountReq
-	(*AccountStorageData)(nil), // 1: protomsg.AccountStorageData
+	(*Data)(nil),               // 1: protomsg.Data
+	(*Close)(nil),              // 2: protomsg.Close
+	(*AccountStorageData)(nil), // 3: protomsg.AccountStorageData
 }
 var file_protobuf_grpc_db_proto_depIdxs = []int32{
 	0, // 0: protomsg.MySQLServer.GetAccount:input_type -> protomsg.GetAccountReq
-	1, // 1: protomsg.MySQLServer.GetAccount:output_type -> protomsg.AccountStorageData
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	1, // 1: protomsg.GRPC_SERVICE.Route:input_type -> protomsg.Data
+	3, // 2: protomsg.MySQLServer.GetAccount:output_type -> protomsg.AccountStorageData
+	2, // 3: protomsg.GRPC_SERVICE.Route:output_type -> protomsg.Close
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -141,6 +246,30 @@ func file_protobuf_grpc_db_proto_init() {
 				return nil
 			}
 		}
+		file_protobuf_grpc_db_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Data); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_protobuf_grpc_db_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Close); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -148,9 +277,9 @@ func file_protobuf_grpc_db_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_protobuf_grpc_db_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   3,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_protobuf_grpc_db_proto_goTypes,
 		DependencyIndexes: file_protobuf_grpc_db_proto_depIdxs,
@@ -241,5 +370,111 @@ var _MySQLServer_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
+	Metadata: "protobuf/grpc_db.proto",
+}
+
+// GRPC_SERVICEClient is the client API for GRPC_SERVICE service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type GRPC_SERVICEClient interface {
+	Route(ctx context.Context, opts ...grpc.CallOption) (GRPC_SERVICE_RouteClient, error)
+}
+
+type gRPC_SERVICEClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewGRPC_SERVICEClient(cc grpc.ClientConnInterface) GRPC_SERVICEClient {
+	return &gRPC_SERVICEClient{cc}
+}
+
+func (c *gRPC_SERVICEClient) Route(ctx context.Context, opts ...grpc.CallOption) (GRPC_SERVICE_RouteClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_GRPC_SERVICE_serviceDesc.Streams[0], "/protomsg.GRPC_SERVICE/Route", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &gRPC_SERVICERouteClient{stream}
+	return x, nil
+}
+
+type GRPC_SERVICE_RouteClient interface {
+	Send(*Data) error
+	CloseAndRecv() (*Close, error)
+	grpc.ClientStream
+}
+
+type gRPC_SERVICERouteClient struct {
+	grpc.ClientStream
+}
+
+func (x *gRPC_SERVICERouteClient) Send(m *Data) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *gRPC_SERVICERouteClient) CloseAndRecv() (*Close, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(Close)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// GRPC_SERVICEServer is the server API for GRPC_SERVICE service.
+type GRPC_SERVICEServer interface {
+	Route(GRPC_SERVICE_RouteServer) error
+}
+
+// UnimplementedGRPC_SERVICEServer can be embedded to have forward compatible implementations.
+type UnimplementedGRPC_SERVICEServer struct {
+}
+
+func (*UnimplementedGRPC_SERVICEServer) Route(GRPC_SERVICE_RouteServer) error {
+	return status.Errorf(codes.Unimplemented, "method Route not implemented")
+}
+
+func RegisterGRPC_SERVICEServer(s *grpc.Server, srv GRPC_SERVICEServer) {
+	s.RegisterService(&_GRPC_SERVICE_serviceDesc, srv)
+}
+
+func _GRPC_SERVICE_Route_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GRPC_SERVICEServer).Route(&gRPC_SERVICERouteServer{stream})
+}
+
+type GRPC_SERVICE_RouteServer interface {
+	SendAndClose(*Close) error
+	Recv() (*Data, error)
+	grpc.ServerStream
+}
+
+type gRPC_SERVICERouteServer struct {
+	grpc.ServerStream
+}
+
+func (x *gRPC_SERVICERouteServer) SendAndClose(m *Close) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *gRPC_SERVICERouteServer) Recv() (*Data, error) {
+	m := new(Data)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+var _GRPC_SERVICE_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "protomsg.GRPC_SERVICE",
+	HandlerType: (*GRPC_SERVICEServer)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Route",
+			Handler:       _GRPC_SERVICE_Route_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "protobuf/grpc_db.proto",
 }

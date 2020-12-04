@@ -9,6 +9,17 @@ service MySQLServer {
 rpc GetAccount (GetAccountReq) returns (AccountStorageData) {}
 }
 
+service GRPC_SERVICE{
+    rpc Route (stream Data) returns (Close) {}
+}
+
 message GetAccountReq{
     uint32 accountID = 1;
+}
+
+message Data{
+    uint32 ID = 1;
+}
+message Close{
+    uint32 ret = 1;
 }

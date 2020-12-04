@@ -75,7 +75,8 @@ func (self *DBServer) Init(actor *core.Actor) bool {
 	child = core.NewActor(common.EActorType_SERVER.Int32(), listen_actor, make(chan core.IMessage, 100000))
 	core.CoreRegisteActor(child)
 
-	go GRPC_SERVER()
+	//go GRPC_SERVER()
+	go GRPC_SERVER2()
 	// 读取所有名字
 	return true
 }
